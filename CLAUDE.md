@@ -26,6 +26,13 @@ architecture, the never-crash rules, "everything is a command", the tests) and `
   geometry; don't edit the files in `assets/app-icon/` by hand.
 - **Look:** the Paragon family's OBSIDIAN (default) and AURORA finishes, from the Paragon PR7
   plugins (`Paragon-PR7-D` / `Paragon-PR7-G` `source/ui/Finish.*`, `ParagonLookAndFeel.*`).
+  The themes are `crates/ui-egui/src/themes/paragon-*.json` (OBSIDIAN is the default dark theme,
+  AURORA the default light one).
+- **Vendored craft-libs:** `vendor/craft-libs/crates/ui-contract` is craft's UI contract with the
+  Paragon painting (gradients, piano keys, Bebas Neue titles), swapped in by `[patch]` in the root
+  `Cargo.toml`. Read `vendor/craft-libs/VENDORED.md` first. Keep `paragon.patch` in step with any
+  change there, and keep it on the same revision as the rest of craft-libs. The rebrand script
+  skips `vendor/`.
 - **Web build:** `apps/photocraft-web*` are excluded from the workspace; leave their sources.
 - **CI:** upstream's workflows are parked in `.github/upstream-workflows/` (inactive); don't move
   them back without the owner asking.

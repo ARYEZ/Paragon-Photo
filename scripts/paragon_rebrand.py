@@ -63,6 +63,7 @@ EXCLUDE = [
         r"(^|/)LICENSE[^/]*$",
         r"^book/src/project/(licenses|credits)\.md$",
         r"^docs/brand/",
+        r"^vendor/",  # vendored third-party sources (craft-libs): changed only through their patch file
         r"^apps/photocraft-web",
         r"^craft-i18n\.rev$",
         r"^scripts/paragon_",
