@@ -106,7 +106,7 @@ fn appearance_defaults_and_legacy_theme_migrate() {
     assert_eq!(p.interface.dark_theme, "paragon.obsidian");
     assert_eq!(p.interface.light_theme, "paragon.aurora");
     for (theme, mode, dark, light) in
-        [("pro", AppearanceMode::Dark, "craft.pro", "craft.pro"), ("classic", AppearanceMode::Light, "paragon.obsidian", "craft.classic")]
+        [("pro", AppearanceMode::Dark, "craft.pro", "paragon.aurora"), ("classic", AppearanceMode::Light, "paragon.obsidian", "craft.classic")]
     {
         let mut s = Session::new();
         s.load_prefs_json(&json!({"interface": {"theme": theme}}).to_string()).unwrap();
