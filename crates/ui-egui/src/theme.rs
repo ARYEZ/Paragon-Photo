@@ -20,11 +20,31 @@
 
 use craft::theme::{ColorToken, ThemeDef, ThemeId};
 use craft::ui::fonts::UiFonts;
+
+// ---- Paragon Photo's own themes ----------------------------------------------------------------
+
+/// The Paragon family's OBSIDIAN finish (pearl black): Paragon Photo's default dark theme.
+pub const OBSIDIAN: &str = "paragon.obsidian";
+/// The Paragon family's AURORA finish (pearl white, dimmed 10%): Paragon Photo's default light theme.
+pub const AURORA: &str = "paragon.aurora";
+
+/// The two finishes as suite theme files (`craft-design-theme` v1), built into the binary. Their
+/// values come from the Paragon PR7-D plugin; see `docs/paragon-finish-spec.md`.
+pub const PARAGON_THEME_FILES: [&[u8]; 2] = [include_bytes!("themes/paragon-obsidian.json"), include_bytes!("themes/paragon-aurora.json")];
+
+/// The Paragon theme `id` (OBSIDIAN or AURORA), parsed once from the built-in file. `None` for any
+/// other id, or if a built-in file failed to parse (a test guards against that).
+pub fn paragon_theme(id: &str) -> Option<Arc<ThemeDef>> {
+    static DEFS: std::sync::LazyLock<Vec<Arc<ThemeDef>>> = std::sync::LazyLock::new(|| {
+        PARAGON_THEME_FILES.iter().filter_map(|bytes| craft::theme::format::parse(bytes).ok()).map(|file| Arc::new(file.theme)).collect()
+    });
+    DEFS.iter().find(|def| def.id.as_str() == id).cloned()
+}
 use egui::{Color32, CornerRadius, FontData, FontFamily, FontId, Stroke, TextStyle, Visuals};
 use photocraft_engine::prefs::UiFontSize;
 use std::sync::Arc;
 
-/// PhotoCraft's own palettes: the suite themes it draws itself, each in the mode it has one for.
+/// Paragon Photo's own palettes: the suite themes it draws itself, each in the mode it has one for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Palette {
     /// Photoshop-style Spectrum dark: flat charcoal panels, tab strips, blue accents (darkest brightness).
@@ -112,18 +132,18 @@ impl Palette {
         }
     }
 
-    /// The Light Theme row of the Appearance settings, in PhotoCraft's order.
+    /// The Light Theme row of the Appearance settings, in Paragon Photo's order.
     const LIGHT_ROW: [Palette; 7] =
         [Palette::ProLight, Palette::ProLightGray, Palette::StudioLight, Palette::Classic, Palette::Adwaita, Palette::BreezeLight, Palette::SoftLight];
 
-    /// The Dark Theme row, in PhotoCraft's order.
+    /// The Dark Theme row, in Paragon Photo's order.
     const DARK_ROW: [Palette; 7] =
         [Palette::ProMedium, Palette::Pro, Palette::Studio, Palette::SolarizedDark, Palette::AdwaitaDark, Palette::BreezeDark, Palette::SoftDark];
 
     /// Photoshop's four interface brightnesses, darkest first.
     const BRIGHTNESSES: [Palette; 4] = [Palette::Pro, Palette::ProMedium, Palette::ProLightGray, Palette::ProLight];
 
-    /// The palette that draws suite theme `id` in the dark or light mode, if PhotoCraft has one.
+    /// The palette that draws suite theme `id` in the dark or light mode, if Paragon Photo has one.
     fn of(id: &ThemeId, dark: bool) -> Option<Palette> {
         Palette::ALL.into_iter().find(|p| p.theme() == (id.as_str(), dark))
     }
@@ -133,15 +153,15 @@ impl Palette {
     }
 }
 
-/// The theme on screen: a suite theme in the mode shown, with the tokens PhotoCraft draws it with.
-/// The themes PhotoCraft has palettes for (see [`AppTheme::all`]) keep them; any other suite theme
+/// The theme on screen: a suite theme in the mode shown, with the tokens Paragon Photo draws it with.
+/// The themes Paragon Photo has palettes for (see [`AppTheme::all`]) keep them; any other suite theme
 /// (a library theme, `craft.graphite`) takes its tokens from craft-theme's resolved tokens.
 #[derive(Clone, Debug)]
 pub struct AppTheme {
     id: ThemeId,
     tokens: Tokens,
     /// The definition the tokens were resolved from, which the runtime resolves its own from;
-    /// `None` for a theme shown with PhotoCraft's palette.
+    /// `None` for a theme shown with Paragon Photo's palette.
     library: Option<Arc<ThemeDef>>,
 }
 
@@ -157,9 +177,19 @@ impl PartialEq for AppTheme {
 }
 
 impl Default for AppTheme {
-    /// The suite default, Pro (Medium Gray).
+    /// Paragon Photo's default, OBSIDIAN, at the standard appearance (the framework resolves it
+    /// again under the window's real appearance on the first frame). Pro (Medium Gray) only if the
+    /// built-in theme file failed to parse, which a test rules out.
     fn default() -> Self {
-        Self::from(Palette::ProMedium)
+        use craft::theme::{Appearance, Contrast, Mode, Size, TextSize};
+        match paragon_theme(OBSIDIAN) {
+            Some(def) => {
+                let appearance = Appearance { mode: Mode::Dark, contrast: Contrast::Standard, size: Size::default(), text_size: TextSize::default(), reduced_motion: false };
+                let resolved = craft::theme::resolve(&def, appearance, None);
+                Self::resolved(def, true, &resolved)
+            }
+            None => Self::from(Palette::ProMedium),
+        }
     }
 }
 
@@ -186,7 +216,7 @@ palette_themes! {
 }
 
 impl AppTheme {
-    /// The themes PhotoCraft has palettes for, in the order of its Appearance settings.
+    /// The themes Paragon Photo has palettes for, in the order of its Appearance settings.
     pub fn all() -> [AppTheme; 14] {
         Palette::ALL.map(AppTheme::from)
     }
@@ -206,7 +236,7 @@ impl AppTheme {
         Palette::BRIGHTNESSES.map(AppTheme::from)
     }
 
-    /// PhotoCraft's palette for suite theme `id` in the dark or light mode, if it has one.
+    /// Paragon Photo's palette for suite theme `id` in the dark or light mode, if it has one.
     pub fn palette(id: &ThemeId, dark: bool) -> Option<Self> {
         Palette::of(id, dark).map(Self::from)
     }
@@ -216,7 +246,7 @@ impl AppTheme {
         AppTheme { id: def.id.clone(), tokens: Tokens::from_resolved(&resolved.tokens, dark), library: Some(def) }
     }
 
-    /// The name PhotoCraft's Appearance settings give a theme it has a palette for.
+    /// The name Paragon Photo's Appearance settings give a theme it has a palette for.
     pub fn palette_label(id: &str, dark: bool) -> Option<&'static str> {
         Palette::ALL.into_iter().find(|p| p.theme() == (id, dark)).map(Palette::label)
     }
@@ -225,7 +255,7 @@ impl AppTheme {
         &self.id
     }
 
-    /// The suite definition of a theme PhotoCraft has no palette for.
+    /// The suite definition of a theme Paragon Photo has no palette for.
     pub fn library(&self) -> Option<&Arc<ThemeDef>> {
         self.library.as_ref()
     }
@@ -306,7 +336,7 @@ pub struct Tokens {
 }
 
 impl Tokens {
-    /// The tokens PhotoCraft draws a suite theme with when it has no palette for it: craft-theme's
+    /// The tokens Paragon Photo draws a suite theme with when it has no palette for it: craft-theme's
     /// resolved colours and radii, in the Studio layout.
     fn from_resolved(t: &craft::theme::Tokens, dark: bool) -> Self {
         let c = |token: ColorToken| {
@@ -957,7 +987,7 @@ pub fn install_fonts(ctx: &egui::Context) {
     install_font_stack(ctx, &fonts);
 }
 
-/// PhotoCraft's faces as the craft framework's font stack: Inter for the interface with its
+/// Paragon Photo's faces as the craft framework's font stack: Inter for the interface with its
 /// `medium` and `semibold` families, JetBrains Mono for numbers. The framework puts egui's default
 /// faces after them, for symbols Inter lacks, and orders the craft-fonts faces this build embeds
 /// (`cjk_fonts::craft_faces`) by `ui_language`. A web build's served faces and their fetcher come
@@ -973,17 +1003,27 @@ fn ui_fonts(ctx: &egui::Context, ui_language: &str) -> UiFonts<'static> {
         None => log::error!("bundled font {name} is unavailable; using the default UI font"),
     };
     let bundled = |bytes: &'static [u8]| (!bytes.is_empty()).then(|| FontData::from_static(bytes));
+    // Paragon Photo: Bebas Neue sets all interface text (the Paragon PR7-S plugin's "Bebas everywhere"). It leads
+    // every proportional family; Inter behind it draws what Bebas lacks (lower-case accents beyond
+    // Latin, other scripts). Number fields and code keep JetBrains Mono, whose digits line up.
+    let display = FontRef::named(DISPLAY);
+    let bebas = bundled(photocraft_text::fonts::BEBAS_NEUE_REGULAR.as_slice()).map(|mut data| {
+        data.tweak.scale = BEBAS_SCALE;
+        data
+    });
+    add("BebasNeue", bebas, &[proportional.clone(), medium.clone(), semibold.clone(), display.clone()]);
     // Each family's own face first, then Inter behind the named weights.
     add("Inter-Medium", bundled(photocraft_text::fonts::INTER_MEDIUM.as_slice()), std::slice::from_ref(&medium));
     add("Inter-SemiBold", bundled(photocraft_text::fonts::INTER_SEMIBOLD.as_slice()), std::slice::from_ref(&semibold));
     add("JetBrainsMono", bundled(photocraft_text::fonts::JETBRAINS_MONO_REGULAR.as_slice()), std::slice::from_ref(&monospace));
-    add("Inter", bundled(photocraft_text::fonts::INTER_REGULAR.as_slice()), &[proportional.clone(), medium.clone(), semibold.clone()]);
+    add("Inter", bundled(photocraft_text::fonts::INTER_REGULAR.as_slice()), &[proportional.clone(), medium.clone(), semibold.clone(), display.clone()]);
     // The monochrome emoji face egui's `default_fonts` would add; the last resort after the system fonts.
     let mut emoji = Emoji::default();
     emoji.monochrome = craft::ui::fonts::noto_emoji();
     let mut fonts = UiFonts::new(&I18nScripts)
         .family(Family::named("medium").weight(500))
         .family(Family::named(SEMIBOLD).weight(600))
+        .family(Family::named(DISPLAY))
         .craft_faces(&crate::cjk_fonts::craft_faces())
         .ui_language(ui_language)
         .emoji(emoji);
@@ -1004,6 +1044,58 @@ pub fn install_runtime(ctx: &egui::Context, frame: Option<craft::window::policy:
     let fonts = ui_fonts(ctx, crate::i18n::current().code());
     crate::app::framework::install(ctx, &fonts, frame);
     install_font_stack(ctx, &fonts);
+    install_satin_grain(ctx);
+}
+
+/// The satin grain AURORA's pearl surfaces show, kept alive for as long as the app runs (the painter only holds its id).
+static SATIN_GRAIN: std::sync::Mutex<Option<egui::TextureHandle>> = std::sync::Mutex::new(None);
+
+/// Makes the satin grain texture on `ctx` and registers it with craft's Paragon painting, which tiles it over
+/// AURORA's pearl (`craft::ui::primitives::paragon`).
+fn install_satin_grain(ctx: &egui::Context) {
+    let options = egui::TextureOptions { wrap_mode: egui::TextureWrapMode::Repeat, ..egui::TextureOptions::LINEAR };
+    let texture = ctx.load_texture("paragon-satin-grain", satin_grain(SATIN_GRAIN_SIDE, 1234), options);
+    craft::ui::primitives::paragon::set_grain_texture(Some(texture.id()));
+    *SATIN_GRAIN.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(texture);
+}
+
+/// The grain tile's side in pixels; craft repeats it every 128 points.
+const SATIN_GRAIN_SIDE: usize = 256;
+
+/// AURORA's satin grain (the Paragon PR7 plugins' `Finish::makeSatinGrain`): a fine speckle with no direction,
+/// white or a dusty rose at up to 9/255, and the odd bright mica fleck (1 in 500: white or a pale pink at
+/// 60–119/255). Drawn with JUCE's random generator, so it has the plugins' character.
+pub(crate) fn satin_grain(side: usize, seed: i64) -> egui::ColorImage {
+    struct JuceRandom(i64);
+    impl JuceRandom {
+        fn next_int(&mut self) -> i32 {
+            self.0 = (self.0.wrapping_mul(0x5DEE_CE66D).wrapping_add(11)) & 0xFFFF_FFFF_FFFF;
+            (self.0 >> 16) as i32
+        }
+        fn below(&mut self, max: u32) -> u32 {
+            ((u64::from(self.next_int() as u32) * u64::from(max)) >> 32) as u32
+        }
+        fn next_float(&mut self) -> f32 {
+            (self.next_int() as u32) as f32 / (u32::MAX as f32 + 1.0)
+        }
+        fn next_bool(&mut self) -> bool {
+            (self.next_int() & 0x4000_0000) != 0
+        }
+    }
+    let mut random = JuceRandom(seed);
+    let mut pixels = Vec::with_capacity(side * side);
+    for _ in 0..side * side {
+        let pixel = if random.below(500) == 0 {
+            let [r, g, b] = if random.next_bool() { [255, 255, 255] } else { [0xFF, 0xD8, 0xE6] };
+            Color32::from_rgba_unmultiplied(r, g, b, 60 + random.below(60) as u8)
+        } else {
+            let s = random.next_float() * 2.0 - 1.0;
+            let alpha = (s.abs() * 9.0).round() as u8;
+            if s > 0.0 { Color32::from_rgba_unmultiplied(255, 255, 255, alpha) } else { Color32::from_rgba_unmultiplied(0x5A, 0x3A, 0x4A, alpha) }
+        };
+        pixels.push(pixel);
+    }
+    egui::ColorImage { size: [side, side], pixels, source_size: egui::vec2(side as f32, side as f32) }
 }
 
 /// Every face of `fonts` at Interface › UI Font Size, egui's default faces the framework adds
@@ -1142,6 +1234,21 @@ pub fn mono(size: f32) -> FontId {
     FontId::monospace(size)
 }
 
+/// The Paragon family's display face (Bebas Neue, upper case by design) for titles the app draws.
+const DISPLAY: &str = "display";
+
+/// How much larger Bebas Neue is set than the size asked for: a tweak on the face itself, so every text style,
+/// label and painter size gets it once. The Paragon PR7-S plugin sets it at 1.3 (`bebasScale`), in a layout made
+/// for it; here the rows are laid out for Inter, whose line height Bebas matches at 1 (1.20 em to 1.21 em, capitals
+/// 0.70 em to 0.73 em), and 1.3 overflowed them (the Layers panel's Opacity and Fill fields collapsed). All
+/// capitals, it reads larger than Inter at the same size.
+const BEBAS_SCALE: f32 = 1.0;
+
+/// Bebas Neue at `size` (the face carries its own 1.3x).
+pub fn display(size: f32) -> FontId {
+    FontId::new(size, FontFamily::Name(DISPLAY.into()))
+}
+
 /// Apply a theme to egui's global style and publish its tokens.
 pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
     // Keep native windows at SystemDefault so macOS continues reporting OS appearance changes,
@@ -1195,7 +1302,8 @@ pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
             (TextStyle::Small, FontId::proportional(10.5)),
             (TextStyle::Body, FontId::proportional(if t.pro { 12.0 } else { 12.5 })),
             (TextStyle::Button, FontId::proportional(if t.pro { 12.0 } else { 12.5 })),
-            (TextStyle::Heading, semibold(15.0)),
+            // Titles in the Paragon display face (Bebas Neue), as the Paragon PR7-S plugin draws them.
+            (TextStyle::Heading, display(15.0)),
             (TextStyle::Monospace, FontId::monospace(12.0)),
         ]
         .into();
@@ -1221,7 +1329,7 @@ pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
         s.spacing.scroll = scroll;
         s.spacing.tooltip_width = 280.0;
     });
-    // egui selects its style branch using OS appearance, independently of PhotoCraft's fixed
+    // egui selects its style branch using OS appearance, independently of Paragon Photo's fixed
     // Dark/Light mode or platform appearance service. Both branches need the selected palette.
     let style = ctx.global_style();
     ctx.set_style_of(egui::Theme::Light, Arc::clone(&style));

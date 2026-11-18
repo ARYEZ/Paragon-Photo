@@ -1036,7 +1036,7 @@ fn toggle(s: &mut Session, p: &Value) -> Result<Value> {
 /// Prefix of the persisted shortcut override that plays a named action (`actions.play:<name>`).
 pub const PLAY_SHORTCUT_PREFIX: &str = "actions.play:";
 
-/// Prefix of the shortcut keys PhotoCraft files of the Actions library commands era stored per
+/// Prefix of the shortcut keys Paragon Photo files of the Actions library commands era stored per
 /// action id (`actions.playById:<id>`); [`name_id_shortcuts`] moves them to names on load.
 const PLAY_BY_ID_PREFIX: &str = "actions.playById:";
 
@@ -1069,7 +1069,7 @@ fn id_names(ids: &[(String, String)]) -> std::collections::HashMap<&str, &str> {
     ids.iter().map(|(id, name)| (id.as_str(), name.as_str())).collect()
 }
 
-/// Names are the list's only identity: the calls a loaded PhotoCraft file made by stored action id
+/// Names are the list's only identity: the calls a loaded Paragon Photo file made by stored action id
 /// (`actionId`, a Conditional's `thenActionId` / `elseActionId`) name the action
 /// [`ActionList::load`] gave that id (`ids`: stored id, name) instead. A call whose id no action
 /// has keeps the name it carried.
@@ -1103,7 +1103,7 @@ pub(crate) fn name_id_calls(list: &mut ActionList, ids: &[(String, String)]) {
     }
 }
 
-/// The `actions.playById:<id>` shortcut keys (primary and alternate) of a loaded PhotoCraft file's
+/// The `actions.playById:<id>` shortcut keys (primary and alternate) of a loaded Paragon Photo file's
 /// actions become `actions.play:<name>`, with the names [`ActionList::load`] gave the ids; a key
 /// whose id no action has goes.
 pub(crate) fn name_id_shortcuts(s: &mut Session, ids: &[(String, String)]) {

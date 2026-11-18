@@ -1,4 +1,4 @@
-//! The Eyedropper tool and the Alt stand-in that samples with a painting tool: PhotoCraft's two
+//! The Eyedropper tool and the Alt stand-in that samples with a painting tool: Paragon Photo's two
 //! uses of the framework's `EyedropperTool`.
 //!
 //! As the Eyedropper tool, a press and each drag sample the foreground (Alt: the background). As
@@ -28,7 +28,7 @@ pub(crate) struct EyedropperState {
     sampler_added: bool,
 }
 
-/// The Eyedropper over PhotoCraft's sampling, options and colours. A pick applies only in the
+/// The Eyedropper over Paragon Photo's sampling, options and colours. A pick applies only in the
 /// `press` or `drag` call that took it, so a second pass in a frame, which gets no new pointer
 /// input, picks nothing again.
 pub(crate) struct PcEyedropper<'a> {

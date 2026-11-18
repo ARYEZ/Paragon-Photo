@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build and package PhotoCraft for Linux (<arch> is x86_64, aarch64 or riscv64):
+# Build and package Paragon Photo for Linux (<arch> is x86_64, aarch64 or riscv64):
 #
 #   $DIST/photocraft-<version>-linux-<arch>.AppImage  any distro with glibc >= the build host's
 #   $DIST/photocraft-<version>-linux-<arch>.AppImage.zsync  delta updates (needs zsyncmake)
@@ -23,7 +23,7 @@ set -euo pipefail
 HERE="$ROOT/packaging/linux"
 # shellcheck source=verified-download.sh
 . "$HERE/verified-download.sh"
-APP_ID=ai.storyteller.photocraft
+APP_ID=io.github.aryez.paragonphoto
 
 SKIP_BUILD=0
 FORMATS="appimage deb rpm tar"
@@ -43,12 +43,12 @@ case "$ARCH" in
   aarch64 | arm64) ARCH=aarch64; DEB_ARCH=arm64 ;;
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
-export PHOTOCRAFT_MAINTAINER="${PHOTOCRAFT_MAINTAINER:-PhotoCraft maintainers <photocraft@storyteller.ai>}"
+export PHOTOCRAFT_MAINTAINER="${PHOTOCRAFT_MAINTAINER:-Paragon Photo maintainers <photocraft@storyteller.ai>}"
 BASENAME="photocraft-$VERSION-linux-$ARCH"
 
-echo "==> PhotoCraft $VERSION for Linux $ARCH ($FORMATS)"
+echo "==> Paragon Photo $VERSION for Linux $ARCH ($FORMATS)"
 
-# The man-and-completions example writes photocraft-cli's man pages and shell completions below. It
+# The man-and-completions example writes paragon-photo-cli's man pages and shell completions below. It
 # is built in its own cargo run: built with the binaries, its dev-dependencies' features would be
 # unified into them.
 if [[ "$SKIP_BUILD" = 0 ]]; then
@@ -66,9 +66,9 @@ STAGE="$WORK/root"
 rm -rf "$WORK"
 
 # ---- stage an FHS tree (shared by every format) -------------------------------------------------
-install -Dm755 "$BIN/photocraft" "$STAGE/usr/bin/photocraft"
-install -Dm755 "$BIN/photocraft-cli" "$STAGE/usr/bin/photocraft-cli"
-"${CROSS_COMPILE:-}strip" "$STAGE/usr/bin/photocraft" "$STAGE/usr/bin/photocraft-cli" 2>/dev/null || true
+install -Dm755 "$BIN/paragon-photo" "$STAGE/usr/bin/paragon-photo"
+install -Dm755 "$BIN/paragon-photo-cli" "$STAGE/usr/bin/paragon-photo-cli"
+"${CROSS_COMPILE:-}strip" "$STAGE/usr/bin/paragon-photo" "$STAGE/usr/bin/paragon-photo-cli" 2>/dev/null || true
 install -Dm644 "$HERE/$APP_ID.desktop" "$STAGE/usr/share/applications/$APP_ID.desktop"
 install -Dm644 "$HERE/$APP_ID.mime.xml" "$STAGE/usr/share/mime/packages/$APP_ID.xml"
 mkdir -p "$STAGE/usr/share/metainfo"
@@ -76,20 +76,20 @@ sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$PHOTOCRAFT_BUILD_DATE/g" \
   "$HERE/$APP_ID.metainfo.xml.in" >"$STAGE/usr/share/metainfo/$APP_ID.metainfo.xml"
 mkdir -p "$STAGE/usr/share/icons"
 cp -R "$ROOT/assets/app-icon/hicolor" "$STAGE/usr/share/icons/"
-mkdir -p "$STAGE/usr/share/doc/photocraft"
-copy_docs "$STAGE/usr/share/doc/photocraft"
-install -Dm644 "$ROOT/docs/mcp.md" "$STAGE/usr/share/doc/photocraft/mcp.md"
-install -Dm644 "$ROOT/docs/control-protocol.md" "$STAGE/usr/share/doc/photocraft/control-protocol.md"
-# photocraft-cli's man pages and shell completions, from its clap definition, written by the
+mkdir -p "$STAGE/usr/share/doc/paragon-photo"
+copy_docs "$STAGE/usr/share/doc/paragon-photo"
+install -Dm644 "$ROOT/docs/mcp.md" "$STAGE/usr/share/doc/paragon-photo/mcp.md"
+install -Dm644 "$ROOT/docs/control-protocol.md" "$STAGE/usr/share/doc/paragon-photo/control-protocol.md"
+# paragon-photo-cli's man pages and shell completions, from its clap definition, written by the
 # example built above. A cross build runs it through $EMULATOR, like the --version check at the
 # end, and leaves them out without one, as a --skip-build run whose prebuilt binaries came without
 # the example does. zsh reads site-functions on Fedora and openSUSE; the deb also links the
 # completion into Debian's vendor-completions (nfpm.yaml).
 CLI_DOCS="$BIN/examples/man-and-completions"
 if [[ -n "${CROSS_TARGET:-}" ]] && [[ -z "${EMULATOR:-}" ]]; then
-  warn "no EMULATOR to run the $CROSS_TARGET build, so photocraft-cli's man pages and completions are left out"
+  warn "no EMULATOR to run the $CROSS_TARGET build, so paragon-photo-cli's man pages and completions are left out"
 elif [[ ! -x "$CLI_DOCS" ]]; then
-  warn "$CLI_DOCS is not built, so photocraft-cli's man pages and completions are left out"
+  warn "$CLI_DOCS is not built, so paragon-photo-cli's man pages and completions are left out"
 else
   if [[ -n "${CROSS_TARGET:-}" ]]; then
     "$EMULATOR" "$CLI_DOCS" "$WORK/cli-docs"
@@ -97,9 +97,9 @@ else
     "$CLI_DOCS" "$WORK/cli-docs"
   fi
   install -Dm644 -t "$STAGE/usr/share/man/man1" "$WORK"/cli-docs/*.1
-  install -Dm644 "$WORK/cli-docs/photocraft-cli.bash" "$STAGE/usr/share/bash-completion/completions/photocraft-cli"
-  install -Dm644 "$WORK/cli-docs/_photocraft-cli" "$STAGE/usr/share/zsh/site-functions/_photocraft-cli"
-  install -Dm644 "$WORK/cli-docs/photocraft-cli.fish" "$STAGE/usr/share/fish/vendor_completions.d/photocraft-cli.fish"
+  install -Dm644 "$WORK/cli-docs/paragon-photo-cli.bash" "$STAGE/usr/share/bash-completion/completions/paragon-photo-cli"
+  install -Dm644 "$WORK/cli-docs/_paragon-photo-cli" "$STAGE/usr/share/zsh/site-functions/_paragon-photo-cli"
+  install -Dm644 "$WORK/cli-docs/paragon-photo-cli.fish" "$STAGE/usr/share/fish/vendor_completions.d/paragon-photo-cli.fish"
 fi
 
 if command -v desktop-file-validate >/dev/null; then
@@ -128,7 +128,7 @@ if has deb || has rpm; then
   # Without the completions (a cross build with no EMULATOR) the deb's zsh symlink would dangle,
   # so its entry is dropped too.
   DROP_ZSH_LINK=
-  [[ -f "$STAGE/usr/share/zsh/site-functions/_photocraft-cli" ]] || DROP_ZSH_LINK='\|^  - src: /usr/share/zsh/site-functions/|,/packager: deb/d;'
+  [[ -f "$STAGE/usr/share/zsh/site-functions/_paragon-photo-cli" ]] || DROP_ZSH_LINK='\|^  - src: /usr/share/zsh/site-functions/|,/packager: deb/d;'
   sed "${DROP_ZSH_LINK}s|\${STAGE}|$STAGE|g" "$HERE/nfpm.yaml" >"$WORK/nfpm.yaml"
   for fmt in deb rpm; do
     if has "$fmt"; then (cd "$ROOT" && nfpm package -f "$WORK/nfpm.yaml" -p "$fmt" -t "$DIST/$BASENAME.$fmt"); fi
@@ -137,10 +137,10 @@ fi
 
 # ---- AppImage -----------------------------------------------------------------------------------
 if has appimage; then
-  APPDIR="$WORK/PhotoCraft.AppDir"
+  APPDIR="$WORK/ParagonPhoto.AppDir"
   cp -R "$STAGE" "$APPDIR"
   # Preserve the sctk-adwaita MIT notice in the packaged AppImage.
-  install -Dm644 "$ROOT/NOTICE" "$APPDIR/usr/share/doc/photocraft/NOTICE"
+  install -Dm644 "$ROOT/NOTICE" "$APPDIR/usr/share/doc/paragon-photo/NOTICE"
   # AppRun is a script, not a symlink: it installs the .desktop entry and icons into
   # $XDG_DATA_HOME before launching, so Wayland compositors can resolve the window's
   # app_id to our icon instead of the generic Wayland logo (#593; opt-out env in the
@@ -208,11 +208,11 @@ if has appimage; then
 fi
 
 if [[ -z "${CROSS_TARGET:-}" ]]; then
-  "$STAGE/usr/bin/photocraft-cli" --version
+  "$STAGE/usr/bin/paragon-photo-cli" --version
 elif [[ -n "${EMULATOR:-}" ]]; then
   # Set, so malloc_tuning::apply doesn't re-execute the CLI (#8743): under qemu-user that exec goes
   # to the host kernel, which can't run a $CROSS_ARCH binary, and glibc then hands it to /bin/sh.
-  MALLOC_TRIM_THRESHOLD_=131072 "$EMULATOR" "$STAGE/usr/bin/photocraft-cli" --version
+  MALLOC_TRIM_THRESHOLD_=131072 "$EMULATOR" "$STAGE/usr/bin/paragon-photo-cli" --version
 fi
 echo "==> done"
 ls -lh "$DIST"

@@ -36,13 +36,16 @@ pub static INTER_REGULAR: LazyLock<Vec<u8>> = LazyLock::new(|| inflate_font(bund
 pub static INTER_MEDIUM: LazyLock<Vec<u8>> = LazyLock::new(|| inflate_font(bundled_font!("Inter-Medium.ttf")));
 pub static INTER_SEMIBOLD: LazyLock<Vec<u8>> = LazyLock::new(|| inflate_font(bundled_font!("Inter-SemiBold.ttf")));
 pub static JETBRAINS_MONO_REGULAR: LazyLock<Vec<u8>> = LazyLock::new(|| inflate_font(bundled_font!("JetBrainsMono-Regular.ttf")));
+/// Bebas Neue: the Paragon family's display face for titles (as the Paragon PR7-S plugin uses it).
+pub static BEBAS_NEUE_REGULAR: LazyLock<Vec<u8>> = LazyLock::new(|| inflate_font(bundled_font!("BebasNeue-Regular.ttf")));
 
-/// Fonts shipped with PhotoCraft (OFL; licences in `assets/fonts`).
-pub static BUNDLED: [(&str, &LazyLock<Vec<u8>>); 4] = [
+/// Fonts shipped with Paragon Photo (OFL; licences in `assets/fonts`).
+pub static BUNDLED: [(&str, &LazyLock<Vec<u8>>); 5] = [
     ("Inter-Regular.ttf", &INTER_REGULAR),
     ("Inter-Medium.ttf", &INTER_MEDIUM),
     ("Inter-SemiBold.ttf", &INTER_SEMIBOLD),
     ("JetBrainsMono-Regular.ttf", &JETBRAINS_MONO_REGULAR),
+    ("BebasNeue-Regular.ttf", &BEBAS_NEUE_REGULAR),
 ];
 
 /// Inflated fonts are bounded (the largest is 0.42 MB), so corrupt data can't exhaust memory.
@@ -595,7 +598,7 @@ impl FontDb {
             let Some(font) = info.fonts().get(index) else { return };
             let Some(blob) = font.load(Some(&mut self.fcx.source_cache)) else { return };
             let Some(blob) = isolated_face(blob, font.index()) else { return };
-            let alias = format!(".PhotoCraft-face-{}-{index}", info.id().to_u64());
+            let alias = format!(".ParagonPhoto-face-{}-{index}", info.id().to_u64());
             self.fcx.collection.register_fonts(blob, Some(FontInfoOverride { family_name: Some(&alias), ..Default::default() }));
             self.face_aliases.insert(key, alias.clone());
             alias

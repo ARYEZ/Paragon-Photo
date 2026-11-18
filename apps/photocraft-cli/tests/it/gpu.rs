@@ -1,4 +1,4 @@
-//! Tests for photocraft-cli GPU rendering flags, precedence, and fallback behavior.
+//! Tests for paragon-photo-cli GPU rendering flags, precedence, and fallback behavior.
 
 use std::path::{Path, PathBuf};
 use std::process::Command;

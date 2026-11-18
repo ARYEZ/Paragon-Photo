@@ -1,4 +1,4 @@
-//! The Layers panel's blend and opacity rows (craft-layers' `BlendRows`) as PhotoCraft applies
+//! The Layers panel's blend and opacity rows (craft-layers' `BlendRows`) as Paragon Photo applies
 //! them: what the rows report becomes a canvas preview, one history step or nothing (#970,
 //! #1481, #9065). How the rows look and read their input is craft-layers'.
 
@@ -45,7 +45,7 @@ struct After {
     preview: Option<BlendMode>,
 }
 
-/// What the rows report, pass by pass, and what PhotoCraft makes of it.
+/// What the rows report, pass by pass, and what Paragon Photo makes of it.
 #[test]
 fn blend_rows_edits_become_previews_and_history_steps() {
     let g = GestureId::new(1);

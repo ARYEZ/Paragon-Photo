@@ -91,16 +91,16 @@ fn busy_native_clipboard_preserves_copied_shape() {
 #[test]
 fn xwayland_command_matches_how_photocraft_was_installed() {
     // Flatpak: WAYLAND_DISPLAY doesn't reach the sandbox's socket choice; flatpak's flags do.
-    let flatpak = xwayland_command(Some("ai.storyteller.photocraft"), None, false);
-    assert_eq!(flatpak.as_deref(), Some("flatpak run --nosocket=wayland --socket=x11 ai.storyteller.photocraft"));
+    let flatpak = xwayland_command(Some("io.github.aryez.paragonphoto"), None, false);
+    assert_eq!(flatpak.as_deref(), Some("flatpak run --nosocket=wayland --socket=x11 io.github.aryez.paragonphoto"));
     // AppImage: its own path, quoted for the shell (spaces, quotes).
     let appimage = xwayland_command(None, Some("/home/me/My Apps/it's.AppImage"), true);
     assert_eq!(appimage.as_deref(), Some(r"WAYLAND_DISPLAY= '/home/me/My Apps/it'\''s.AppImage'"));
     let bare = xwayland_command(None, Some("/opt/photocraft-0.3.0-linux-x86_64.AppImage"), true);
     assert_eq!(bare.as_deref(), Some("WAYLAND_DISPLAY= /opt/photocraft-0.3.0-linux-x86_64.AppImage"));
     // deb, rpm, AUR, tarball: the binary on the PATH.
-    assert_eq!(xwayland_command(None, None, true).as_deref(), Some("WAYLAND_DISPLAY= photocraft"));
-    assert_eq!(xwayland_command(Some(""), Some(""), true).as_deref(), Some("WAYLAND_DISPLAY= photocraft"));
+    assert_eq!(xwayland_command(None, None, true).as_deref(), Some("WAYLAND_DISPLAY= paragon-photo"));
+    assert_eq!(xwayland_command(Some(""), Some(""), true).as_deref(), Some("WAYLAND_DISPLAY= paragon-photo"));
     // No X server (XWayland disabled): nothing to suggest.
     assert_eq!(xwayland_command(None, Some("/opt/p.AppImage"), false), None);
 }

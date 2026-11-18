@@ -1,5 +1,5 @@
-//! What a click or double-click on a Layers panel thumbnail runs in PhotoCraft: the panel reports
-//! the part and modifiers (`ThumbClick`, `Activate`), PhotoCraft picks the command.
+//! What a click or double-click on a Layers panel thumbnail runs in Paragon Photo: the panel reports
+//! the part and modifiers (`ThumbClick`, `Activate`), Paragon Photo picks the command.
 
 use craft::layers::ui::tree::LayerPart;
 use egui::Modifiers;

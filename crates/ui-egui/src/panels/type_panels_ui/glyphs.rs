@@ -1,4 +1,4 @@
-//! The Glyphs panel body: the framework's `GlyphsPanel` over PhotoCraft's text engine.
+//! The Glyphs panel body: the framework's `GlyphsPanel` over Paragon Photo's text engine.
 
 use std::hash::{Hash, Hasher};
 

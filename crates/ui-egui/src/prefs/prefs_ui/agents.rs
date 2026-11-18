@@ -1,6 +1,6 @@
 //! Agents in the open window: the agent link follows Preferences › Integrations and the ArtCraft
 //! Launcher's switch without a restart. The link, the switch and the Agents page are the
-//! framework's (`craft::automation::agents`, `custom_rows::AGENTS_PAGE`); PhotoCraft supplies what
+//! framework's (`craft::automation::agents`, `custom_rows::AGENTS_PAGE`); Paragon Photo supplies what
 //! agent requests may read, write and run (`Services::agent_automation`).
 
 use craft::automation::agents::LinkProblem;

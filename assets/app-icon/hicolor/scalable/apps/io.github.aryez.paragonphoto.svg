@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<title>Paragon Photo</title>
+<defs>
+<linearGradient id="tile" x1="0" y1="0.0" x2="0" y2="1024.0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1d171c"/><stop offset="1" stop-color="#070508"/></linearGradient>
+<linearGradient id="seven" x1="0" y1="251.00" x2="0" y2="591.14" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#de0639"/><stop offset="1" stop-color="#cd6619"/></linearGradient>
+<mask id="cuts"><rect width="1024.0" height="1024.0" fill="white"/><rect x="0" y="465.29" width="1024.0" height="17.01" fill="black"/><rect x="0" y="519.71" width="1024.0" height="13.61" fill="black"/></mask>
+<linearGradient id="neon" x1="201.32" y1="0" x2="822.68" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0.0" stop-color="#a6042b"/><stop offset="0.25" stop-color="#a3052a"/><stop offset="0.5" stop-color="#9f2220"/><stop offset="0.75" stop-color="#9b4515"/><stop offset="1.0" stop-color="#9a4c13"/></linearGradient>
+</defs>
+<rect x="0.0" y="0.0" width="1024.0" height="1024.0" rx="204.8" fill="url(#tile)"/>
+<rect x="25.6" y="25.6" width="972.8" height="972.8" rx="184.32000000000002" fill="none" stroke="#ff4a3a" stroke-opacity="0.28" stroke-width="35.84"/>
+<rect x="8.192" y="8.192" width="1007.616" height="1007.616" rx="204.8" fill="none" stroke="#ff4a3a" stroke-width="12.288"/>
+<g mask="url(#cuts)" fill-rule="evenodd">
+<path fill="url(#seven)" d="M273.05,251.00 L490.74,251.00 L529.86,302.02 L499.24,404.06 L429.52,455.08 L293.46,455.08 L252.64,591.14 L171.01,591.14 Z M334.28,319.03 L443.12,319.03 L422.71,387.05 L313.87,387.05 Z"/>
+<path fill="#f4eeea" d="M596.19,251.00 L813.88,251.00 L852.99,302.02 L822.38,404.06 L752.65,455.08 L616.59,455.08 L575.78,591.14 L494.14,591.14 Z M657.41,319.03 L766.26,319.03 L745.85,387.05 L637.00,387.05 Z"/>
+</g>
+<rect x="201.32" y="722.88" width="621.36" height="12.29" fill="url(#neon)"/>
+<mask id="wordcuts"><rect width="1024.0" height="1024.0" fill="white"/><rect x="0" y="828.53" width="1024.0" height="3.30" fill="black"/><rect x="0" y="839.08" width="1024.0" height="2.64" fill="black"/></mask>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M152.90,786.98 L195.11,786.98 L202.70,796.87 L196.76,816.66 L183.24,826.55 L156.86,826.55 L148.95,852.93 L133.12,852.93 Z M164.78,800.17 L185.88,800.17 L181.92,813.36 L160.82,813.36 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M192.47,852.93 L209.29,796.87 L222.81,786.98 L254.47,786.98 L262.05,796.87 L245.23,852.93 L229.41,852.93 L236.92,827.87 L215.82,827.87 L208.30,852.93 Z M224.13,800.17 L245.23,800.17 L240.88,814.68 L219.78,814.68 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M271.61,786.98 L313.82,786.98 L321.41,796.87 L315.47,816.66 L301.95,826.55 L275.57,826.55 L267.66,852.93 L251.83,852.93 Z M286.12,826.55 L301.95,826.55 L307.23,852.93 L291.40,852.93 Z M283.48,800.17 L304.59,800.17 L300.63,813.36 L279.53,813.36 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M313.82,852.93 L330.64,796.87 L344.16,786.98 L375.81,786.98 L383.40,796.87 L366.58,852.93 L350.75,852.93 L358.27,827.87 L337.17,827.87 L329.65,852.93 Z M345.48,800.17 L366.58,800.17 L362.23,814.68 L341.12,814.68 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M403.51,786.98 L445.72,786.98 L441.76,800.17 L404.83,800.17 L392.96,839.74 L414.06,839.74 L417.63,827.87 L407.07,827.87 L411.03,814.68 L437.41,814.68 L428.90,843.04 L415.38,852.93 L383.73,852.93 L376.14,843.04 L389.99,796.87 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M462.87,786.98 L494.52,786.98 L502.11,796.87 L488.26,843.04 L474.74,852.93 L443.08,852.93 L435.50,843.04 L449.35,796.87 Z M464.19,800.17 L485.29,800.17 L473.42,839.74 L452.32,839.74 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#f4eeea" d="M511.67,786.98 L527.50,786.98 L537.72,823.25 L548.60,786.98 L564.43,786.98 L544.65,852.93 L528.82,852.93 L518.59,816.66 L507.71,852.93 L491.89,852.93 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#e0103c" d="M600.70,786.98 L642.91,786.98 L650.49,796.87 L644.56,816.66 L631.04,826.55 L604.66,826.55 L596.75,852.93 L580.92,852.93 Z M612.57,800.17 L633.68,800.17 L629.72,813.36 L608.62,813.36 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#e0103c" d="M660.06,786.98 L675.88,786.98 L667.97,813.36 L689.07,813.36 L696.99,786.98 L712.82,786.98 L693.03,852.93 L677.20,852.93 L685.12,826.55 L664.01,826.55 L656.10,852.93 L640.27,852.93 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#e0103c" d="M729.96,786.98 L761.62,786.98 L769.20,796.87 L755.35,843.04 L741.83,852.93 L710.18,852.93 L702.59,843.04 L716.44,796.87 Z M731.28,800.17 L752.39,800.17 L740.52,839.74 L719.41,839.74 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#e0103c" d="M778.77,786.98 L831.53,786.98 L827.57,800.17 L809.10,800.17 L793.27,852.93 L777.45,852.93 L793.27,800.17 L774.81,800.17 Z"/>
+<path mask="url(#wordcuts)" fill-rule="evenodd" fill="#e0103c" d="M848.67,786.98 L880.33,786.98 L887.91,796.87 L874.06,843.04 L860.54,852.93 L828.89,852.93 L821.30,843.04 L835.15,796.87 Z M849.99,800.17 L871.10,800.17 L859.22,839.74 L838.12,839.74 Z"/>
+</svg>

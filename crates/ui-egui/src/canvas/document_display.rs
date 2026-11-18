@@ -127,7 +127,7 @@ pub(crate) fn ants_shown(app: &PhotocraftApp, idx: usize) -> Option<(i32, i32)> 
     Some(if active { super::tools::selection::shown_offset(app).unwrap_or((0, 0)) } else { (0, 0) })
 }
 
-/// Whether PhotoCraft's tool moves the view with the pointer this pass: the Crop tool in its default mode slides the
+/// Whether Paragon Photo's tool moves the view with the pointer this pass: the Crop tool in its default mode slides the
 /// view under a fixed frame. The canvas then shows the view unaligned.
 pub(crate) fn view_follows_pointer(app: &PhotocraftApp) -> bool {
     crate::crop_ui::moves_view(app)
@@ -231,7 +231,7 @@ fn pasteboard_color(app: &PhotocraftApp) -> PasteboardColor {
 }
 
 /// Shows document `pass.host.idx` in a framework `Canvas` over `pass.rect` through `view`: the canvas folds the wheel,
-/// pinch, page keys, view commands and the Overscroll clamp into the view, eases PhotoCraft's own eased zooms, and its
+/// pinch, page keys, view commands and the Overscroll clamp into the view, eases Paragon Photo's own eased zooms, and its
 /// body shows the pasteboard and the canvas controls, runs the tool host on the canvas's tool input, and last shows
 /// the document's picture into the slot the canvas reserved under the controls, so the picture shows what this pass's
 /// press and moves did. `view` is the view after the canvas's pass.

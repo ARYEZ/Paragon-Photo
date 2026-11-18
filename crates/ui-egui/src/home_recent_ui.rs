@@ -160,7 +160,7 @@ impl RecentThumbs<'_> {
 
 impl ThumbSource<ThumbKey> for RecentThumbs<'_> {
     fn revision(&self, key: &ThumbKey, _request: &ThumbRequest) -> Revision {
-        // The template previews are not PhotoCraft's: it lists none.
+        // The template previews are not Paragon Photo's: it lists none.
         let ThumbKey::Recent(path) = key else { return Revision::new(0) };
         let path = path.to_string_lossy();
         let mut cache = lock(self.cache);
@@ -197,7 +197,7 @@ impl ThumbSource<ThumbKey> for RecentThumbs<'_> {
     }
 }
 
-/// The first `cap` recent files, newest first as the app keeps them. PhotoCraft stores no opened or created
+/// The first `cap` recent files, newest first as the app keeps them. Paragon Photo stores no opened or created
 /// times, so the start screen's dates stay empty.
 pub(crate) fn recent_files(app: &PhotocraftApp, cap: usize) -> Vec<RecentFile> {
     app.ui.recent_files.iter().take(cap).map(|p| RecentFile::new(PathBuf::from(p), crate::file_open::display_name(p))).collect()

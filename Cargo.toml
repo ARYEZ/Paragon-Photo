@@ -1,6 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "apps/*", "xtask"]
+members = ["crates/*", "apps/photocraft", "apps/photocraft-cli", "xtask"]
+# Paragon Photo is a desktop app: the browser build (trunk + wasm-bindgen) is not built. Its sources
+# stay in the tree so upstream changes keep merging; add them back to `members` to build them.
+exclude = ["apps/photocraft-web", "apps/photocraft-web-boot", "vendor"]
 default-members = ["crates/*", "apps/photocraft", "apps/photocraft-cli", "xtask"]
 
 [workspace.package]
@@ -12,7 +15,7 @@ rust-version = "1.95"
 [workspace.dependencies]
 # The craft framework through its facade (`craft::ui::…`). The egui `[patch]` below must match
 # `craft::egui_fork::REV` (checked by `cargo xtask ci`).
-craft = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
+craft = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9", default-features = false }
 # internal
 photocraft-geom = { path = "crates/geom" }
 photocraft-color = { path = "crates/color" }
@@ -316,6 +319,13 @@ opt-level = "z"
 opt-level = 3
 
 # Keep the complete egui family and native event bridge on reviewed fork commits.
+
+# Paragon Photo: craft's UI contract with the Paragon family's finishes painted in (gradients, piano-key
+# controls, Bebas Neue titles). A copy of craft-libs' crates/ui-contract at the pinned revision with
+# Paragon Photo's changes; see vendor/craft-libs/VENDORED.md for how to update it.
+[patch."https://github.com/storytold/craft-libs"]
+craft-ui-contract = { path = "vendor/craft-libs/crates/ui-contract" }
+craft-ui-widgets = { path = "vendor/craft-libs/crates/ui-widgets" }
 
 [patch.crates-io]
 krilla = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }

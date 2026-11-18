@@ -85,7 +85,7 @@ impl PhotocraftApp {
         theme::install_runtime(ctx, frame);
         egui_extras::install_image_loaders(ctx);
         theme::apply(ctx, &theme);
-        // egui's own ⌘+ / ⌘- / ⌘0 scale the whole interface; PhotoCraft zooms the canvas instead
+        // egui's own ⌘+ / ⌘- / ⌘0 scale the whole interface; Paragon Photo zooms the canvas instead
         // (shortcuts.rs), like Photoshop.
         ctx.options_mut(|o| o.zoom_with_keyboard = false);
     }

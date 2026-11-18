@@ -194,8 +194,8 @@ mod missing_font_warning_tests {
 
     #[test]
     fn missing_typeface_is_reported_by_run_info_and_convert() {
-        let family = "DefinitelyMissingPhotoCraftTypeface1251";
-        let folder = std::env::temp_dir().join(format!("photocraft-cli-font-warnings-{}", std::process::id()));
+        let family = "DefinitelyMissingParagonPhotoTypeface1251";
+        let folder = std::env::temp_dir().join(format!("paragon-photo-cli-font-warnings-{}", std::process::id()));
         std::fs::create_dir_all(&folder).unwrap();
         let native = folder.join("missing.pcraft");
         let png = folder.join("missing.png");
@@ -245,7 +245,7 @@ mod missing_font_warning_tests {
 
     #[test]
     fn convert_reads_and_writes_openraster() {
-        let folder = std::env::temp_dir().join(format!("photocraft-cli-ora-{}", std::process::id()));
+        let folder = std::env::temp_dir().join(format!("paragon-photo-cli-ora-{}", std::process::id()));
         std::fs::create_dir_all(&folder).unwrap();
         let path = |name: &str| folder.join(name).to_string_lossy().to_string();
         let (native, ora, png) = (path("layers.pcraft"), path("layers.ora"), path("back.png"));
@@ -270,7 +270,7 @@ mod missing_font_warning_tests {
 
     #[test]
     fn no_type_layers_do_not_produce_missing_font_warnings() {
-        let folder = std::env::temp_dir().join(format!("photocraft-cli-no-font-warning-{}", std::process::id()));
+        let folder = std::env::temp_dir().join(format!("paragon-photo-cli-no-font-warning-{}", std::process::id()));
         std::fs::create_dir_all(&folder).unwrap();
         let native = folder.join("blank.pcraft");
         let png = folder.join("blank.png");

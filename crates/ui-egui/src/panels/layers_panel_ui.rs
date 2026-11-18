@@ -123,7 +123,7 @@ fn report(app: &mut PhotocraftApp, result: Result<(), String>) {
 }
 
 /// The rows of the Layers panel menu, above the framework's own rows (Filter Options, Panel Options…, Collapse All Groups,
-/// Clip Thumbnails to Layer Bounds). Animation Options is not offered: PhotoCraft has no frame-unification buttons.
+/// Clip Thumbnails to Layer Bounds). Animation Options is not offered: Paragon Photo has no frame-unification buttons.
 pub(crate) fn panel_rows(app: &PhotocraftApp) -> Vec<PanelRow> {
     let command = |id: &str| PanelRow::Command(CommandRef::new(id));
     let any_hidden = app.session.active().is_some_and(|st| st.selected_layers().iter().any(|id| st.doc.layer(*id).is_some_and(|l| !l.visible)));
@@ -165,7 +165,7 @@ pub(crate) fn command_states(app: &PhotocraftApp) -> Vec<(CommandRef, CommandSta
     states
 }
 
-/// Runs a fired settings command of the panel menu. `false` for every other command: PhotoCraft's `layer.arrange.*`
+/// Runs a fired settings command of the panel menu. `false` for every other command: Paragon Photo's `layer.arrange.*`
 /// bindings stay the one path of the stacking keys, and the catalogue commands run through the menus.
 pub(crate) fn run_fired(app: &mut PhotocraftApp, _ctx: &egui::Context, command: &CommandRef) -> bool {
     if LayersMenuCommand::from_ref(command).is_some() {

@@ -849,7 +849,7 @@ const UNTITLED: &str = "Untitled-1";
 
 impl PhotocraftApp {
     /// File › New's settings: those of the last document made with the dialog (Photoshop starts from
-    /// them, #1810), else PhotoCraft's defaults. The name is always the default one. A stored value
+    /// them, #1810), else Paragon Photo's defaults. The name is always the default one. A stored value
     /// the dialog cannot show is ignored.
     #[allow(clippy::field_reassign_with_default)] // `DocumentOptions` is `#[non_exhaustive]`: it cannot be built with a struct expression here.
     pub(crate) fn new_document_options(&mut self) -> DocumentOptions {

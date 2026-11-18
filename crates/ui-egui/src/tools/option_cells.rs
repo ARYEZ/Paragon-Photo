@@ -1,4 +1,4 @@
-//! The options bar's number cell and hint, shared by every PhotoCraft tool bar: a captioned
+//! The options bar's number cell and hint, shared by every Paragon Photo tool bar: a captioned
 //! `NumberField` whose out-of-range commit comes back as a [`RangeAlert`] for the caller to show.
 
 use std::ops::RangeInclusive;
@@ -118,7 +118,7 @@ pub(crate) struct NumberCellOutput {
 /// Opens the out-of-range alert for `alert`; `ui` supplies the env that words its range. One alert
 /// is open per message (the helper's rule).
 pub(crate) fn range_alert(app: &mut PhotocraftApp, ui: &egui::Ui, alert: &RangeAlert) {
-    let _ = crate::dialogs::alerts::show(app, Alert::range(tl!("PhotoCraft"), alert, &Env::of(ui)));
+    let _ = crate::dialogs::alerts::show(app, Alert::range(tl!("Paragon Photo"), alert, &Env::of(ui)));
 }
 
 /// A faint one-line hint after a bar's members.

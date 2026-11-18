@@ -1,8 +1,8 @@
-//! Escape for PhotoCraft's own code beside the craft runtime.
+//! Escape for Paragon Photo's own code beside the craft runtime.
 //!
 //! The runtime takes a plain Escape (Alt and Shift may be held) out of egui's input. While a
 //! framework stop has focus it goes there; otherwise it reaches the window as `Intent::Cancel`
-//! (craft-framework.md 2.2). While a PhotoCraft widget holds egui focus, the press stays in
+//! (craft-framework.md 2.2). While a Paragon Photo widget holds egui focus, the press stays in
 //! egui's input instead. A pass carries one or the other, never both, so every reader here takes
 //! whichever is there, once.
 //!

@@ -207,7 +207,7 @@ fn geometry_params(app: &PhotocraftApp, geometry: &ShapeGeometry, kind: ShapeKin
             "arrowWidth": o.arrow_width, "arrowLength": o.arrow_length,
             // Settings saved with the old 0..100 range draw at the nearest value (#13258).
             "arrowConcavity": if o.arrow_concavity.is_finite() { o.arrow_concavity.round().clamp(-50.0, 50.0) } else { 0.0 }}),
-        // PhotoCraft's drag rules keep `radial_polygons` off, so no tool sends a radial polygon and `shape.create` has no kind for it
+        // Paragon Photo's drag rules keep `radial_polygons` off, so no tool sends a radial polygon and `shape.create` has no kind for it
         ShapeGeometry::RadialPolygon { .. } => return Err(tl!("This shape can't be created").into()),
         ShapeGeometry::Custom { .. } => return Err(tl!("A custom shape is placed from its preset").into()),
     })

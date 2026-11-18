@@ -2,7 +2,7 @@
 # Check the macOS release artifacts exactly as users download them:
 #
 #   $DIST/photocraft-<version>-macos-<arch>.dmg       signed, notarized, ticket stapled
-#   $DIST/photocraft-cli-<version>-macos-<arch>.zip   unpacked here; the binary inside must be
+#   $DIST/paragon-photo-cli-<version>-macos-<arch>.zip   unpacked here; the binary inside must be
 #                                                    Developer ID signed with the hardened runtime,
 #                                                    timestamped and notarized
 #
@@ -38,7 +38,7 @@ case "$ARCH" in
 esac
 
 DMG="$DIST/photocraft-$VERSION-macos-$ARCH.dmg"
-CLI_ZIP="$DIST/photocraft-cli-$VERSION-macos-$ARCH.zip"
+CLI_ZIP="$DIST/paragon-photo-cli-$VERSION-macos-$ARCH.zip"
 IDENTITY="${MACOS_SIGN_IDENTITY:--}"
 STRICT=0
 if [[ "$IDENTITY" != "-" ]] && [[ -n "${APPLE_ID:-}" ]] && [[ -n "${APPLE_PASSWORD:-}" ]] && [[ -n "${APPLE_TEAM_ID:-}" ]]; then
@@ -94,9 +94,9 @@ trap 'rm -rf "$WORK"' EXIT
 # ---- CLI zip -----------------------------------------------------------------------------------
 echo "==> $(basename "$CLI_ZIP")"
 ditto -x -k "$CLI_ZIP" "$WORK/cli"
-CLI="$WORK/cli/photocraft-cli-$VERSION-macos-$ARCH/photocraft-cli"
+CLI="$WORK/cli/paragon-photo-cli-$VERSION-macos-$ARCH/paragon-photo-cli"
 if [[ ! -x "$CLI" ]]; then
-  echo "error: $(basename "$CLI_ZIP") has no executable photocraft-cli-$VERSION-macos-$ARCH/photocraft-cli" >&2
+  echo "error: $(basename "$CLI_ZIP") has no executable paragon-photo-cli-$VERSION-macos-$ARCH/paragon-photo-cli" >&2
   exit 1
 fi
 
@@ -104,7 +104,7 @@ archs="$(lipo -archs "$CLI")"
 for a in $WANT_ARCHS; do
   case " $archs " in
     *" $a "*) ;;
-    *) echo "error: photocraft-cli lacks $a (has: $archs)" >&2; exit 1 ;;
+    *) echo "error: paragon-photo-cli lacks $a (has: $archs)" >&2; exit 1 ;;
   esac
 done
 
@@ -114,22 +114,22 @@ details="$(codesign -d --verbose=2 "$CLI" 2>&1)"
 printf '%s\n' "$details" | grep -E '^(Identifier|Format|CodeDirectory|Authority|Timestamp|TeamIdentifier)[= ]' || true
 
 printf '%s\n' "$details" | grep -Eq '^CodeDirectory .*flags=0x[0-9a-f]+\([^)]*runtime' \
-  || fail "photocraft-cli is not signed with the hardened runtime"
+  || fail "paragon-photo-cli is not signed with the hardened runtime"
 printf '%s\n' "$details" | grep -q '^Authority=Developer ID Application:' \
-  || fail "photocraft-cli is not signed with a Developer ID Application identity"
+  || fail "paragon-photo-cli is not signed with a Developer ID Application identity"
 printf '%s\n' "$details" | grep -q '^Timestamp=' \
-  || fail "photocraft-cli signature has no secure timestamp"
+  || fail "paragon-photo-cli signature has no secure timestamp"
 if [[ -n "${APPLE_TEAM_ID:-}" ]]; then
   printf '%s\n' "$details" | grep -qx "TeamIdentifier=$APPLE_TEAM_ID" \
-    || fail "photocraft-cli is signed by a different team"
+    || fail "paragon-photo-cli is signed by a different team"
 fi
 if gk="$(assess --assess --type install -vv "$CLI")"; then
   printf '%s\n' "$gk"
   printf '%s\n' "$gk" | grep -q 'source=Notarized Developer ID' \
-    || fail "Gatekeeper accepts photocraft-cli but not as notarized"
+    || fail "Gatekeeper accepts paragon-photo-cli but not as notarized"
 else
   printf '%s\n' "$gk"
-  fail "Gatekeeper rejects photocraft-cli (not notarized?)"
+  fail "Gatekeeper rejects paragon-photo-cli (not notarized?)"
 fi
 "$CLI" --version
 

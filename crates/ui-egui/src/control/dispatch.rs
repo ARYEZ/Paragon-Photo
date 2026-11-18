@@ -388,7 +388,7 @@ impl UiSet {
     }
 }
 
-/// `theme`: a suite theme id, shown in the mode on screen, or a name PhotoCraft took before theme
+/// `theme`: a suite theme id, shown in the mode on screen, or a name Paragon Photo took before theme
 /// ids (`proMedium`, `Pro (Medium Gray)`, `gnome`, ...), shown in its own mode.
 fn theme_param(app: &PhotocraftApp, p: &Value) -> std::result::Result<Option<(craft::theme::ThemeId, bool)>, String> {
     let Some(name) = str_param(p, "theme") else { return Ok(None) };

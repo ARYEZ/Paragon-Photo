@@ -1,4 +1,4 @@
-//! What the Layers panel's events do: each `LayersEvent` becomes the `(command, params)` PhotoCraft's
+//! What the Layers panel's events do: each `LayersEvent` becomes the `(command, params)` Paragon Photo's
 //! own commands take, run through one tail (a type session commits before a select, the target
 //! switches, `Value::Null` params run as the menu item does).
 

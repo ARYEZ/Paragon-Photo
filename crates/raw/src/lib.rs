@@ -187,7 +187,7 @@ pub fn decode(bytes: &[u8], limits: &Limits) -> Result<Sensor, RawError> {
     // A three-component sample allowance is not a pixel allowance: a CFA plane
     // must still obey the caller's max_pixels before any sample allocation.
     limits.check(info.width as u64, info.height as u64, (info.cpp as u64).saturating_mul(4))?;
-    // The shared parser supports additional component layouts; PhotoCraft's developer
+    // The shared parser supports additional component layouts; Paragon Photo's developer
     // currently accepts only one CFA/monochrome plane or three RGB planes.
     if !matches!(info.cpp, 1 | 3) {
         return Err(RawError::unsupported(format!("{} samples per pixel", info.cpp)));

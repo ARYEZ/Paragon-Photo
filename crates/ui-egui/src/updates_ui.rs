@@ -139,7 +139,7 @@ pub fn preview_release(app: &mut PhotocraftApp, version: &str, url: &str) {
     app.updates_rt.updater.offer(craft::update::Release {
         tag: format!("v{version}"),
         version: craft::update::parse_version(version),
-        name: format!("PhotoCraft {version}"),
+        name: format!("Paragon Photo {version}"),
         html_url: url.into(),
         ..Default::default()
     });

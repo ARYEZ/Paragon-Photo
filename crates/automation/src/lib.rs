@@ -9,9 +9,9 @@
 //!   agents can also inspect, screenshot and click the live UI.
 //! * [`Headless`]: the synchronous session + file I/O core, shared with the CLI.
 //! * [`rpc`]: a headless JSON-lines server (stdio or loopback TCP) with the
-//!   control protocol's envelope, used by `photocraft-cli serve`.
+//!   control protocol's envelope, used by `paragon-photo-cli serve`.
 //! * [`files`]: open/save any supported format, `.pcraft` natively.
-//! * [`agent_link`] and [`live`]: plain `photocraft-cli mcp` in the open desktop app, over the
+//! * [`agent_link`] and [`live`]: plain `paragon-photo-cli mcp` in the open desktop app, over the
 //!   framework's agents switch and connection file (`craft::automation::agents`).
 //!
 //! L6, no UI-toolkit dependencies.

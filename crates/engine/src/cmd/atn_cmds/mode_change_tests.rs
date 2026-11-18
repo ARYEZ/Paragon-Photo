@@ -92,7 +92,7 @@ fn every_native_target_loads_and_the_canonical_form_carries_only_the_settings() 
     }
 }
 
-/// A step recorded in PhotoCraft writes the measured descriptor byte for byte: an empty class name,
+/// A step recorded in Paragon Photo writes the measured descriptor byte for byte: an empty class name,
 /// class `cjsp`, then `Msge` TEXT, `SrcM` VlLs of `Cndn` enums and `DstM` Objc of the target's
 /// class without items; the step is enabled and without its dialog.
 #[test]

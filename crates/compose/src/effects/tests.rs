@@ -1037,7 +1037,7 @@ fn flat_contour_glow_table_is_linear_up_to_a_knee_on_an_entry() {
 ///
 /// The inner half is measured now, not assumed (#11636): in Photoshop 2021 a flat-contour
 /// inner glow fills its whole shape at 100 %, out to the centre — Precise and Softer, sizes
-/// 5 and 15, squares and circles — and PhotoCraft's uncapped inner path matches that render
+/// 5 and 15, squares and circles — and Paragon Photo's uncapped inner path matches that render
 /// exactly (0 levels difference across the eight shapes; carl-anders' PSD is attached to
 /// #11636). Newer Photoshop versions are untested.
 #[test]

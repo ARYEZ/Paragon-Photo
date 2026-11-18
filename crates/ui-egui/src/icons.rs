@@ -1,4 +1,4 @@
-//! PhotoCraft's icon names. The glyphs come from the framework's catalog and from the app's own set in
+//! Paragon Photo's icon names. The glyphs come from the framework's catalog and from the app's own set in
 //! `icon_data.rs`, registered once by [`register`]; drawing is the framework's `Icon` / `IconSpec::svg`.
 
 use std::borrow::Cow;
@@ -45,7 +45,7 @@ mod tests {
     use crate::icon_data::ICONS;
 
     /// A missing glyph paints nothing and only logs, so a call site left on a renamed (hyphenated)
-    /// name is caught here: every name PhotoCraft asks for resolves once the app set is registered.
+    /// name is caught here: every name Paragon Photo asks for resolves once the app set is registered.
     #[test]
     fn every_name_photocraft_asks_for_resolves() {
         register();

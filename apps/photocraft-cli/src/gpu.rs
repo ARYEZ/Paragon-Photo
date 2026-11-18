@@ -1,4 +1,4 @@
-//! GPU acceleration policy and options for photocraft-cli.
+//! GPU acceleration policy and options for paragon-photo-cli.
 
 use photocraft_automation::Headless;
 use photocraft_io::BandRenderer;

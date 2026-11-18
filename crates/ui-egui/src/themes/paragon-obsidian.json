@@ -1,0 +1,51 @@
+{
+  "schema": "craft-design-theme",
+  "schema_version": 1,
+  "id": "paragon.obsidian",
+  "name": "Obsidian",
+  "version": 1,
+  "variants": "dark",
+  "contrast_intent": "standard",
+  "_about": "The Paragon family's OBSIDIAN finish (pearl black, the default), from the Paragon PR7-D plugin. Values: docs/paragon-finish-spec.md. Family colour rule: only pink, red and orange hues plus pearl and greys.",
+  "seeds": {
+    "neutral": "#151217",
+    "accent": "#f4353a",
+    "status": { "good": "#ffb38a", "warn": "#ffa53b", "bad": "#ff3b2f", "info": "#de0639" }
+  },
+  "shape": {
+    "radius": { "control": 4, "surface": 4, "window": 8, "panel": 8, "button": 4 },
+    "edge": "flat",
+    "knob": "round",
+    "wells": "square"
+  },
+  "dark": {
+    "surface.background": "#060407",
+    "surface.chrome": "#0c0a0d",
+    "surface.canvas": "#09070a",
+    "surface.panel": "#0e0b0f",
+    "surface.raised": "#1c1c20",
+    "surface.sunken": "#151217",
+    "line.border": "#27222a",
+    "line.divider": "#27222a",
+    "line.control_edge": "#27222a",
+    "line.knob_edge": "#000000",
+    "line.focus": "#ff4a3a",
+    "state.hover": "#303034",
+    "state.pressed": "#4e1016",
+    "state.selected": "#411418",
+    "text.normal": "#e8e8ea",
+    "text.muted": "#8a8a92",
+    "text.faint": "#76707a",
+    "text.on_selected": "#ffffff",
+    "accent.solid": "#f4353a",
+    "accent.strong": "#de0639",
+    "accent.soft": "#4e1016",
+    "accent.border": "#f4353a",
+    "accent.text": "#ff6153",
+    "text.on_accent": "#ffffff",
+    "text.on_strong": "#ffffff",
+    "caption.close_hover": "#de0639",
+    "caption.close_text": "#ffffff",
+    "surface.knob": "#1a1216"
+  }
+}

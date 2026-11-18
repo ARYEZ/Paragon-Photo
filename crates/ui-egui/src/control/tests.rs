@@ -899,7 +899,7 @@ fn ui_set_rejects_view_numbers_beyond_f32_range() {
     assert!(app.ui.views[0].zoom.is_finite() && app.ui.views[0].zoom > zoom, "{}", app.ui.views[0].zoom);
 }
 
-/// `ui.set {theme}` takes a suite theme id, shown in the mode on screen, or a name PhotoCraft took
+/// `ui.set {theme}` takes a suite theme id, shown in the mode on screen, or a name Paragon Photo took
 /// before theme ids, shown in its own mode; a theme the suite doesn't have is refused.
 #[test]
 fn ui_set_theme_takes_ids_and_pre_id_names_and_refuses_unknown_themes() {
@@ -908,7 +908,7 @@ fn ui_set_theme_takes_ids_and_pre_id_names_and_refuses_unknown_themes() {
     let ctx = app.ctx().clone();
     for unknown in ["nope", "Not an id!"] {
         assert_eq!(call(&mut app, &ctx, "ui.set", json!({"theme": unknown}))["ok"], false, "{unknown}");
-        assert_eq!(app.ui.theme, AppTheme::pro_medium(), "{unknown}");
+        assert_eq!(app.ui.theme.id().as_str(), crate::theme::OBSIDIAN, "{unknown}: the default stays");
     }
     for (name, shown) in [
         ("craft.studio", AppTheme::studio()),
@@ -975,7 +975,7 @@ fn an_unknown_slot_theme_shows_the_mode_default_without_resolving_each_frame() {
             break;
         }
     }
-    assert_eq!(app.ui.theme, crate::theme::AppTheme::pro_medium(), "the dark mode's default");
+    assert_eq!((app.ui.theme.id().as_str(), app.ui.theme.is_dark()), (crate::theme::OBSIDIAN, true), "the dark mode's default");
     let resolves = app.framework.theme_resolves.load(Ordering::Relaxed);
     assert!(!frame(&mut app));
     assert_eq!(app.framework.theme_resolves.load(Ordering::Relaxed), resolves, "a settled frame resolves nothing");

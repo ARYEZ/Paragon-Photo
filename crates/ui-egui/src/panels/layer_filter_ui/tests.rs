@@ -1,4 +1,4 @@
-//! The Layers panel filter over PhotoCraft's layers: what the app adds to `listed` (the fill rule,
+//! The Layers panel filter over Paragon Photo's layers: what the app adds to `listed` (the fill rule,
 //! missing links) and the control channel's reading of the criteria (`patched`).
 
 use craft::layers::ui::filter::{EffectKind, FilterBy, FilterKind, LayerAttribute, LayerFilter, SmartKind};

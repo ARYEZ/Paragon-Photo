@@ -256,7 +256,7 @@ fn a_disabled_shortcut_says_why() {
     assert!(!h.state().ui.status.is_empty() && h.state().ui.status_error, "the status bar says why");
 }
 
-/// The catalog's chords reach PhotoCraft's commands through `run_fired`, whichever of a command's keys is pressed.
+/// The catalog's chords reach Paragon Photo's commands through `run_fired`, whichever of a command's keys is pressed.
 /// A dry run logs the command a key fired; the second part runs the keys whose effect is the point.
 #[test]
 fn keys_run_their_commands() {

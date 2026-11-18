@@ -1,4 +1,4 @@
-//! The Layers panel's rows through the real panel: what a key on a row runs in PhotoCraft, and what an eye sweep
+//! The Layers panel's rows through the real panel: what a key on a row runs in Paragon Photo, and what an eye sweep
 //! becomes in the history. How the rows look and hit-test is craft-layers'.
 
 use std::sync::Arc;
@@ -75,7 +75,7 @@ fn sweeping_the_eyes_is_one_step() {
 }
 
 /// Cmd+] with the rows focused moves the active layer up once per press: the list's stacking key
-/// and PhotoCraft's Layer › Arrange › Bring Forward share the chord, and one press runs one of them.
+/// and Paragon Photo's Layer › Arrange › Bring Forward share the chord, and one press runs one of them.
 #[test]
 fn command_bracket_moves_the_layer_once() {
     let mut h = harness(three());

@@ -1,11 +1,11 @@
-# Releasing PhotoCraft
+# Releasing Paragon Photo
 
 Every push to the `release` branch runs `.github/workflows/release.yml`. The workflow builds
 signed installers for macOS, Windows, Linux and the web, plus a FreeBSD tarball, then creates
-or updates a **draft** GitHub Release named `PhotoCraft v<version>`. Nobody sees a draft until a
+or updates a **draft** GitHub Release named `Paragon Photo v<version>`. Nobody sees a draft until a
 maintainer publishes it.
 
-User-facing names say **PhotoCraft**. Files, binaries and ids stay lowercase (`photocraft-<version>-<platform>-<arch>.<ext>`, `ai.storyteller.photocraft`).
+User-facing names say **Paragon Photo**. Files, binaries and ids stay lowercase (`photocraft-<version>-<platform>-<arch>.<ext>`, `io.github.aryez.paragonphoto`).
 
 ## In-app update checks
 
@@ -36,7 +36,7 @@ changes are required: publishing a newer stable GitHub Release makes it discover
    Commit the change (`Cargo.toml` + `Cargo.lock`) through the normal review flow.
 2. **Merge `main` into `release`** (or fast-forward it) and push. The workflow starts by itself.
 3. **Wait for the draft.** After about 30 to 45 minutes (notarization is the slow part), the
-   Releases page has a draft `PhotoCraft v0.2.0`, tagged `v0.2.0` on the pushed commit, with
+   Releases page has a draft `Paragon Photo v0.2.0`, tagged `v0.2.0` on the pushed commit, with
    every artifact and `SHA256SUMS.txt`. The notes are generated from the merged PRs.
 4. **Check it.** Download an installer or two and look at the job summaries. Any
    `::warning::` there means a signing secret was missing and that artifact is unsigned.
@@ -62,7 +62,7 @@ in the dialog.
 
 | Platform | Artifacts | Built on |
 |---|---|---|
-| macOS 11+ (universal: Apple silicon + Intel) | `photocraft-<v>-macos-universal.dmg`, `photocraft-cli-<v>-macos-universal.zip` | `macos-15` |
+| macOS 11+ (universal: Apple silicon + Intel) | `photocraft-<v>-macos-universal.dmg`, `paragon-photo-cli-<v>-macos-universal.zip` | `macos-15` |
 | Windows 10+ x64 | `photocraft-<v>-windows-x64.msi`, `photocraft-<v>-windows-x64-portable.zip`, `photocraft-<v>-windows-x64-symbols.zip` | `windows-latest` |
 | Windows 10+ x86 (32-bit) | `photocraft-<v>-windows-x86.msi`, `photocraft-<v>-windows-x86-portable.zip`, `photocraft-<v>-windows-x86-symbols.zip` | `windows-latest` |
 | Linux x86_64 | `photocraft-<v>-linux-x86_64.{AppImage,AppImage.zsync,deb,rpm,tar.gz,flatpak}` | `ubuntu-22.04` (Flatpak: `ubuntu-24.04`) |
@@ -71,8 +71,8 @@ in the dialog.
 | FreeBSD 14 x86_64 | `photocraft-<v>-freebsd-x86_64.tar.gz` | FreeBSD 14.3 VM on `ubuntu-latest` |
 | Web | `photocraft-web-<v>.zip` (static site; see [`packaging/web/README.md`](../packaging/web/README.md)) | `ubuntu-latest` |
 
-Every binary reports its version, the commit and the build date: `photocraft --version`,
-`photocraft-cli --version`, and *Help › About PhotoCraft*. CI sets `PHOTOCRAFT_BUILD_SHA` and
+Every binary reports its version, the commit and the build date: `paragon-photo --version`,
+`paragon-photo-cli --version`, and *Help › About Paragon Photo*. CI sets `PHOTOCRAFT_BUILD_SHA` and
 `PHOTOCRAFT_BUILD_DATE`, and `crates/engine/src/build_info.rs` reads them at compile time. A plain
 `cargo build` doesn't set them and reports `0.2.0 (dev build)`.
 
@@ -87,11 +87,11 @@ in `ci.yml`. Build option: `docs/development.md` › Fonts.
 ### macOS
 
 `packaging/macos/package.sh` builds `aarch64-apple-darwin` and `x86_64-apple-darwin` with
-`MACOSX_DEPLOYMENT_TARGET=11.0`, joins them with `lipo`, and assembles `PhotoCraft.app`:
+`MACOSX_DEPLOYMENT_TARGET=11.0`, joins them with `lipo`, and assembles `ParagonPhoto.app`:
 
-- `Info.plist` is generated from `Info.plist.in`. The bundle id is `ai.storyteller.photocraft`.
+- `Info.plist` is generated from `Info.plist.in`. The bundle id is `io.github.aryez.paragonphoto`.
   The plist sets `LSMinimumSystemVersion` 11.0, `NSHighResolutionCapable`, and document types:
-  `.pcraft` (Owner), plus PSD/PSB and the image formats PhotoCraft reads (Alternate, so it never
+  `.pcraft` (Owner), plus PSD/PSB and the image formats Paragon Photo reads (Alternate, so it never
   takes over Preview's defaults). The icon is `assets/app-icon/photocraft.icns`.
 - **Signing** goes inside-out with the hardened runtime and a secure timestamp. The executable
   is signed first, then the bundle. There's no `--deep` on the final signature. The
@@ -101,14 +101,14 @@ in `ci.yml`. Build option: `docs/development.md` › Fonts.
   to drag onto). The DMG is signed, notarized and stapled too. The script checks the results
   with `codesign --verify --strict`, `stapler validate` and `spctl -a -vvv`.
   Its Finder window (background, icon size and positions) comes from
-  [`packaging/macos/dmg/`](../packaging/macos/dmg/README.md), and its volume is named `PhotoCraft`
+  [`packaging/macos/dmg/`](../packaging/macos/dmg/README.md), and its volume is named `Paragon Photo`
   without the version, which the window's background needs; the DMG file name keeps the version.
-- **CLI:** `PhotoCraft.app/Contents/MacOS/photocraft-cli` is bundled and signed so generated
+- **CLI:** `ParagonPhoto.app/Contents/MacOS/paragon-photo-cli` is bundled and signed so generated
   droplet scripts can run without installing the separate CLI download. The scripts prefer
   `PHOTOCRAFT_CLI` when set, then the bundled CLI in `/Applications` or `~/Applications`, then
-  `photocraft-cli` on `PATH`. Finder drag-and-drop onto droplets still requires an app wrapper.
-  The universal standalone `photocraft-cli` is signed with the same Developer ID, the hardened
-  runtime and a secure timestamp (identifier `ai.storyteller.photocraft-cli`), zipped, and the zip
+  `paragon-photo-cli` on `PATH`. Finder drag-and-drop onto droplets still requires an app wrapper.
+  The universal standalone `paragon-photo-cli` is signed with the same Developer ID, the hardened
+  runtime and a secure timestamp (identifier `io.github.aryez.paragonphoto-cli`), zipped, and the zip
   is sent to `notarytool`. Only `.app`, `.dmg` and `.pkg` can hold a stapled ticket, not a bare
   Mach-O, so Gatekeeper looks the CLI's ticket up online the first time a downloaded
   (quarantined) copy runs. Offline, that first run can be refused until the Mac is online again.
@@ -142,11 +142,11 @@ goes in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, so host build scripts aren't affected
   (`assets/app-icon/photocraft.ico`) and VERSIONINFO with the `winresource` crate
   (build dependency `0.1`). They only do this when targeting Windows. Elsewhere each
   script is a no-op, even if `PHOTOCRAFT_REQUIRE_WINRES` is set, and the web build
-  doesn't touch that crate. Both set ProductName to PhotoCraft, CompanyName to
+  doesn't touch that crate. Both set ProductName to Paragon Photo, CompanyName to
   Learning Machines LLC and the same copyright line. The GUI description is
-  "PhotoCraft image editor" (`photocraft.exe`). The CLI description is
-  "PhotoCraft command-line interface", with OriginalFilename `photocraft-cli.exe`
-  and InternalName `photocraft-cli`. Version strings are the Cargo package version,
+  "Paragon Photo image editor" (`paragon-photo.exe`). The CLI description is
+  "Paragon Photo command-line interface", with OriginalFilename `paragon-photo-cli.exe`
+  and InternalName `paragon-photo-cli`. Version strings are the Cargo package version,
   so a pre-release tag is kept; the numeric file and product versions are
   winresource's `major.minor.patch.0`. A missing resource compiler warns, so an
   optional cross-compile still links. `package.ps1` sets `PHOTOCRAFT_REQUIRE_WINRES=1`.
@@ -155,15 +155,15 @@ goes in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, so host build scripts aren't affected
 - Release builds use the GUI subsystem, so Start Menu launches don't open a console window.
   The CLI stays console subsystem 3 so its output reaches the terminal.
 - `photocraft.wxs` (WiX v5) is a dual-scope package (Microsoft "Single Package Authoring"):
-  it installs per-user by default, without a UAC prompt, into `%LOCALAPPDATA%\Programs\ArtCraft\PhotoCraft`
+  it installs per-user by default, without a UAC prompt, into `%LOCALAPPDATA%\Programs\ArtCraft\Paragon Photo`
   (Windows Installer redirects the ProgramFiles folder in a per-user install); the setup
   wizard's "Everyone on this computer" option, or `msiexec ... ALLUSERS=1`, installs per-machine into
-  `Program Files\ArtCraft\PhotoCraft` (`Program Files (x86)` for the 32-bit build). It installs an advertised Start Menu shortcut associated with the
-  `PhotocraftExe` file component. PhotoCraft
+  `Program Files\ArtCraft\Paragon Photo` (`Program Files (x86)` for the 32-bit build). It installs an advertised Start Menu shortcut associated with the
+  `PhotocraftExe` file component. Paragon Photo
   becomes the default app for `.pcraft` and is listed under "Open with" for PSD/PSB and image
   files (in a per-user install those registrations and the `InstallDir` record live under
   HKCU instead of HKLM; the package's registry roots follow the context automatically). It also
-  registers App Paths (Win+R `photocraft`). An install updates the copy registered in its own
+  registers App Paths (Win+R `paragon-photo`). An install updates the copy registered in its own
   context; installing in the other context while a copy already exists is stopped with a
   message, not a silent duplicate (a scope change needs an explicit uninstall first).
   The MSI version is the numeric `X.Y.Z`, because MSI has no pre-release field. Same-version
@@ -171,9 +171,9 @@ goes in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, so host build scripts aren't affected
 - Double-clicking the MSI opens a setup wizard (WixUI_InstallDir without the licence page; the scope page appears only for a new full-UI install, not for
   maintenance, uninstall or reduced and silent runs):
   a scope page ("Only for me" or "Everyone on this computer"), Welcome, the install folder
-  (remembered for upgrades in `HKLM` or `HKCU\Software\PhotoCraft\InstallDir` according to context),
+  (remembered for upgrades in `HKLM` or `HKCU\Software\ParagonPhoto\InstallDir` according to context),
   Ready, a progress page, and a Finish page that says where to find the app, with a ticked "Launch
-  PhotoCraft" box. The pages name the full version (`photocraft.en-us.wxl`). `package.ps1` draws
+  Paragon Photo" box. The pages name the full version (`photocraft.en-us.wxl`). `package.ps1` draws
   the wizard's banner and side bitmaps from the app icon, so no WiX stock art ships. `msiexec /qn`
   installs a new product silently per-user unless `ALLUSERS=1` is passed. Maintenance keeps the
   existing installation context, and a major upgrade of an existing per-machine installation without
@@ -183,10 +183,10 @@ goes in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, so host build scripts aren't affected
   as the cached icon filename, and an extensionless filename can render as a blank document
   icon. `packaging/windows/check-icons.ps1` checks the references and extensions in CI;
   `package.ps1` also validates the built MSI with ICE50 before signing it.
-- **Portable zip:** it ships `packaging/windows/portable.txt` beside `photocraft.exe`. That
-  marker (or a `PhotoCraft.portable` file) switches on portable mode: preferences, presets,
-  recovery autosaves and the GPU startup marker go to `PhotoCraftData\` next to the exe instead
-  of `%APPDATA%\Photocraft`. If that folder isn't writable the app warns and uses `%APPDATA%`.
+- **Portable zip:** it ships `packaging/windows/portable.txt` beside `paragon-photo.exe`. That
+  marker (or a `ParagonPhoto.portable` file) switches on portable mode: preferences, presets,
+  recovery autosaves and the GPU startup marker go to `ParagonPhotoData\` next to the exe instead
+  of `%APPDATA%\ParagonPhoto`. If that folder isn't writable the app warns and uses `%APPDATA%`.
   The MSI has no marker. The logic is in `apps/photocraft/src/app_dirs.rs` and works the same
   on macOS and Linux.
 - **Symbols zip:** `photocraft.pdb` and `photocraft_cli.pdb` from the same release build, plus
@@ -212,9 +212,9 @@ Locally on Windows: `dotnet tool install -g wix --version 5.0.2`,
 ### Linux
 
 `packaging/linux/package.sh` stages one FHS tree and makes every format from it. The tree
-holds both binaries, `ai.storyteller.photocraft.desktop`, hicolor icons from 16 px to 512 px
+holds both binaries, `io.github.aryez.paragonphoto.desktop`, hicolor icons from 16 px to 512 px
 plus a scalable SVG, AppStream metainfo, a shared-mime-info file for `.pcraft`, `.psb` and
-`.qoi`, and `photocraft-cli`'s man pages and bash, zsh and fish completions. The
+`.qoi`, and `paragon-photo-cli`'s man pages and bash, zsh and fish completions. The
 `man-and-completions` example, built with the binaries, writes those; a cross build runs it
 through `EMULATOR` and leaves them out without one. The zsh completion is in
 `/usr/share/zsh/site-functions`, which Fedora's and openSUSE's zsh read; the `.deb` also links it
@@ -239,7 +239,7 @@ Why these formats:
   Wayland the dock icon comes from the compositor resolving the window's app_id against an
   *installed* `.desktop` file, which an AppImage alone never provides — without this every
   AppImage run shows the generic Wayland logo (#593). Best effort: it installs
-  `~/.local/share/applications/ai.storyteller.photocraft.desktop` with `Exec` rewritten to
+  `~/.local/share/applications/io.github.aryez.paragonphoto.desktop` with `Exec` rewritten to
   the AppImage's path (`TryExec` dropped, the binary isn't on the host PATH) and the
   hicolor icons beside it, rewriting only when the content changed, and any failure leaves
   the launch untouched. Launcher refresh uses a hidden generated snapshot to preserve
@@ -251,12 +251,12 @@ Why these formats:
   install. These checks do not synchronize concurrent changes by other processes.
   This overlaps the deduplication protection proposed in #5168 without depending on it.
   `PHOTOCRAFT_NO_DESKTOP_INTEGRATION=1` opts out; to uninstall, `rm
-  ~/.local/share/applications/ai.storyteller.photocraft.desktop` and `find
-  ~/.local/share/icons/hicolor -name 'ai.storyteller.photocraft*' -delete`. The script is
+  ~/.local/share/applications/io.github.aryez.paragonphoto.desktop` and `find
+  ~/.local/share/icons/hicolor -name 'io.github.aryez.paragonphoto*' -delete`. The script is
   covered by `packaging/linux/apprun-test.sh` in the packaging-lint workflow.
-  A leading `--cli` launches the bundled `usr/bin/photocraft-cli`, without desktop
+  A leading `--cli` launches the bundled `usr/bin/paragon-photo-cli`, without desktop
   integration: `./photocraft-<version>-linux-x86_64.AppImage --cli mcp` serves MCP on
-  stdio. A symlink named `photocraft-cli` also selects that binary via the runtime's
+  stdio. A symlink named `paragon-photo-cli` also selects that binary via the runtime's
   `ARGV0`. Arguments and process streams pass through unchanged; the entry point
   uses `exec` so signals and exit status reach the caller directly. CLI routing is
   covered by `packaging/linux/apprun-cli-test.sh` in the same workflow.
@@ -270,17 +270,17 @@ Why these formats:
 - **Flatpak bundle** (`.flatpak`) is a single file that installs into Flatpak, sandboxed and
   updatable by installing a newer bundle, for people who prefer Flatpak to AppImage.
   `packaging/linux/flatpak-bundle.sh` repackages the job's `.tar.gz` with
-  `packaging/linux/flatpak/ai.storyteller.photocraft.bundle.yml` on the freedesktop 26.08
+  `packaging/linux/flatpak/io.github.aryez.paragonphoto.bundle.yml` on the freedesktop 26.08
   runtime. It does no Rust build and needs no network inside `flatpak-builder`, so the bundle
   holds the same binaries as the other formats. A separate `flatpak` job per architecture
   (`ubuntu-24.04` and `ubuntu-24.04-arm`, for flatpak-builder 1.4) downloads the Linux job's
-  artifact, runs the script, installs the bundle and runs `photocraft-cli --version` inside the
+  artifact, runs the script, installs the bundle and runs `paragon-photo-cli --version` inside the
   sandbox as a smoke test. The bundle names Flathub as its runtime repo, so users install
   it with:
 
   ```sh
   flatpak install --user photocraft-<v>-linux-x86_64.flatpak   # pulls org.freedesktop.Platform//26.08 from Flathub if missing
-  flatpak run ai.storyteller.photocraft
+  flatpak run io.github.aryez.paragonphoto
   ```
 
   Sandbox permissions (justified in the manifest): Wayland with X11 fallback, IPC (X11
@@ -290,7 +290,7 @@ Why these formats:
   checks and makes the optional loopback `--control` server reachable from the host. Host fonts
   are read from `/run/host/fonts` and `/run/host/user-fonts`. Locally (on Linux, with `flatpak` and
   `flatpak-builder`): `packaging/linux/package.sh --formats tar && packaging/linux/flatpak-bundle.sh`.
-- **Flathub**: `packaging/linux/flatpak/ai.storyteller.photocraft.yml` builds from source and
+- **Flathub**: `packaging/linux/flatpak/io.github.aryez.paragonphoto.yml` builds from source and
   is ready for a Flathub submission (it keeps the same runtime and `finish-args` as the bundle
   manifest, which packaging-lint checks). CI doesn't build it. A real build needs vendored crate
   sources (`cargo-sources.json` from `flatpak-cargo-generator.py`) and adds 20+ minutes per
@@ -302,7 +302,7 @@ Wayland, xkbcommon, Vulkan and EGL are loaded at runtime from the system, which 
 the GPU driver has to come from. That's why the .deb and .rpm declare them as dependencies
 (the full list, and why each is there, is in `packaging/linux/nfpm.yaml`) and the AppImage
 doesn't bundle them. The Flatpak gets them from the freedesktop runtime. Because the AppImage
-and the tarball can't declare dependencies, `photocraft` checks for the libraries its session
+and the tarball can't declare dependencies, `paragon-photo` checks for the libraries its session
 (X11 or Wayland) needs before it opens a window (`apps/photocraft/src/linux_libs.rs`) and, if
 one is missing, prints the package to install and exits with status 1 instead of crashing.
 `PHOTOCRAFT_SKIP_LIB_CHECK=1` skips the check.
@@ -312,16 +312,16 @@ Locally (on Linux): install [nfpm](https://nfpm.goreleaser.com/install/), then
 
 #### Packaged automation and offline documentation
 
-Both Flatpak manifests install `photocraft-cli`, alongside the GUI. To start the stdio MCP
+Both Flatpak manifests install `paragon-photo-cli`, alongside the GUI. To start the stdio MCP
 server with a project in the sandbox's allowed Documents directory:
 
 ```sh
-flatpak run --command=photocraft-cli ai.storyteller.photocraft mcp \
+flatpak run --command=paragon-photo-cli io.github.aryez.paragonphoto mcp \
   --automation-read-root "$HOME/Documents/project" \
   --automation-write-root "$HOME/Documents/project"
 ```
 
-The automation roots restrict PhotoCraft's file access; they do not grant Flatpak access to
+The automation roots restrict Paragon Photo's file access; they do not grant Flatpak access to
 other host directories. For a project elsewhere, also grant that directory with Flatpak's
 `--filesystem=/absolute/project` run option. Stdio MCP needs no network permission.
 
@@ -329,20 +329,20 @@ Linux packages include the original `mcp.md` and `control-protocol.md` for offli
 
 | Format | Documentation directory |
 |---|---|
-| `.deb`, `.rpm` | `/usr/share/doc/photocraft/` |
-| Extracted `.tar.gz` | `share/doc/photocraft/` inside the extracted release directory |
-| Flatpak (source or bundle) | `/app/share/doc/photocraft/` inside the sandbox |
-| Extracted AppImage | `squashfs-root/usr/share/doc/photocraft/` |
+| `.deb`, `.rpm` | `/usr/share/doc/paragon-photo/` |
+| Extracted `.tar.gz` | `share/doc/paragon-photo/` inside the extracted release directory |
+| Flatpak (source or bundle) | `/app/share/doc/paragon-photo/` inside the sandbox |
+| Extracted AppImage | `squashfs-root/usr/share/doc/paragon-photo/` |
 
 For example, read the Flatpak's MCP guide without opening the GUI:
 
 ```sh
-flatpak run --command=cat ai.storyteller.photocraft /app/share/doc/photocraft/mcp.md
+flatpak run --command=cat io.github.aryez.paragonphoto /app/share/doc/paragon-photo/mcp.md
 ```
 
-To read an AppImage's guides, run `./PhotoCraft.AppImage --appimage-extract` in a directory
+To read an AppImage's guides, run `./ParagonPhoto.AppImage --appimage-extract` in a directory
 where you want its `squashfs-root` contents, using the downloaded file's actual name. Then
-open either guide in `squashfs-root/usr/share/doc/photocraft/`. Extraction is an explicit user
+open either guide in `squashfs-root/usr/share/doc/paragon-photo/`. Extraction is an explicit user
 action; launching the app does not extract documentation into the home directory. These two
 Markdown files are included as written; links to other repository documents still need a
 checkout or the online documentation.
@@ -359,10 +359,10 @@ FreeBSD 14.3 VM (`vmactions/freebsd-vm`, pinned by commit), with the same packag
 FreeBSD CI workflow (`.github/workflows/freebsd.yml`) plus `bash`. The script builds both
 binaries with `CARGO_BUILD_JOBS=4` (more runs the 12 GB VM out of memory) and writes
 `photocraft-<v>-freebsd-x86_64.tar.gz`. FreeBSD's `uname -m` says `amd64`; the file name uses
-`x86_64` like the other artifacts. The tarball is a `/usr/local`-style tree: `bin/photocraft`,
-`bin/photocraft-cli`, and under `share/` the same desktop entry, MIME type, AppStream metainfo
+`x86_64` like the other artifacts. The tarball is a `/usr/local`-style tree: `bin/paragon-photo`,
+`bin/paragon-photo-cli`, and under `share/` the same desktop entry, MIME type, AppStream metainfo
 and hicolor icons as Linux, plus the licences, `NOTICE` and `ATTRIBUTION.md` in
-`share/doc/photocraft/`, and `photocraft-cli`'s man pages (`man/man1/`) and bash, zsh and fish
+`share/doc/paragon-photo/`, and `paragon-photo-cli`'s man pages (`man/man1/`) and bash, zsh and fish
 completions (`share/bash-completion`, `share/zsh/site-functions`, `share/fish`), written by the
 `man-and-completions` example built with the binaries. Users install it with:
 

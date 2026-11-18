@@ -1857,7 +1857,7 @@ assert_eq!(names.len(), encoded.len());
 
   - Perform the explicit artifact inspection below; mark BLOCKED if fixtures are absent.
 
-- Expected: ZIP has photocraft.pdb, photocraft_cli.pdb and symbols.txt. Each PDB GUID/age matches its same-run executable; debugger/profiler resolves a PhotoCraft function. Portable/MSI launches without optional symbols.
+- Expected: ZIP has photocraft.pdb, photocraft_cli.pdb and symbols.txt. Each PDB GUID/age matches its same-run executable; debugger/profiler resolves a Paragon Photo function. Portable/MSI launches without optional symbols.
 - Separate coverage / prerequisites: Inspect PE CodeView/PDB identity, record run/job/artifact IDs and hashes. Same SHA rebuilt is not the same PDB identity. Source lines are not required because release omits line tables. Missing packaging artifacts/identity evidence is BLOCKED; do not publish a release just for fixtures.
 - Status: NOT RUN
 - Actual:
@@ -2741,9 +2741,9 @@ assert_eq!(reached.len(), painted.len(), "the line breaks along {path:?}");
 - Evidence:
 - Tester:
 
-## PR-4742: fix(macos): bundle photocraft-cli and resolve it from droplet scripts
+## PR-4742: fix(macos): bundle paragon-photo-cli and resolve it from droplet scripts
 
-- Fixture/setup: Frozen-SHA macOS bundle containing executable Contents/MacOS/photocraft-cli; synthetic droplet and image paths with spaces.
+- Fixture/setup: Frozen-SHA macOS bundle containing executable Contents/MacOS/paragon-photo-cli; synthetic droplet and image paths with spaces.
 - Action: run each command separately:
 
   - `cargo test -p photocraft-engine --locked droplets_are_written_and_run -- --nocapture`
@@ -4271,7 +4271,7 @@ Expected assertion context (overlapping windows merged):
 - Tester/date:
 - Tested SHA:
 
-## PR-4547: fix(icons): PhotoCraft icon corner radius matches other Craft apps (#4478)
+## PR-4547: fix(icons): Paragon Photo icon corner radius matches other Craft apps (#4478)
 
 - Fixture/setup and action: execute **all** identified changed regression functions below on the final frozen tree. Their checked-in setup constructs the concrete inputs; preserve those inputs, capability prerequisites and assertions.
 
@@ -4285,7 +4285,7 @@ Expected assertion context (overlapping windows merged):
 
 ```rust
 // rx=112 of 512 leaves (10, 10) of a 256 px render transparent; the old crop filled it (#4478).
-        let png = include_bytes!("../../../assets/app-icon/hicolor/256x256/apps/ai.storyteller.photocraft.png");
+        let png = include_bytes!("../../../assets/app-icon/hicolor/256x256/apps/io.github.aryez.paragonphoto.png");
         let icon = eframe::icon_data::from_png_bytes(png).unwrap();
         assert_eq!(icon.width, 256);
         assert_eq!(icon.rgba[(10 * 256 + 10) * 4 + 3], 0, "corner is transparent");

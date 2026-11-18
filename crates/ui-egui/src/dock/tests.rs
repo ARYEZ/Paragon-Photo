@@ -82,7 +82,7 @@ fn reset_workspace_restores_the_default_layout_and_new_workspaces_keep_theirs() 
     assert_eq!(app.workspaces.set.current, named);
 }
 
-/// The load robustness of PhotoCraft's own payload: an unreadable `docking` value is dropped for the
+/// The load robustness of Paragon Photo's own payload: an unreadable `docking` value is dropped for the
 /// default layout, and the rest of the save still applies.
 #[test]
 fn an_unreadable_docking_layout_is_dropped_and_the_rest_applies() {

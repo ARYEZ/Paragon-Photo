@@ -33,7 +33,7 @@ pub(crate) fn block_on<T>(future: impl Future<Output = T>) -> T {
     }
 }
 
-/// Per-user settings directory: `PHOTOCRAFT_CONFIG_DIR`, else `<exe dir>/PhotoCraftData` in
+/// Per-user settings directory: `PHOTOCRAFT_CONFIG_DIR`, else `<exe dir>/ParagonPhotoData` in
 /// portable mode, else the platform convention. Everything the app persists lives under it
 /// except, on Windows and Linux, crash-recovery autosaves; see [`crate::app_dirs`].
 pub fn config_dir() -> Option<PathBuf> {
@@ -399,7 +399,7 @@ pub fn xwayland_command(flatpak_id: Option<&str>, appimage: Option<&str>, x_disp
     if let Some(id) = flatpak_id.filter(|id| !id.is_empty()) {
         return Some(format!("flatpak run --nosocket=wayland --socket=x11 {}", shell_word(id)));
     }
-    let exe = appimage.filter(|path| !path.is_empty()).map_or_else(|| "photocraft".to_string(), shell_word);
+    let exe = appimage.filter(|path| !path.is_empty()).map_or_else(|| "paragon-photo".to_string(), shell_word);
     x_display.then(|| format!("WAYLAND_DISPLAY= {exe}"))
 }
 

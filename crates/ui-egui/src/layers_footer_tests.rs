@@ -1,4 +1,4 @@
-//! The Layers panel footer's buttons run PhotoCraft's commands (#2561, #153, #4728). New Group: like
+//! The Layers panel footer's buttons run Paragon Photo's commands (#2561, #153, #4728). New Group: like
 //! Photoshop CC 2014 and later, a click with two or more layers selected puts them in a new,
 //! collapsed group, and with one layer it adds an empty group; Shift-click groups the selection
 //! too, Alt-click asks in the New Group dialog first and Cmd-click adds the empty group below the

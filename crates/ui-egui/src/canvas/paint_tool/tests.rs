@@ -473,7 +473,7 @@ fn within_a_level(a: &Document, b: &Document) -> bool {
 
 /// #10074: painting a group looked as if it worked (the stroke's trail followed the pointer) and
 /// vanished on release with only a status-bar note. Photoshop refuses at the press with a
-/// message; so does PhotoCraft, and nothing is painted or drawn.
+/// message; so does Paragon Photo, and nothing is painted or drawn.
 #[test]
 fn painting_a_group_is_refused_at_the_press_with_a_message() {
     let mut app = PhotocraftApp::new(photocraft_engine::Session::new(), Default::default());

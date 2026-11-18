@@ -373,10 +373,10 @@ mod tests {
 
     #[test]
     fn lists_changes_and_learns_words() {
-        let (mut s, id) = session("Teh quick brwon fox, teh end. Photocraft");
+        let (mut s, id) = session("Teh quick brwon fox, teh end. ParagonPhoto");
         let r = s.execute("edit.checkSpelling", json!({})).unwrap();
         let words: Vec<&str> = r["misspellings"].as_array().unwrap().iter().map(|m| m["word"].as_str().unwrap()).collect();
-        assert_eq!(words, vec!["Teh", "brwon", "teh", "Photocraft"]);
+        assert_eq!(words, vec!["Teh", "brwon", "teh", "ParagonPhoto"]);
         let first = &r["misspellings"][0];
         assert_eq!((first["start"].as_u64(), first["end"].as_u64()), (Some(0), Some(3)));
         assert_eq!(first["suggestions"][0], "The");
@@ -385,7 +385,7 @@ mod tests {
         assert!(s.execute("edit.checkSpelling", json!({"action": "change", "layer": id, "start": 0, "end": 3, "word": "Teh", "replace": "X"})).is_err());
         let r = s.execute("edit.checkSpelling", json!({"action": "changeAll", "word": "brwon", "replace": "brown"})).unwrap();
         assert_eq!(r["changed"], 1);
-        assert_eq!(text_of(&s, id), "The quick brown fox, teh end. Photocraft");
+        assert_eq!(text_of(&s, id), "The quick brown fox, teh end. ParagonPhoto");
         // One undo step per change.
         s.execute("edit.undo", json!({})).unwrap();
         assert!(text_of(&s, id).contains("brwon"));
@@ -393,8 +393,8 @@ mod tests {
         // Ignore All and Add to Dictionary.
         let r = s.execute("edit.checkSpelling", json!({"ignore": ["teh"]})).unwrap();
         assert_eq!(r["count"], 1);
-        s.execute("edit.checkSpelling", json!({"action": "addToDictionary", "word": "Photocraft"})).unwrap();
-        assert_eq!(s.prefs().user_dictionary, vec!["Photocraft".to_string()]);
+        s.execute("edit.checkSpelling", json!({"action": "addToDictionary", "word": "ParagonPhoto"})).unwrap();
+        assert_eq!(s.prefs().user_dictionary, vec!["ParagonPhoto".to_string()]);
         let r = s.execute("edit.checkSpelling", json!({})).unwrap();
         assert_eq!(r["count"], 1);
         s.execute("edit.checkSpelling", json!({"action": "removeFromDictionary", "word": "photocraft"})).unwrap();
@@ -420,8 +420,8 @@ mod tests {
         s.execute("edit.checkSpelling", json!({"action": "change", "layer": id, "start": 0, "end": 3, "word": "Teh", "replace": "The"})).unwrap();
         s.execute("edit.checkSpelling", json!({"action": "changeAll", "word": "brwon", "replace": "brown"})).unwrap();
         s.execute("edit.checkSpelling", json!({"action": "suggest", "word": "recieve"})).unwrap();
-        s.execute("edit.checkSpelling", json!({"action": "addToDictionary", "word": "Photocraft"})).unwrap();
-        s.execute("edit.checkSpelling", json!({"action": "removeFromDictionary", "word": "Photocraft"})).unwrap();
+        s.execute("edit.checkSpelling", json!({"action": "addToDictionary", "word": "ParagonPhoto"})).unwrap();
+        s.execute("edit.checkSpelling", json!({"action": "removeFromDictionary", "word": "ParagonPhoto"})).unwrap();
         // The dialog closing.
         s.execute("edit.checkSpelling", json!({"allLayers": true, "suggestions": 8})).unwrap();
         s.execute("actions.stop", json!({})).unwrap();

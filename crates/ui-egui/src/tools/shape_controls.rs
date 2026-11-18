@@ -7,7 +7,7 @@
 //! History step named "Transform Path"; no Free Transform session opens. The `CornerWidgets` come
 //! after the box in the canvas body, so a widget wins a press where both reach.
 //!
-//! Neither control keeps a drag in PhotoCraft: the box's id salt carries the document, its revision
+//! Neither control keeps a drag in Paragon Photo: the box's id salt carries the document, its revision
 //! and the tool, so a switch, an Undo or a tool change makes a new control and the library cancels
 //! the press of the one that is gone.
 

@@ -1,0 +1,51 @@
+{
+  "schema": "craft-design-theme",
+  "schema_version": 1,
+  "id": "paragon.aurora",
+  "name": "Aurora",
+  "version": 1,
+  "variants": "light",
+  "contrast_intent": "standard",
+  "_about": "The Paragon family's AURORA finish (pearl white, dimmed 10% as Finish::pearl does), from the Paragon PR7-D plugin. Values: docs/paragon-finish-spec.md. Family colour rule: only pink, red and orange hues plus pearl and greys.",
+  "seeds": {
+    "neutral": "#e0dbdd",
+    "accent": "#f4353a",
+    "status": { "good": "#c8642e", "warn": "#cd6619", "bad": "#d42e2a", "info": "#de0639" }
+  },
+  "shape": {
+    "radius": { "control": 4, "surface": 4, "window": 8, "panel": 8, "button": 4 },
+    "edge": "flat",
+    "knob": "round",
+    "wells": "square"
+  },
+  "light": {
+    "surface.background": "#d9d0d4",
+    "surface.chrome": "#d6ccd2",
+    "surface.canvas": "#c6b7bf",
+    "surface.panel": "#e0dbdd",
+    "surface.raised": "#e1dcde",
+    "surface.sunken": "#e6e4e5",
+    "line.border": "#857c80",
+    "line.divider": "#aea6aa",
+    "line.control_edge": "#857c80",
+    "line.knob_edge": "#26252a",
+    "line.focus": "#dd4032",
+    "state.hover": "#d4cdd0",
+    "state.pressed": "#c8bfc3",
+    "state.selected": "#e4b6b9",
+    "text.normal": "#26252a",
+    "text.muted": "#6b6569",
+    "text.faint": "#857c80",
+    "text.on_selected": "#26252a",
+    "accent.solid": "#f4353a",
+    "accent.strong": "#de0639",
+    "accent.soft": "#e4b6b9",
+    "accent.border": "#dd4032",
+    "accent.text": "#dd4032",
+    "text.on_accent": "#ffffff",
+    "text.on_strong": "#ffffff",
+    "caption.close_hover": "#de0639",
+    "caption.close_text": "#ffffff",
+    "surface.knob": "#1a1216"
+  }
+}

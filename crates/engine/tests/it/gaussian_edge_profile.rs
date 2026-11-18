@@ -1,21 +1,21 @@
 //! #11528: Gaussian Blur's edge profile on an opaque interior edge, pinned at RGB8 and RGB16 and
 //! across the direct command and an action (ATN) replay.
 //!
-//! The issue measures Photoshop 27.11 against PhotoCraft on a black/white step with no selection,
+//! The issue measures Photoshop 27.11 against Paragon Photo on a black/white step with no selection,
 //! mask, transparency or smart object, so nothing but the kernel can explain the difference:
 //! at radius 2.3 the reported red levels for x = 10..22 are
 //!
 //! ```text
 //! Photoshop   0, 2,10,27,59,103,152,196,228,245,253,255,255
-//! PhotoCraft  2, 6,16,35,65,105,150,190,220,239,249,253,255
+//! Paragon Photo  2, 6,16,35,65,105,150,190,220,239,249,253,255
 //! ```
 //!
-//! PhotoCraft's row is what a Gaussian sampled at whole pixels with sigma = radius and a 3-sigma
+//! Paragon Photo's row is what a Gaussian sampled at whole pixels with sigma = radius and a 3-sigma
 //! window gives (its variance is 0.6 % short of 2.3^2 from that truncation), so the pipeline adds
 //! no error of its own: the gap is the two applications' radius-to-blur mapping, 8 levels at
-//! radius 2.3, 5 at radius 1 and 1 at radius 5 (where PhotoCraft already runs box passes). No
+//! radius 2.3, 5 at radius 1 and 1 at radius 5 (where Paragon Photo already runs box passes). No
 //! single factor maps one to the other, as the issue itself notes, so the kernel is deliberately
-//! left alone here; what this file does is pin the profile that PhotoCraft produces today, at both
+//! left alone here; what this file does is pin the profile that Paragon Photo produces today, at both
 //! depths and on both routes, and ratchet the distance to Photoshop's measured row so a future
 //! kernel change is a decision with a number attached to it instead of a silent drift.
 
@@ -30,7 +30,7 @@ const WIDTH: i32 = 33;
 /// The step is at x = 16; seven pixels of kernel reach keep x = 10..22 clear of both canvas ends.
 const FROM: i32 = 10;
 const TO: i32 = 22;
-/// PhotoCraft 0.20.2 (`7c12f6471`) as published in #11528, and Photoshop 27.11 beside it.
+/// Paragon Photo 0.20.2 (`7c12f6471`) as published in #11528, and Photoshop 27.11 beside it.
 const PHOTOCRAFT: [u32; 13] = [2, 6, 16, 35, 65, 105, 150, 190, 220, 239, 249, 253, 255];
 const PHOTOSHOP: [u32; 13] = [0, 2, 10, 27, 59, 103, 152, 196, 228, 245, 253, 255, 255];
 /// The measured gap at radius 2.3. May only shrink, never grow: raising it needs the new number
@@ -108,7 +108,7 @@ fn edge_profile_at_radius_2_3_at_sixteen_bits_is_the_same_curve_in_another_scale
     }
 }
 
-/// #11528 also checks Photoshop's direct blur against its own action replay; PhotoCraft's two
+/// #11528 also checks Photoshop's direct blur against its own action replay; Paragon Photo's two
 /// routes must stay identical, at both depths, or the action path hides a second implementation.
 #[test]
 fn gaussian_recording_replays_the_direct_blur_pixels_and_radius() {

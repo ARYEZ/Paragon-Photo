@@ -1,4 +1,4 @@
-//! The PhotoCraft engine façade: open documents, history, and the command registry.
+//! The Paragon Photo engine façade: open documents, history, and the command registry.
 //!
 //! Every user-visible action is a command with a stable id (Photoshop-style, such as
 //! `layer.newAdjustmentLayer.invert`) and JSON parameters. Every frontend goes through the same
@@ -279,7 +279,7 @@ pub struct Session {
     /// Gate for every command the session runs, including the ones a command runs on its own
     /// behalf and `actions.play` steps. Untrusted sessions (MCP, the control channel) install
     /// the same check a top-level request sees. `None` runs everything, which is what a local
-    /// UI and `photocraft-cli run` do.
+    /// UI and `paragon-photo-cli run` do.
     pub authorize: Option<fn(&str, &serde_json::Value) -> Result<()>>,
     /// The gate automation runs under in this process (the desktop's policy). An action
     /// automation wrote ([`actions_cmds::Action::automation`]) plays under it when no gate is

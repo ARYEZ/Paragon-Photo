@@ -3,7 +3,7 @@
 # exports VERSION and NFPM_ARCH.
 #
 #   nfpm package -f packaging/linux/nfpm.yaml -p deb -t dist/release/
-name: photocraft
+name: paragon-photo
 arch: ${NFPM_ARCH}
 platform: linux
 version: ${VERSION}
@@ -20,7 +20,7 @@ description: |-
   Open-source, native image editor with familiar, professional tools.
   Layers, masks, adjustment layers, layer styles, type and brushes; opens and
   saves layered PSD/PSB files; 8/16/32-bit documents; GPU compositing (wgpu).
-  Includes photocraft-cli, a headless converter and command runner.
+  Includes paragon-photo-cli, a headless converter and command runner.
 
 # The binaries link only glibc and libgcc_s directly. Windowing (X11/Wayland, xkbcommon) and the
 # GPU (Vulkan, EGL/GL) are loaded at runtime with dlopen, so they aren't ELF NEEDED entries and
@@ -66,19 +66,19 @@ overrides:
       - xdg-desktop-portal
 
 contents:
-  - src: ${STAGE}/usr/bin/photocraft
-    dst: /usr/bin/photocraft
+  - src: ${STAGE}/usr/bin/paragon-photo
+    dst: /usr/bin/paragon-photo
     file_info: { mode: 0755 }
-  - src: ${STAGE}/usr/bin/photocraft-cli
-    dst: /usr/bin/photocraft-cli
+  - src: ${STAGE}/usr/bin/paragon-photo-cli
+    dst: /usr/bin/paragon-photo-cli
     file_info: { mode: 0755 }
   - src: ${STAGE}/usr/share/
     dst: /usr/share/
     type: tree
   # Debian's zsh reads vendor-completions, not /usr/share/zsh/site-functions as Fedora's and
   # openSUSE's do (its debian/rules sets --enable-additional-fpath).
-  - src: /usr/share/zsh/site-functions/_photocraft-cli
-    dst: /usr/share/zsh/vendor-completions/_photocraft-cli
+  - src: /usr/share/zsh/site-functions/_paragon-photo-cli
+    dst: /usr/share/zsh/vendor-completions/_paragon-photo-cli
     type: symlink
     packager: deb
 

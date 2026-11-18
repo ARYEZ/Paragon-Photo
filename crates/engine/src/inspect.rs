@@ -31,7 +31,7 @@ pub fn document(d: &DocState) -> Value {
 }
 
 /// [`document`] plus every text run and paragraph run, anti-aliasing and the full serialized
-/// layer-effect settings, for format round-trip checks (`photocraft-cli info --detail`).
+/// layer-effect settings, for format round-trip checks (`paragon-photo-cli info --detail`).
 pub fn document_detail(d: &DocState) -> Value {
     document_with(d, true)
 }
@@ -83,7 +83,7 @@ pub fn layer(l: &Layer) -> Value {
 }
 
 /// [`layer`] plus every text run and paragraph run, anti-aliasing and the full serialized
-/// layer-effect settings, for format round-trip checks (`photocraft-cli info --detail`).
+/// layer-effect settings, for format round-trip checks (`paragon-photo-cli info --detail`).
 pub fn layer_detail(l: &Layer) -> Value {
     layer_sel(l, &[], &smart_instances(std::slice::from_ref(l)), None, true)
 }
@@ -298,7 +298,7 @@ mod tests {
         assert!(!adj.to_string().contains('_'), "{adj}");
     }
 
-    /// #6541: an adjustment PhotoCraft keeps but cannot render is reported as such, not as an Invert.
+    /// #6541: an adjustment Paragon Photo keeps but cannot render is reported as such, not as an Invert.
     #[test]
     fn an_unsupported_adjustment_layer_is_reported_as_kept_not_rendered() {
         let mut s = Session::new();

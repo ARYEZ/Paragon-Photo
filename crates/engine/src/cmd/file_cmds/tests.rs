@@ -1472,7 +1472,7 @@ fn camera_raw_opens_as_16_bit_with_notes() {
 }
 
 /// #5799: Batch with Format "Same" over a folder of camera raws saved nothing (every output was
-/// a raw PhotoCraft can't write). Raws are saved as PSD; other inputs keep their format.
+/// a raw Paragon Photo can't write). Raws are saved as PSD; other inputs keep their format.
 #[test]
 fn batch_same_format_saves_camera_raws_as_psd() {
     use photocraft_raw::testgen::{DngSpec, mosaic, scene};
@@ -4071,7 +4071,7 @@ fn folder_listing_takes_every_format_photocraft_opens() {
     for name in ["a.cr3", "IMG_0001.CR3", "a.orf", "a.raf", "a.rw2", "a.srf", "a.sr2"] {
         assert!(!super::openable_name(name), "{name}");
     }
-    // PhotoCraft does not read AVIF.
+    // Paragon Photo does not read AVIF.
     assert!(!super::openable_name("a.avif"));
 }
 

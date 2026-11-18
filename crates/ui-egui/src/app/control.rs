@@ -1,5 +1,5 @@
 //! The control channel's UI-thread side (desktop only, as craft-automation's channel is):
-//! craft-automation's `ControlChannel` hands each request to PhotoCraft's method table
+//! craft-automation's `ControlChannel` hands each request to Paragon Photo's method table
 //! (`crate::control::handle`) and settles its reply now, after the queued synthetic input, after a
 //! job, or through its screenshot queue.
 

@@ -27,7 +27,7 @@ fn mode_name(mode: TransformMode) -> &'static str {
     }
 }
 
-/// The app's warp as the framework session holds it in the Warp phase: PhotoCraft's [`Warp`](photocraft_geom::warp::Warp)
+/// The app's warp as the framework session holds it in the Warp phase: Paragon Photo's [`Warp`](photocraft_geom::warp::Warp)
 /// with the control mesh the imaging warp grid edits, copied once when the warp is made.
 #[derive(Clone, Debug, PartialEq)]
 pub struct SessionWarp {
@@ -72,7 +72,7 @@ impl TransformWarp for SessionWarp {
     }
 }
 
-/// Free Transform in progress: the framework session (box, mode, warp, undo steps) and what PhotoCraft
+/// Free Transform in progress: the framework session (box, mode, warp, undo steps) and what Paragon Photo
 /// adds to say what the box moves.
 #[derive(Clone, Debug)]
 pub struct FreeTransform {

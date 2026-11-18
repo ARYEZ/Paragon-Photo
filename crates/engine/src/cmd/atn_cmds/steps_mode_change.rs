@@ -95,7 +95,7 @@ fn dst_m(to: usize) -> D {
     D::Descriptor(desc(TARGETS[to].1))
 }
 
-/// The descriptor a step recorded in PhotoCraft saves as: the measured class and key order. The
+/// The descriptor a step recorded in Paragon Photo saves as: the measured class and key order. The
 /// message is empty: it is the script's own text, not a setting, and no text of the reference
 /// application is copied.
 fn canonical(c: &Change) -> Descriptor {

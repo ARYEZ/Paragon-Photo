@@ -511,7 +511,7 @@ fn builder(
             .reset_to(reset.clone())
             .layout(ParamLayout::Stacked)
             .previews(previews(&key))
-            .alert_title(tl!("PhotoCraft"));
+            .alert_title(tl!("Paragon Photo"));
         if let Some(canvas) = canvas {
             dialog = dialog.canvas(canvas);
         }
@@ -991,7 +991,7 @@ fn report_file_errors(app: &mut PhotocraftApp, command: &str, r: &Value) {
 }
 
 /// Filter › Distort › Displace confirmed with no map: no open document picked and no path typed
-/// (#5806). Photoshop asks for the displacement map file after OK; so does PhotoCraft.
+/// (#5806). Photoshop asks for the displacement map file after OK; so does Paragon Photo.
 pub(crate) fn needs_displace_map(command: &str, params: &Value) -> bool {
     command == "filter.distort.displace"
         && params.get("mapPath").and_then(Value::as_str).is_none_or(|p| p.trim().is_empty())

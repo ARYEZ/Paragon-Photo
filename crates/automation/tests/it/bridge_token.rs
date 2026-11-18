@@ -120,7 +120,7 @@ async fn a_listener_that_is_not_the_app_never_receives_the_token() {
     }
 }
 
-/// The bridge authenticates to the headless `photocraft-cli serve` server by challenge.
+/// The bridge authenticates to the headless `paragon-photo-cli serve` server by challenge.
 #[tokio::test(flavor = "multi_thread")]
 async fn the_bridge_authenticates_to_the_headless_server_by_challenge() {
     let headless = Arc::new(Mutex::new(Headless::new()));

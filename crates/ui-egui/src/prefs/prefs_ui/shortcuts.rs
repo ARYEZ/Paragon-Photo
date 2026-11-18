@@ -1,5 +1,5 @@
 //! Edit › Keyboard Shortcuts and Menus: the framework's Keyboard Shortcuts dialog over a draft
-//! keymap, with PhotoCraft's Menus tab beside it.
+//! keymap, with Paragon Photo's Menus tab beside it.
 //!
 //! The session holds everything the dialog edits: the draft keymap, the shortcut sets, the Menus
 //! draft and the text of a set waiting to be reviewed. Cancel drops it and the runtime never saw
@@ -63,7 +63,7 @@ impl MenusDraft {
     }
 }
 
-/// The built-in sets: PhotoCraft's defaults.
+/// The built-in sets: Paragon Photo's defaults.
 fn builtins() -> [(&'static str, Overrides); 1] {
     [(DEFAULTS_NAME, Overrides::new())]
 }

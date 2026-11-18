@@ -96,7 +96,7 @@ impl PhotocraftApp {
         // A window bigger than its display (1440 × 900 on 1366 × 768) runs under the taskbar:
         // maximize it into the work area once (#315).
         work_area::fit_window(ctx);
-        // The runtime's close path, which asks PhotoCraft when the window was asked to close.
+        // The runtime's close path, which asks Paragon Photo when the window was asked to close.
         craft::ui::shell::embed::logic(ctx, || discard_ui::close_decision(self));
         // A component refused its input (a zoom field turning a Tab or Alt away, a dialog field):
         // the alert plays once per frame, whatever the number of refusals.

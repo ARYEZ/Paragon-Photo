@@ -22,7 +22,7 @@ PACKAGES = [
     pkg('photocraft-compose', 'crates/compose', ['photocraft-raster', 'serde']),
     pkg('photocraft-gpu', 'crates/gpu', ['photocraft-compose', 'wgpu']),
     pkg('photocraft-ui-egui', 'crates/ui-egui', ['photocraft-gpu']),
-    pkg('photocraft', 'apps/photocraft', ['photocraft-ui-egui']),
+    pkg('paragon-photo', 'apps/photocraft', ['photocraft-ui-egui']),
 ]
 
 
