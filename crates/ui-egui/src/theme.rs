@@ -1003,13 +1003,20 @@ fn ui_fonts(ctx: &egui::Context, ui_language: &str) -> UiFonts<'static> {
         None => log::error!("bundled font {name} is unavailable; using the default UI font"),
     };
     let bundled = |bytes: &'static [u8]| (!bytes.is_empty()).then(|| FontData::from_static(bytes));
+    // Paragon Photo: Bebas Neue sets all interface text (the Paragon PR7-S plugin's "Bebas everywhere"), at the
+    // 1.3x that plugin gives it (its `bebasScale`: Bebas is all capitals, so it is set larger to read at the same
+    // line). It leads every proportional family; Inter behind it draws what Bebas lacks (lower-case accents beyond
+    // Latin, other scripts). Number fields and code keep JetBrains Mono, whose digits line up.
+    let display = FontRef::named(DISPLAY);
+    let bebas = bundled(photocraft_text::fonts::BEBAS_NEUE_REGULAR.as_slice()).map(|mut data| {
+        data.tweak.scale = BEBAS_SCALE;
+        data
+    });
+    add("BebasNeue", bebas, &[proportional.clone(), medium.clone(), semibold.clone(), display.clone()]);
     // Each family's own face first, then Inter behind the named weights.
     add("Inter-Medium", bundled(photocraft_text::fonts::INTER_MEDIUM.as_slice()), std::slice::from_ref(&medium));
     add("Inter-SemiBold", bundled(photocraft_text::fonts::INTER_SEMIBOLD.as_slice()), std::slice::from_ref(&semibold));
     add("JetBrainsMono", bundled(photocraft_text::fonts::JETBRAINS_MONO_REGULAR.as_slice()), std::slice::from_ref(&monospace));
-    // The Paragon display face for titles (`display`), with Inter behind it for what it lacks.
-    let display = FontRef::named(DISPLAY);
-    add("BebasNeue", bundled(photocraft_text::fonts::BEBAS_NEUE_REGULAR.as_slice()), std::slice::from_ref(&display));
     add("Inter", bundled(photocraft_text::fonts::INTER_REGULAR.as_slice()), &[proportional.clone(), medium.clone(), semibold.clone(), display.clone()]);
     // The monochrome emoji face egui's `default_fonts` would add; the last resort after the system fonts.
     let mut emoji = Emoji::default();
@@ -1231,10 +1238,13 @@ pub fn mono(size: f32) -> FontId {
 /// The Paragon family's display face (Bebas Neue, upper case by design) for titles the app draws.
 const DISPLAY: &str = "display";
 
-/// Bebas Neue at `size`. The Paragon PR7-S plugin draws it 1.3× the size Inter would take for the
-/// same line (its `bebasScale`), so pass the Inter size and this scales it.
+/// How much larger Bebas Neue is set than the size asked for (the Paragon PR7-S plugin's `bebasScale`): a tweak
+/// on the face itself, so every text style, label and painter size gets it once.
+const BEBAS_SCALE: f32 = 1.3;
+
+/// Bebas Neue at `size` (the face carries its own 1.3x).
 pub fn display(size: f32) -> FontId {
-    FontId::new(size * 1.3, FontFamily::Name(DISPLAY.into()))
+    FontId::new(size, FontFamily::Name(DISPLAY.into()))
 }
 
 /// Apply a theme to egui's global style and publish its tokens.

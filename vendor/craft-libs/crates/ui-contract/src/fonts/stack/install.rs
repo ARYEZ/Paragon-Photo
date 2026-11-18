@@ -41,9 +41,10 @@ const LINE_PROBE_SIZE: f32 = 100.0;
 /// Neue). Without it, titles keep their slot's family.
 pub(crate) const DISPLAY: &str = "display";
 
-/// Paragon Photo: how much larger the display face is set than the role's size, so its capitals match the
-/// line they replace (the Paragon PR7-S plugin's `bebasScale`).
-pub(crate) const DISPLAY_SCALE: f32 = 1.3;
+/// Paragon Photo: how much larger the display face is set than the role's size. 1: Paragon Photo's display face
+/// carries its own scale (a tweak on the face, the Paragon PR7-S plugin's `bebasScale` of 1.3), so a title set in
+/// it is not scaled twice.
+pub(crate) const DISPLAY_SCALE: f32 = 1.0;
 
 /// What text layout and control sizing read of the stack last installed in a context, read once per layout or pass.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]

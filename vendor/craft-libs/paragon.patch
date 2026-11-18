@@ -24,7 +24,7 @@ diff -ruN a/crates/ui-contract/src/fonts/mod.rs ui-contract/src/fonts/mod.rs
  use crate::runtime::frame;
 diff -ruN a/crates/ui-contract/src/fonts/stack/install.rs ui-contract/src/fonts/stack/install.rs
 --- a/crates/ui-contract/src/fonts/stack/install.rs	2026-11-18 13:58:19.139725881 +0000
-+++ b/crates/ui-contract/src/fonts/stack/install.rs	2026-11-18 13:55:37.748726260 +0000
++++ b/crates/ui-contract/src/fonts/stack/install.rs	2026-11-18 17:26:08.856726863 +0000
 @@ -23,6 +23,8 @@
      system_ui: bool,
      /// Whether that stack has the semibold family.
@@ -34,7 +34,7 @@ diff -ruN a/crates/ui-contract/src/fonts/stack/install.rs ui-contract/src/fonts/
      /// The line height per point of text of the face that leads the proportional family, measured at install.
      line_ratio: f32,
      /// The provider that serves the stack's faces after the system fonts, swapped in place by every install.
-@@ -35,6 +37,14 @@
+@@ -35,6 +37,15 @@
  /// height is negligible in the ratio.
  const LINE_PROBE_SIZE: f32 = 100.0;
  
@@ -42,14 +42,15 @@ diff -ruN a/crates/ui-contract/src/fonts/stack/install.rs ui-contract/src/fonts/
 +/// Neue). Without it, titles keep their slot's family.
 +pub(crate) const DISPLAY: &str = "display";
 +
-+/// Paragon Photo: how much larger the display face is set than the role's size, so its capitals match the
-+/// line they replace (the Paragon PR7-S plugin's `bebasScale`).
-+pub(crate) const DISPLAY_SCALE: f32 = 1.3;
++/// Paragon Photo: how much larger the display face is set than the role's size. 1: Paragon Photo's display face
++/// carries its own scale (a tweak on the face, the Paragon PR7-S plugin's `bebasScale` of 1.3), so a title set in
++/// it is not scaled twice.
++pub(crate) const DISPLAY_SCALE: f32 = 1.0;
 +
  /// What text layout and control sizing read of the stack last installed in a context, read once per layout or pass.
  #[derive(Clone, Copy, Debug, Default, PartialEq)]
  pub(crate) struct StackFacts {
-@@ -43,13 +53,15 @@
+@@ -43,13 +54,15 @@
      pub system_ui: bool,
      /// Whether the semibold family exists.
      pub semibold: bool,
@@ -66,7 +67,7 @@ diff -ruN a/crates/ui-contract/src/fonts/stack/install.rs ui-contract/src/fonts/
  }
  
  /// Installs the stack kept for `ctx` once the OS face has resolved: the first pass after it resolves.
-@@ -99,12 +111,14 @@
+@@ -99,12 +112,14 @@
          load(ctx, self.checked_definitions());
          let system_ui = self.has_system_ui();
          let semibold = self.definitions.families.contains_key(&FontFamily::Name(SEMIBOLD.into()));
