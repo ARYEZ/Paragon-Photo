@@ -1,9 +1,9 @@
 # Paragon Photo: a trimmed copy of craft-libs' workspace manifest at a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9, for the one
-# vendored crate (crates/ui-contract). Every other craft crate comes from git at that revision.
+# vendored crates (crates/ui-contract, crates/ui-widgets). Every other craft crate comes from git at that revision.
 # See vendor/craft-libs/VENDORED.md.
 [workspace]
 resolver = "3"
-members = ["crates/ui-contract"]
+members = ["crates/ui-contract", "crates/ui-widgets"]
 exclude = []
 
 [workspace.package]
@@ -209,7 +209,7 @@ craft-ui-panels = { git = "https://github.com/storytold/craft-libs", rev = "a6b9
 craft-ui-patterns = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
 craft-ui-shell = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
 craft-ui-test-kit = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
-craft-ui-widgets = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
+craft-ui-widgets = { path = "crates/ui-widgets" }
 craft-ui-macros = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
 craft-update = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }
 craft-vcard = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }

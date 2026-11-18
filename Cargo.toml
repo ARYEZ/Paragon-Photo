@@ -325,6 +325,7 @@ opt-level = 3
 # Paragon Photo's changes; see vendor/craft-libs/VENDORED.md for how to update it.
 [patch."https://github.com/storytold/craft-libs"]
 craft-ui-contract = { path = "vendor/craft-libs/crates/ui-contract" }
+craft-ui-widgets = { path = "vendor/craft-libs/crates/ui-widgets" }
 
 [patch.crates-io]
 krilla = { git = "https://github.com/storytold/craft-libs", rev = "a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9" }

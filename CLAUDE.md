@@ -29,8 +29,9 @@ architecture, the never-crash rules, "everything is a command", the tests) and `
   The themes are `crates/ui-egui/src/themes/paragon-*.json` (OBSIDIAN is the default dark theme,
   AURORA the default light one).
 - **Vendored craft-libs:** `vendor/craft-libs/crates/ui-contract` is craft's UI contract with the
-  Paragon painting (gradients, piano keys, Bebas Neue titles), swapped in by `[patch]` in the root
-  `Cargo.toml`. Read `vendor/craft-libs/VENDORED.md` first. Keep `paragon.patch` in step with any
+  Paragon painting (gradients, piano keys, neon knobs, satin grain, Bebas Neue), and
+  `vendor/craft-libs/crates/ui-widgets` has one measuring fix; both are swapped in by `[patch]` in
+  the root `Cargo.toml`. Read `vendor/craft-libs/VENDORED.md` first. Keep `paragon.patch` in step with any
   change there, and keep it on the same revision as the rest of craft-libs. The rebrand script
   skips `vendor/`.
 - **Web build:** `apps/photocraft-web*` are excluded from the workspace; leave their sources.

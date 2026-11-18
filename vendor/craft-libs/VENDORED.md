@@ -2,16 +2,16 @@
 
 Paragon Photo paints the Paragon family's finishes (OBSIDIAN, AURORA) into craft's widgets. craft
 draws its buttons, toggles, tabs, sliders and surfaces in `craft-ui-contract`, which a theme file
-can only recolour, so that one crate is vendored here with Paragon Photo's changes. Every other
-craft crate still comes from git.
+can only recolour, so that crate is vendored here with Paragon Photo's changes, and
+`craft-ui-widgets` for one measuring fix. Every other craft crate still comes from git.
 
 - **Upstream:** https://github.com/storytold/craft-libs (MIT OR Apache-2.0; `LICENSE-MIT`,
   `LICENSE-APACHE` here).
 - **Revision:** `a6b9d9c986f7c4c399632d72d9a4a8c8ea0b86e9`, the revision the root `Cargo.toml`
   pins for every craft crate. The vendored crate must stay on the same revision as the rest.
-- **What's here:** `crates/ui-contract` (patched), and a trimmed copy of craft-libs' workspace
-  `Cargo.toml` (it lists only that crate and takes every other craft crate from git at the
-  revision above). The root `Cargo.toml` swaps it in with
+- **What's here:** `crates/ui-contract` and `crates/ui-widgets` (patched), and a trimmed copy of
+  craft-libs' workspace `Cargo.toml` (it lists only those crates and takes every other craft crate
+  from git at the revision above). The root `Cargo.toml` swaps it in with
   `[patch."https://github.com/storytold/craft-libs"]` and excludes `vendor` from the workspace.
 - **Paragon Photo's changes:** `paragon.patch`, the diff from the pristine crate. In short:
   - `src/primitives/paragon.rs` (new): fills of the finishes' exact colours paint as the family
@@ -25,13 +25,16 @@ craft crate still comes from git.
   - `src/fonts/stack/install.rs`, `src/fonts/stack.rs`, `src/fonts/mod.rs`, `src/style/tokens.rs`:
     Title and Heading text in the app's `display` family (Bebas Neue) at 1.3×, when it has one.
   - `Cargo.toml`: `craft-font-catalog` from git (it was a sibling path).
+  - `crates/ui-widgets/src/text/text_field.rs`: a mono field (the hex field) is measured in the mono
+    role, as it is drawn; measured in its own role it came out too narrow with Bebas Neue's narrow
+    digits (an upstream bug Inter's wide digits hid).
 
 ## Updating to a new craft-libs revision
 
 When upstream PhotoCraft moves its craft-libs pin (after `git merge upstream/main`, the root
 `Cargo.toml` names a new `rev`):
 
-1. Put the new revision's `crates/ui-contract` here in place of the old one. Cargo fetches it to
+1. Put the new revision's `crates/ui-contract` and `crates/ui-widgets` here in place of the old ones. Cargo fetches it to
    `~/.cargo/git/checkouts/craft-libs-*/<short rev>/` once the root `Cargo.toml` names it
    (`cargo fetch`), or clone craft-libs at that revision.
 2. Apply Paragon Photo's changes: `git apply --directory=vendor/craft-libs vendor/craft-libs/paragon.patch`

@@ -558,3 +558,19 @@ diff -ruN a/crates/ui-contract/src/style/tokens.rs ui-contract/src/style/tokens.
          let slot = if strong && style.font == craft_theme::FontSlot::Ui { craft_theme::FontSlot::UiSemibold } else { style.font };
          let family = match slot {
              craft_theme::FontSlot::Mono => FontFamily::Monospace,
+diff -ruN a/crates/ui-widgets/src/text/text_field.rs ui-widgets/src/text/text_field.rs
+--- a/crates/ui-widgets/src/text/text_field.rs	2026-11-18 19:42:02.829516983 +0000
++++ b/crates/ui-widgets/src/text/text_field.rs	2026-11-18 19:42:02.880802543 +0000
+@@ -285,7 +285,11 @@
+             None => Cow::Borrowed(""),
+         };
+         let text = if sample.is_empty() { self.options.placeholder.as_ref().map_or("", Label::as_str) } else { sample.as_ref() };
+-        let mut size = cx.field_text(&TextRun::new(text).role(self.options.role));
++        // Paragon Photo: a mono field draws its text in the mono role's face and size (`TextInput::mono`), so it is
++        // measured in it too; measured in its own role, a field of digits came out too narrow wherever the UI face's
++        // digits are narrower than the mono face's (Bebas Neue: the Color panel's hex field clipped "000000").
++        let role = if self.options.mono { crate::style::TypeRole::Mono } else { self.options.role };
++        let mut size = cx.field_text(&TextRun::new(text).role(role));
+         // A multi-line field takes the height of its lines, and grows past them with longer text, as the editor does.
+         if let Some(lines) = self.options.lines.filter(|_| self.options.multiline()) {
+             let line = cx.layout(&TextRun::new("M").role(self.options.role)).size().y;
