@@ -1003,9 +1003,8 @@ fn ui_fonts(ctx: &egui::Context, ui_language: &str) -> UiFonts<'static> {
         None => log::error!("bundled font {name} is unavailable; using the default UI font"),
     };
     let bundled = |bytes: &'static [u8]| (!bytes.is_empty()).then(|| FontData::from_static(bytes));
-    // Paragon Photo: Bebas Neue sets all interface text (the Paragon PR7-S plugin's "Bebas everywhere"), at the
-    // 1.3x that plugin gives it (its `bebasScale`: Bebas is all capitals, so it is set larger to read at the same
-    // line). It leads every proportional family; Inter behind it draws what Bebas lacks (lower-case accents beyond
+    // Paragon Photo: Bebas Neue sets all interface text (the Paragon PR7-S plugin's "Bebas everywhere"). It leads
+    // every proportional family; Inter behind it draws what Bebas lacks (lower-case accents beyond
     // Latin, other scripts). Number fields and code keep JetBrains Mono, whose digits line up.
     let display = FontRef::named(DISPLAY);
     let bebas = bundled(photocraft_text::fonts::BEBAS_NEUE_REGULAR.as_slice()).map(|mut data| {
@@ -1238,9 +1237,12 @@ pub fn mono(size: f32) -> FontId {
 /// The Paragon family's display face (Bebas Neue, upper case by design) for titles the app draws.
 const DISPLAY: &str = "display";
 
-/// How much larger Bebas Neue is set than the size asked for (the Paragon PR7-S plugin's `bebasScale`): a tweak
-/// on the face itself, so every text style, label and painter size gets it once.
-const BEBAS_SCALE: f32 = 1.3;
+/// How much larger Bebas Neue is set than the size asked for: a tweak on the face itself, so every text style,
+/// label and painter size gets it once. The Paragon PR7-S plugin sets it at 1.3 (`bebasScale`), in a layout made
+/// for it; here the rows are laid out for Inter, whose line height Bebas matches at 1 (1.20 em to 1.21 em, capitals
+/// 0.70 em to 0.73 em), and 1.3 overflowed them (the Layers panel's Opacity and Fill fields collapsed). All
+/// capitals, it reads larger than Inter at the same size.
+const BEBAS_SCALE: f32 = 1.0;
 
 /// Bebas Neue at `size` (the face carries its own 1.3x).
 pub fn display(size: f32) -> FontId {
