@@ -648,6 +648,13 @@ pub(crate) fn surface_look_shapes(
 ) -> Vec<egui::Shape> {
     let fill = state.resolve(&look.fill);
     let radius = look.corners.apply(look.radius, direction);
+    // Paragon Photo: a button's border is a layer of its own, painted after its surface, so a piano key (an outlined
+    // button at rest, a raised or hovered one) or a knob is decided here, from the fill and border together, and
+    // replaces both (see `paragon`).
+    let border = look.border.as_ref().map(|border| state.resolve(border).egui());
+    if let Some((shapes, false)) = super::paragon::surface(rect, radius, fill.egui(), border, 1.0 / ppp) {
+        return shapes;
+    }
     let mut shapes = match look.kind_in(state) {
         Some(kind) => {
             let mut style = surface_style(tokens, kind);

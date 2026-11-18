@@ -95,7 +95,7 @@ diff -ruN a/crates/ui-contract/src/fonts/stack.rs ui-contract/src/fonts/stack.rs
  use super::coverage::script_sample;
 diff -ruN a/crates/ui-contract/src/primitives/draw.rs ui-contract/src/primitives/draw.rs
 --- a/crates/ui-contract/src/primitives/draw.rs	2026-11-18 13:58:19.141404998 +0000
-+++ b/crates/ui-contract/src/primitives/draw.rs	2026-11-18 13:55:22.646077181 +0000
++++ b/crates/ui-contract/src/primitives/draw.rs	2026-11-18 16:45:48.607088485 +0000
 @@ -569,6 +569,18 @@
      fn paint(&self, shape: &PaintShape, fill: Option<Color32>, stroke: Option<Stroke>) {
          let fill_color = fill.unwrap_or(Color32::TRANSPARENT);
@@ -115,6 +115,20 @@ diff -ruN a/crates/ui-contract/src/primitives/draw.rs ui-contract/src/primitives
          let shape = match shape {
              PaintShape::Rect(rect, radius) => Shape::Rect(RectShape::new(*rect, *radius, fill_color, stroke, StrokeKind::Inside)),
              PaintShape::Circle(center, radius) => Shape::Circle(CircleShape { center: *center, radius: *radius, fill: fill_color, stroke }),
+@@ -636,6 +648,13 @@
+ ) -> Vec<egui::Shape> {
+     let fill = state.resolve(&look.fill);
+     let radius = look.corners.apply(look.radius, direction);
++    // Paragon Photo: a button's border is a layer of its own, painted after its surface, so a piano key (an outlined
++    // button at rest, a raised or hovered one) or a knob is decided here, from the fill and border together, and
++    // replaces both (see `paragon`).
++    let border = look.border.as_ref().map(|border| state.resolve(border).egui());
++    if let Some((shapes, false)) = super::paragon::surface(rect, radius, fill.egui(), border, 1.0 / ppp) {
++        return shapes;
++    }
+     let mut shapes = match look.kind_in(state) {
+         Some(kind) => {
+             let mut style = surface_style(tokens, kind);
 diff -ruN a/crates/ui-contract/src/primitives/mod.rs ui-contract/src/primitives/mod.rs
 --- a/crates/ui-contract/src/primitives/mod.rs	2026-11-18 13:58:19.142140262 +0000
 +++ b/crates/ui-contract/src/primitives/mod.rs	2026-11-18 16:23:13.208943319 +0000
