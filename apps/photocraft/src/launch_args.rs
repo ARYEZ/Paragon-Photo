@@ -6,7 +6,7 @@
 //! `--present-mode` or `--frame-latency`. A value never starts with `-` (write `--opt=-value`),
 //! except for negative numbers, and a file whose name starts with `-` goes after `--`.
 //!
-//! The control and automation flags are `photocraft-automation`'s, shared with `photocraft-cli`.
+//! The control and automation flags are `photocraft-automation`'s, shared with `paragon-photo-cli`.
 //! Only the desktop app reads the automation roots from `PHOTOCRAFT_AUTOMATION_*_ROOT` (#1551).
 
 use std::ffi::OsString;
@@ -21,11 +21,11 @@ use photocraft_automation::args::{AutomationArgs, ControlArgs, blank_env_is_unse
 
 use crate::presentation;
 
-/// Opens PhotoCraft with the given files
+/// Opens Paragon Photo with the given files
 #[derive(Parser)]
-#[command(name = "photocraft", version = photocraft_engine::build_info::long_version_static(), after_help = ENVIRONMENT)]
+#[command(name = "paragon-photo", version = photocraft_engine::build_info::long_version_static(), after_help = ENVIRONMENT)]
 pub(crate) struct LaunchArgs {
-    /// Files to open. On Windows and Linux they open as new tabs in the PhotoCraft already running.
+    /// Files to open. On Windows and Linux they open as new tabs in the Paragon Photo already running.
     /// Put `--` before a name that starts with `-`
     pub(crate) files: Vec<PathBuf>,
     /// Start with the CPU renderer for this launch (after a graphics driver crash)
@@ -35,7 +35,7 @@ pub(crate) struct LaunchArgs {
     /// or off is off; empty is unset)
     #[arg(long, env = "PHOTOCRAFT_IN_WINDOW_MENUS", value_parser = FalseyValueParser::new())]
     pub(crate) in_window_menus: bool,
-    /// Windows and Linux: start a separate PhotoCraft instead of opening the files in the one
+    /// Windows and Linux: start a separate Paragon Photo instead of opening the files in the one
     /// already running
     #[arg(long)]
     pub(crate) new_instance: bool,
@@ -164,7 +164,7 @@ pub(crate) fn parse(mut cmd: Command, args: impl IntoIterator<Item = OsString>) 
             !(options && a.to_str().is_some_and(|s| s.starts_with("-psn_")))
         })
         .collect();
-    let argv = std::iter::once(OsString::from("photocraft")).chain(args.iter().cloned());
+    let argv = std::iter::once(OsString::from("paragon-photo")).chain(args.iter().cloned());
     let matches = cmd.try_get_matches_from_mut(argv).map_err(|e| name_env_vars(e, &cmd, &args))?;
     let mut launch = LaunchArgs::from_arg_matches(&matches)?;
     // Only the control server reads a token, so a stale exported pair doesn't stop a launch.

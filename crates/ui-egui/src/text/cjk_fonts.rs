@@ -1,12 +1,12 @@
-//! PhotoCraft's inputs to the framework's UI font stack (`craft::ui::fonts::UiFonts`).
+//! Paragon Photo's inputs to the framework's UI font stack (`craft::ui::fonts::UiFonts`).
 //!
 //! The stack orders the craft-fonts faces by UI language, and `OnDemandFonts` reads an installed
 //! system font the first time a visible character of a script has no glyph. What stays here is
-//! what only PhotoCraft knows: which craft-fonts faces this build embeds
+//! what only Paragon Photo knows: which craft-fonts faces this build embeds
 //! ([`photocraft_text::craft_fonts`], empty without `CRAFT_FONTS_DIR`; the web build embeds none),
 //! and the OS locale.
 //!
-//! PhotoCraft's baseline for shared Han and kana is the craft manifest's first Japanese face
+//! Paragon Photo's baseline for shared Han and kana is the craft manifest's first Japanese face
 //! (Shippori Mincho): [`craft_faces`] passes the manifest in order, and the stack keeps that order
 //! while neither the UI language nor the OS locale names a Han script. An explicit ja/ko/zh
 //! preference puts its own script's face first.

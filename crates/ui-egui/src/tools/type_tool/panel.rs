@@ -93,7 +93,7 @@ fn character_controls(app: &mut PhotocraftApp, ui: &mut egui::Ui, unit: DocUnit)
 fn paragraph_controls(app: &mut PhotocraftApp, ui: &mut egui::Ui, unit: DocUnit) {
     let shown = values::paragraph_values(app);
     let vertical = values::orientation(app) == TextOrientation::Vertical;
-    // PhotoCraft's layout does not hyphenate (#6710): the check box stays hidden.
+    // Paragon Photo's layout does not hyphenate (#6710): the check box stays hidden.
     let out = ParagraphControls::new(tl!("Paragraph"), &shown).unit(unit).point_text(values::point_text(app)).vertical(vertical).hyphenate(false).show(ui);
     values::apply_paragraph_events(app, &out.edits);
 }

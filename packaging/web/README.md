@@ -1,4 +1,4 @@
-# Hosting PhotoCraft for the web
+# Hosting Paragon Photo for the web
 
 `photocraft-web-<version>.zip` (from the GitHub release, or `packaging/web/package.sh`) holds a
 static site in `photocraft-web-<version>/`:
@@ -57,13 +57,13 @@ a builder with more memory, pass `--build-arg CARGO_PROFILE_WASM_RELEASE_LTO=fat
 For a public deployment, put an HTTPS reverse proxy or your hosting platform's TLS endpoint
 in front of container port 8080. With a reverse proxy on the same host, bind only loopback
 (`-p 127.0.0.1:8080:8080`); with a proxy container, connect both through a Docker network.
-HTTPS enables WebGPU and browser clipboard APIs. If hosting under `/photocraft/`, redirect
-`/photocraft` to `/photocraft/` and strip that prefix when proxying to the container. Relative
+HTTPS enables WebGPU and browser clipboard APIs. If hosting under `/paragon-photo/`, redirect
+`/paragon-photo` to `/paragon-photo/` and strip that prefix when proxying to the container. Relative
 asset URLs then work without rebuilding. For example, in an existing HTTPS NGINX server:
 
 ```nginx
-location = /photocraft { return 301 /photocraft/; }
-location /photocraft/ {
+location = /paragon-photo { return 301 /paragon-photo/; }
+location /paragon-photo/ {
     proxy_pass http://127.0.0.1:8080/;
 }
 ```
@@ -106,7 +106,7 @@ without such a cap.
 
 The app is built with the `wasm-release` Cargo profile (fat LTO, size-optimized code with the
 pixel and file-decoding crates kept at speed) plus `wasm-opt -Oz`, and stores the bundled fonts
-(PhotoCraft's and egui's) and the translation catalogs compressed, unpacked on first use.
+(Paragon Photo's and egui's) and the translation catalogs compressed, unpacked on first use.
 
 ## Any path works
 
@@ -125,7 +125,7 @@ their names and need revalidation.
   are gzip already, and the page inflates them). Their extension is one servers don't
   know, so the usual result, `application/octet-stream` and no compression, is right.
 - **Missing files are 404s:** a host that answers every unknown path with `index.html` (a
-  single-page-app fallback) hides a failed upload. PhotoCraft notices and says the download
+  single-page-app fallback) hides a failed upload. Paragon Photo notices and says the download
   failed, but a 404 is clearer in the server's logs.
 - **Compression:** turn on gzip or Brotli for `.wasm`, `.js` and `.html`. It matters little for
   the download, since the parts are compressed already; it shrinks the two `.js` files and the
@@ -135,7 +135,7 @@ their names and need revalidation.
   `app/photocraft-web.js` and `app/parts.txt`. The sample `_headers` and `.htaccess` do this.
 - **HTTPS:** WebGPU (and the clipboard) only work in a secure context, which means `https://`
   or `http://localhost`. Over plain HTTP elsewhere, the app falls back to WebGL2.
-- **No special isolation headers:** PhotoCraft doesn't use `SharedArrayBuffer`, so it doesn't
+- **No special isolation headers:** Paragon Photo doesn't use `SharedArrayBuffer`, so it doesn't
   need `Cross-Origin-Opener-Policy` or `Cross-Origin-Embedder-Policy`. If your site already sends
   COEP `require-corp`, also send `Cross-Origin-Resource-Policy: same-origin` (or `cross-origin`
   when the files live on a CDN) on the app's files.
@@ -143,7 +143,7 @@ their names and need revalidation.
 nginx example:
 
 ```nginx
-location /photocraft/ {
+location /paragon-photo/ {
     types { application/wasm wasm; text/javascript js; text/html html; }
     gzip on;
     gzip_types application/wasm text/javascript text/html;
@@ -195,7 +195,7 @@ fetches them with `fetch()`, so a Content Security Policy needs them allowed by 
 ```html
 <iframe
   src="https://example.com/photocraft/"
-  title="PhotoCraft image editor"
+  title="Paragon Photo image editor"
   style="width: 100%; height: 720px; border: 0;"
   allow="fullscreen; clipboard-read; clipboard-write"
   allowfullscreen>
@@ -215,7 +215,7 @@ fetches them with `fetch()`, so a Content Security Policy needs them allowed by 
 
 ## Renderer selection and fallback flags
 
-PhotoCraft renders with wgpu. It uses **WebGPU** when the browser has it and falls back to
+Paragon Photo renders with wgpu. It uses **WebGPU** when the browser has it and falls back to
 **WebGL2** on its own. URL query flags override this, and they work on the iframe `src` too:
 
 | Flag | Effect |

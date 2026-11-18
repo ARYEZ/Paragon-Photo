@@ -9,13 +9,13 @@
 # Wayland, xkbcommon and Vulkan at runtime; the freedesktop runtime has all of them, and the
 # GPU driver comes from its org.freedesktop.Platform.GL extension.
 #
-# ai.storyteller.photocraft.yml (same directory) is the from-source manifest for Flathub. Keep
+# io.github.aryez.paragonphoto.yml (same directory) is the from-source manifest for Flathub. Keep
 # runtime-version and finish-args identical in both (packaging-lint checks this).
-id: ai.storyteller.photocraft
+id: io.github.aryez.paragonphoto
 runtime: org.freedesktop.Platform
 runtime-version: '26.08'
 sdk: org.freedesktop.Sdk
-command: photocraft
+command: paragon-photo
 finish-args:
   # The shared updater inspects and updates this installation via flatpak-spawn --host.
   - --talk-name=org.freedesktop.Flatpak
@@ -95,7 +95,7 @@ modules:
           - '  esac'
           - 'fi'
           - 'exec "/app/libexec/cups/${0##*/}" "$@"'
-  - name: photocraft
+  - name: paragon-photo
     buildsystem: simple
     # The release binaries were built with the interface translations at the commit in
     # craft-i18n.rev (the craft-i18n source below); nothing here compiles, so this records which
@@ -103,16 +103,16 @@ modules:
     # keeps both equal to the pin).
     build-options:
       env:
-        CRAFT_I18N_DIR: /run/build/photocraft/craft-i18n
+        CRAFT_I18N_DIR: /run/build/paragon-photo/craft-i18n
     build-commands:
-      - install -Dm755 bin/photocraft /app/bin/photocraft
-      - install -Dm755 bin/photocraft-cli /app/bin/photocraft-cli
-      - install -Dm644 share/applications/ai.storyteller.photocraft.desktop /app/share/applications/ai.storyteller.photocraft.desktop
+      - install -Dm755 bin/paragon-photo /app/bin/paragon-photo
+      - install -Dm755 bin/paragon-photo-cli /app/bin/paragon-photo-cli
+      - install -Dm644 share/applications/io.github.aryez.paragonphoto.desktop /app/share/applications/io.github.aryez.paragonphoto.desktop
       # .pcraft, .psb and .qoi; the runtime's shared-mime-info already knows PSD and the rest.
-      - install -Dm644 share/mime/packages/ai.storyteller.photocraft.xml /app/share/mime/packages/ai.storyteller.photocraft.xml
+      - install -Dm644 share/mime/packages/io.github.aryez.paragonphoto.xml /app/share/mime/packages/io.github.aryez.paragonphoto.xml
       # Already has the release's version and date substituted by package.sh.
-      - install -Dm644 share/metainfo/ai.storyteller.photocraft.metainfo.xml /app/share/metainfo/ai.storyteller.photocraft.metainfo.xml
-      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/photocraft /app/share/doc/
+      - install -Dm644 share/metainfo/io.github.aryez.paragonphoto.metainfo.xml /app/share/metainfo/io.github.aryez.paragonphoto.metainfo.xml
+      - mkdir -p /app/share/icons /app/share/doc && cp -R share/icons/hicolor /app/share/icons/ && cp -R share/doc/paragon-photo /app/share/doc/
     sources:
       - type: dir
         path: stage

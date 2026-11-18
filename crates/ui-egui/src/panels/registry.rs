@@ -1,4 +1,4 @@
-//! The panel registry: every panel PhotoCraft shows in its workspace, with its name, icon, size policy, body and
+//! The panel registry: every panel Paragon Photo shows in its workspace, with its name, icon, size policy, body and
 //! panel menu, and the built-in workspaces those panels are arranged in.
 //!
 //! The dock (`panel_docking`) reads a panel's spec and body from here; the command sources read each panel's menu

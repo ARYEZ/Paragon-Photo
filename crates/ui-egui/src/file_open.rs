@@ -86,7 +86,7 @@ pub(crate) fn folder_error(path: &std::path::Path) -> Option<String> {
 
 /// Log, once per drag, that files are being dragged over the window (`hovering` of them). Together
 /// with the line `open_dropped` logs for a drop, it shows how far a drag got: nothing logged
-/// means the operating system never offered the files to PhotoCraft (a window running as
+/// means the operating system never offered the files to Paragon Photo (a window running as
 /// administrator is not offered files from a File Explorer that isn't, #10492).
 pub(crate) fn log_drag_over(ctx: &egui::Context, hovering: usize) {
     let id = egui::Id::unique("log-drag-over");
@@ -378,7 +378,7 @@ impl PhotocraftApp {
     /// gradients) always go to their libraries. A native drop carries an absolute path, read in
     /// bounded reads (#375); a drop without a path carries its bytes.
     pub(crate) fn open_dropped(&mut self, ctx: &egui::Context, files: Vec<OsFile>, to: DropTo) {
-        // Files dragged in from another app's window bring PhotoCraft to the front and give it the keyboard, as
+        // Files dragged in from another app's window bring Paragon Photo to the front and give it the keyboard, as
         // Photoshop does, instead of leaving it behind the source (#5687). A drop on a floating panel's window
         // brings the main window.
         ctx.send_viewport_cmd_to(egui::ViewportId::ROOT, egui::ViewportCommand::Focus);

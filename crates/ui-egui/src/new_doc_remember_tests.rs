@@ -78,7 +78,7 @@ fn create(h: &mut AppHarness, edit: impl FnOnce(&mut DocumentOptions)) -> Dialog
 #[test]
 fn new_document_starts_from_the_last_settings() {
     let mut h = harness(app());
-    // The first time: PhotoCraft's defaults (1920 × 1080, 72 ppi).
+    // The first time: Paragon Photo's defaults (1920 × 1080, 72 ppi).
     let first = h.state_mut().new_document_options();
     assert_eq!((first.size, first.pixels_per_inch, first.name.as_str()), (PixelSize::new(1920, 1080), 72.0, "Untitled-1"));
     create(&mut h, |o| {

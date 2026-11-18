@@ -1,5 +1,5 @@
 //! What the Brush Settings panel's events do: section events edit the brush copy the panel works
-//! on, buttons run the commands PhotoCraft's own palette runs. The brush edits leave as one
+//! on, buttons run the commands Paragon Photo's own palette runs. The brush edits leave as one
 //! `tools.setBrush` per gesture (`brush_panel::commit_gesture`).
 
 use craft::draw::ui::brush_settings::{BrushPanelAction, BrushSectionEvent};

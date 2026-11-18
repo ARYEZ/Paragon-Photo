@@ -1,13 +1,13 @@
-//! The craft framework's runtime on PhotoCraft's context, hosted through `craft::ui::shell::embed`
+//! The craft framework's runtime on Paragon Photo's context, hosted through `craft::ui::shell::embed`
 //! (craft-libs docs/craft-framework.md 2.2, "Host the runtime from your own eframe `App`"):
-//! installed once with PhotoCraft's fonts, then given PhotoCraft's preferences before each frame.
+//! installed once with Paragon Photo's fonts, then given Paragon Photo's preferences before each frame.
 //!
 //! eframe's `ui` would also call `embed::before_ui`, which needs craft-ui-shell's `app` feature;
-//! that feature turns on egui's `default_fonts`, which PhotoCraft leaves out (it ships them
-//! deflated). Its two jobs are PhotoCraft's own here: `work_area::fit_window` fits the window to
-//! its monitor, and the Windows window comes from PhotoCraft's title bar code.
+//! that feature turns on egui's `default_fonts`, which Paragon Photo leaves out (it ships them
+//! deflated). Its two jobs are Paragon Photo's own here: `work_area::fit_window` fits the window to
+//! its monitor, and the Windows window comes from Paragon Photo's title bar code.
 //!
-//! The `craft` facade features PhotoCraft enables for this: `text`, `text-font-picker`,
+//! The `craft` facade features Paragon Photo enables for this: `text`, `text-font-picker`,
 //! `font-manager`, `menu`, `timeline` and `print`, plus `dialogs` on native targets.
 
 use std::collections::BTreeMap;
@@ -44,7 +44,7 @@ use crate::theme::AppTheme;
 /// context). Only `theme::install_runtime` calls it.
 pub(crate) fn install(ctx: &egui::Context, fonts: &UiFonts<'_>, frame: Option<Decision>) {
     // The wheel zooms with the canvas's own keys and scrolls sideways with Shift or Command, as
-    // PhotoCraft's input always has.
+    // Paragon Photo's input always has.
     let wheel = WheelModifiers::new(egui::Modifiers::NONE, egui::Modifiers::SHIFT | egui::Modifiers::COMMAND);
     let wake = ctx.clone();
     let mut spec = InstallSpec::new(ShellInfo::default().backend(Backend::from_env()), Arc::new(SystemWindows))
@@ -73,7 +73,7 @@ pub(crate) fn install(ctx: &egui::Context, fonts: &UiFonts<'_>, frame: Option<De
 #[cfg(test)]
 type TestBody = Box<dyn FnMut(&mut egui::Ui, &mut PhotocraftApp)>;
 
-/// What PhotoCraft keeps for the framework: the `Host` its components read services from, and
+/// What Paragon Photo keeps for the framework: the `Host` its components read services from, and
 /// the host of the framework dialogs it opens.
 pub struct Framework {
     /// A test harness's own pass body, run in place of the app's frame (see [`BuildApp`]).
@@ -109,7 +109,7 @@ pub struct Framework {
     pub(crate) delivered: Vec<Fired>,
     /// The suite's theme selection, shared with the other Craft apps.
     suite: SuiteClient,
-    /// The theme slots and mode as PhotoCraft's preferences and the suite last agreed on them.
+    /// The theme slots and mode as Paragon Photo's preferences and the suite last agreed on them.
     synced: Option<ThemePrefs>,
     /// The preferences' rev `synced` was taken at: with no suite move since, nothing to sync.
     synced_rev: Option<u64>,
@@ -156,7 +156,7 @@ impl ThemePrefs {
         ThemePrefs { mode: i.appearance_mode, dark: i.dark_theme.clone(), light: i.light_theme.clone() }
     }
 
-    /// What the suite shows: its chosen fields, else PhotoCraft's defaults.
+    /// What the suite shows: its chosen fields, else Paragon Photo's defaults.
     fn of_suite(choice: &SuiteChoice) -> Self {
         let defaults = defaults();
         let shown = choice.with_defaults(&defaults);
@@ -191,12 +191,12 @@ fn mode_choice(mode: AppearanceMode) -> ModeChoice {
     }
 }
 
-/// PhotoCraft's theme in the dark mode when nobody chose one: Pro (Medium Gray).
+/// Paragon Photo's theme in the dark mode when nobody chose one: Pro (Medium Gray).
 const DEFAULT_DARK: &str = "craft.artcraft";
-/// PhotoCraft's theme in the light mode when nobody chose one: Pro (Light).
+/// Paragon Photo's theme in the light mode when nobody chose one: Pro (Light).
 const DEFAULT_LIGHT: &str = "craft.pro";
 
-/// What PhotoCraft shows for each suite field nobody has chosen: Pro (Medium Gray) in the dark
+/// What Paragon Photo shows for each suite field nobody has chosen: Pro (Medium Gray) in the dark
 /// mode, Pro in the light, and the dark mode.
 fn defaults() -> AppDefaults {
     let theme = |id: &str| ThemeId::parse(id).unwrap_or_else(|_| ThemeId::suite_default());
@@ -208,7 +208,7 @@ fn defaults() -> AppDefaults {
     }
 }
 
-/// PhotoCraft's size overrides: Photoshop's panel dock width, and 12-point Label and Mono text in the compact density.
+/// Paragon Photo's size overrides: Photoshop's panel dock width, and 12-point Label and Mono text in the compact density.
 const SIZES: &[u8] = include_bytes!("sizes.json");
 
 /// The size overrides, parsed once: the root keeps one `Arc` so the runtime's token and hit-size caches, which key on
@@ -218,7 +218,7 @@ fn app_sizes() -> &'static Arc<AppSizes> {
     &SIZES_ONCE
 }
 
-/// The root values PhotoCraft gives the runtime before the theme, mode, scale and direction: the
+/// The root values Paragon Photo gives the runtime before the theme, mode, scale and direction: the
 /// contrast, size and sizes a theme's tokens resolve under.
 fn base_root() -> RootEnv {
     let mut root = RootEnv::new();
@@ -238,7 +238,7 @@ impl Default for Framework {
 
 fn build_host(sections: &Arc<PrefSections>, lang: &str, files: Option<&Arc<dyn Files>>) -> Host {
     let i18n = i18n::framework_i18n();
-    let mut builder = Host::builder(AppInfo { id: "photocraft", name: "PhotoCraft", version: env!("CARGO_PKG_VERSION") })
+    let mut builder = Host::builder(AppInfo { id: "paragon-photo", name: "Paragon Photo", version: env!("CARGO_PKG_VERSION") })
         .i18n(Arc::clone(i18n))
         .settings(Arc::clone(sections) as Arc<dyn SectionStore>)
         .jobs(craft::host::default_jobs());
@@ -302,7 +302,7 @@ impl Framework {
         self.sections.sync(session);
     }
 
-    /// The input for the coming frame, from PhotoCraft's preferences: `states` of every command
+    /// The input for the coming frame, from Paragon Photo's preferences: `states` of every command
     /// source, the held catalog and overrides, and `gate` over the commands.
     fn frame_input(
         &mut self,
@@ -421,9 +421,9 @@ impl Framework {
         changed
     }
 
-    /// The theme `id` to show in the dark or light mode: PhotoCraft's palette for it, else its
+    /// The theme `id` to show in the dark or light mode: Paragon Photo's palette for it, else its
     /// tokens resolved from the suite's definition under the root's contrast, size and sizes, as
-    /// the runtime resolves its own. A theme the suite can't resolve shows as PhotoCraft's default
+    /// the runtime resolves its own. A theme the suite can't resolve shows as Paragon Photo's default
     /// for the mode.
     pub(crate) fn theme_for(&self, id: &ThemeId, dark: bool, ctx: &egui::Context) -> AppTheme {
         #[cfg(test)]
@@ -468,7 +468,7 @@ impl Framework {
         }
     }
 
-    /// The name of theme `id` for a menu: PhotoCraft's own name for its palettes, else the suite's.
+    /// The name of theme `id` for a menu: Paragon Photo's own name for its palettes, else the suite's.
     pub(crate) fn theme_name(&self, id: &ThemeId, dark: bool) -> String {
         AppTheme::palette_label(id.as_str(), dark)
             .map(str::to_owned)
@@ -484,7 +484,7 @@ impl Framework {
     }
 
     /// Rebuilds the catalog and the runtime's keymap overrides at preferences revision `rev`. The
-    /// pane moves are unbound in the overrides, because PhotoCraft's own table binds F6 and
+    /// pane moves are unbound in the overrides, because Paragon Photo's own table binds F6 and
     /// Shift+F6 (Window › Color, Select › Modify › Feather) until those are a framework
     /// `CommandSet`. The held `Arc` is replaced only when the bindings differ, so the runtime
     /// rebuilds its keymap only on a change.
@@ -545,7 +545,7 @@ pub(crate) fn run_command(app: &mut PhotocraftApp, ctx: &egui::Context, command:
 
 impl PhotocraftApp {
     /// Before each frame (`raw_input_hook`): the runtime's output of the last frame, and its
-    /// input for this one. Of the output, PhotoCraft keeps the fired commands (`shortcuts::handle`
+    /// input for this one. Of the output, Paragon Photo keeps the fired commands (`shortcuts::handle`
     /// runs them), the commands the canvas ran (`record_view_commands`, in `logic`) and whether a
     /// component refused its input.
     pub(crate) fn framework_before_input(&mut self, ctx: &egui::Context) {
@@ -577,13 +577,13 @@ impl PhotocraftApp {
         });
     }
 
-    /// Whether a dialog is open, PhotoCraft's own or a framework one: the canvas, shortcuts, menus and tools under it
+    /// Whether a dialog is open, Paragon Photo's own or a framework one: the canvas, shortcuts, menus and tools under it
     /// take no input.
     pub fn dialog_open(&self) -> bool {
         !self.framework.dialogs.stack().is_empty()
     }
 
-    /// How many dialogs are open, PhotoCraft's own and framework ones.
+    /// How many dialogs are open, Paragon Photo's own and framework ones.
     pub fn dialog_count(&self) -> usize {
         self.framework.dialogs.stack().ids().count()
     }
@@ -594,7 +594,7 @@ impl PhotocraftApp {
     }
 }
 
-/// The framework's settings sections, kept in PhotoCraft's preferences (`Preferences::sections`).
+/// The framework's settings sections, kept in Paragon Photo's preferences (`Preferences::sections`).
 /// Components write from inside a pass, where the session isn't reachable: the tables wait here
 /// and reach the preferences before the next frame.
 #[derive(Default)]
@@ -641,7 +641,7 @@ impl SectionStore for PrefSections {
 }
 
 /// One frame with the runtime installed on a fresh context, running only the root window's close
-/// path with PhotoCraft's decision, as `logic` does.
+/// path with Paragon Photo's decision, as `logic` does.
 #[cfg(test)]
 pub(crate) fn close_path_frame(app: &mut PhotocraftApp, input: egui::RawInput) -> egui::FullOutput {
     let ctx = app.ctx().clone();
@@ -681,7 +681,7 @@ pub(crate) fn keys_pass(app: &mut PhotocraftApp, ctx: &egui::Context, input: egu
 
 #[cfg(test)]
 mod tests {
-    /// Every theme PhotoCraft has a palette for names a framework built-in.
+    /// Every theme Paragon Photo has a palette for names a framework built-in.
     #[test]
     fn every_palette_theme_is_a_builtin() {
         let builtins = craft::theme::builtins();
@@ -691,7 +691,7 @@ mod tests {
         assert_eq!(crate::theme::AppTheme::pro_medium().id().as_str(), "craft.artcraft");
     }
 
-    /// The size overrides PhotoCraft ships read without an error, so none is dropped at startup.
+    /// The size overrides Paragon Photo ships read without an error, so none is dropped at startup.
     #[test]
     fn the_size_overrides_parse() {
         if let Err(errors) = craft::theme::AppSizes::parse(super::SIZES) {

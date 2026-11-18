@@ -142,7 +142,7 @@ pub(super) fn rules() -> Vec<SettingRule> {
     ] {
         tweak(&mut rules, path, |r| r.hidden());
     }
-    // The web build has no Agents page (`custom_rows::AGENTS_PAGE`): it shows the settings PhotoCraft had before the
+    // The web build has no Agents page (`custom_rows::AGENTS_PAGE`): it shows the settings Paragon Photo had before the
     // ArtCraft Launcher's switch.
     if cfg!(target_arch = "wasm32") {
         for key in ["connectAgents", "readRoot", "writeRoot", "whenAppClosed"] {

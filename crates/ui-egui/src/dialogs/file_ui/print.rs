@@ -215,7 +215,7 @@ pub(super) fn sections(fields: &DialogFields) -> Vec<PrintSection> {
                     choice(
                         &[
                             ("printerManages", tl!("Printer Manages Colors")),
-                            ("photocraftManages", tl!("PhotoCraft Manages Colors")),
+                            ("photocraftManages", tl!("Paragon Photo Manages Colors")),
                             ("noColorManagement", tl!("No Color Management")),
                         ],
                         "printerManages",

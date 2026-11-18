@@ -1,4 +1,4 @@
-//! The Home screen: the framework start page with PhotoCraft's recent files, links and drop hint, and the Home rule
+//! The Home screen: the framework start page with Paragon Photo's recent files, links and drop hint, and the Home rule
 //! the options bar's button, the rail's Home link and `window.home` share.
 
 use craft::behavior::IconId;
@@ -60,14 +60,12 @@ fn reveal(app: &mut PhotocraftApp, path: &std::path::Path) {
     let _ = (app, path);
 }
 
-/// The links of the Home rail: Home, which leaves Home for the open documents, then Learn and the community pages.
-fn links() -> [StartLink; 5] {
+/// The links of the Home rail: Home, which leaves Home for the open documents, then the project pages.
+fn links() -> [StartLink; 3] {
     [
         StartLink::command(tl!("Home"), Some(IconId::new("home")), "window.home"),
-        StartLink::url(tl!("Learn"), Some(IconId::new("sparkles")), crate::links::TUTORIALS),
-        StartLink::url(tl!("Website"), Some(IconId::new("link")), crate::links::APP_PAGE),
-        StartLink::url(tl!("Discord"), Some(IconId::new("globe")), crate::links::DISCORD),
-        StartLink::url(tl!("GitHub"), Some(IconId::new("globe")), crate::links::GITHUB),
+        StartLink::url(tl!("GitHub"), Some(IconId::new("link")), crate::links::GITHUB),
+        StartLink::url(tl!("PhotoCraft"), Some(IconId::new("globe")), crate::links::UPSTREAM), // paragon:keep
     ]
 }
 

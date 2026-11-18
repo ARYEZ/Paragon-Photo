@@ -1,4 +1,4 @@
-//! `ui.screenshot` through the app: craft-automation's capture queue driven by PhotoCraft's logic
+//! `ui.screenshot` through the app: craft-automation's capture queue driven by Paragon Photo's logic
 //! and UI phases, its document identity, the geometry the runtime reports, and the automation
 //! write authority. The queue's own rules (budgets, settling, deadlines, image checks) are
 //! craft-automation's and tested there.
@@ -236,7 +236,7 @@ fn a_launch_and_capture_request_waits_for_the_first_ui_pass() {
     assert_eq!(reply["ok"], true, "{reply}");
 }
 
-/// PhotoCraft's document identity against a capture in flight: switching to another document, or
+/// Paragon Photo's document identity against a capture in flight: switching to another document, or
 /// away and back, fails it; an edit in the same document does not.
 #[test]
 fn a_capture_in_flight_follows_the_app_document_identity() {

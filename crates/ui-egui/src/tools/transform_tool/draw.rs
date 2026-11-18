@@ -135,7 +135,7 @@ fn show_preview(app: &PhotocraftApp, t: &FreeTransform, pv: &OpenPreview, ui: &m
     }
     let display = preview_display(app, ui.ctx());
     let boxed = t.session.phase() == TransformPhase::Box;
-    // The layers that get the styled preview stay PhotoCraft's: a visible layer with a style.
+    // The layers that get the styled preview stay Paragon Photo's: a visible layer with a style.
     let source = LayerStyleSource::new(app).filter(|_| boxed && pv.styled.is_some());
     let (map, textures) = match t.session.warp() {
         Some(w) => (PreviewMap::mesh(&w.mesh, t.session.rect()), &pv.textures),

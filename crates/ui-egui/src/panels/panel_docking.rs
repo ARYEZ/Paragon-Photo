@@ -1,4 +1,4 @@
-//! PhotoCraft's workspace on the framework dock: the `DockArea` pass over the panel registry, the one path that
+//! Paragon Photo's workspace on the framework dock: the `DockArea` pass over the panel registry, the one path that
 //! changes the workspace ([`apply`]), the panel queries the menus and tests read, the control protocol's
 //! `window.panel.*` ids, and the saved layout's load, snapshot and one-time migration of pre-workspace saves.
 //!

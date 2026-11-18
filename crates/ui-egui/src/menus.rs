@@ -44,7 +44,7 @@ pub(crate) fn menu_gate(app: &PhotocraftApp) -> (Gate, ModalRules) {
     (gate, rules)
 }
 
-/// The runtime's gate over commands. Only PhotoCraft's catalogue commands are gated here: framework
+/// The runtime's gate over commands. Only Paragon Photo's catalogue commands are gated here: framework
 /// command sets and dialog-scoped commands pass, and the runtime's own modal rule decides them. The shell's
 /// screen-mode commands are judged as their View › Screen Mode rows, and the rows' own rules
 /// ([`refused`]) apply to them: their keys and menu items are one command.
@@ -69,7 +69,7 @@ fn gated(gate: &Gate, rules: &ModalRules, refused: &[CommandRef], command: &Comm
     !is_live(&command.id) || gate.allows_under(rules, command)
 }
 
-/// The framework commands PhotoCraft's state turns off now: the shell's screen modes its View › Screen Mode rows
+/// The framework commands Paragon Photo's state turns off now: the shell's screen modes its View › Screen Mode rows
 /// grey (no full screen without a document, #9349; none while type is edited), and the canvas colour keys of the
 /// held Hand while type is edited.
 fn refused(app: &PhotocraftApp) -> Vec<CommandRef> {

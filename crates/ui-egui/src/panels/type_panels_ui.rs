@@ -32,7 +32,7 @@ pub struct TypePanelsUi {
     pub style_selection: [Selection<u64>; 2],
     /// The Glyphs panel's own family and style; `None` follows the type selection.
     pub glyph_face: Option<(String, String)>,
-    /// The Glyphs panel's category, zoom and recent glyphs. Saved with the UI state because PhotoCraft's runtime
+    /// The Glyphs panel's category, zoom and recent glyphs. Saved with the UI state because Paragon Photo's runtime
     /// has no craft-host `Host` to hold a setting.
     pub glyph_settings: craft::font_manager::glyphs::GlyphsPanelSettings,
     /// The text style colour picker's target while it is open.

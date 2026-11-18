@@ -554,7 +554,7 @@ fn blend_modes(layer: &Layer) -> Vec<Entry<String>> {
     photocraft_color::BlendMode::LAYER_MODES.into_iter().chain(own).map(|m| Entry::new(m.label().to_string(), m.label().to_string())).collect()
 }
 
-/// English blend-mode name to the app's key: PhotoCraft keys modes by their label.
+/// English blend-mode name to the app's key: Paragon Photo keys modes by their label.
 fn blend_keys() -> HashMap<String, String> {
     photocraft_color::BlendMode::LAYER_MODES.into_iter().map(|m| (m.label().to_string(), m.label().to_string())).collect()
 }

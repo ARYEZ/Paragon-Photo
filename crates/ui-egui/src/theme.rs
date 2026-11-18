@@ -24,7 +24,7 @@ use egui::{Color32, CornerRadius, FontData, FontFamily, FontId, Stroke, TextStyl
 use photocraft_engine::prefs::UiFontSize;
 use std::sync::Arc;
 
-/// PhotoCraft's own palettes: the suite themes it draws itself, each in the mode it has one for.
+/// Paragon Photo's own palettes: the suite themes it draws itself, each in the mode it has one for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Palette {
     /// Photoshop-style Spectrum dark: flat charcoal panels, tab strips, blue accents (darkest brightness).
@@ -112,18 +112,18 @@ impl Palette {
         }
     }
 
-    /// The Light Theme row of the Appearance settings, in PhotoCraft's order.
+    /// The Light Theme row of the Appearance settings, in Paragon Photo's order.
     const LIGHT_ROW: [Palette; 7] =
         [Palette::ProLight, Palette::ProLightGray, Palette::StudioLight, Palette::Classic, Palette::Adwaita, Palette::BreezeLight, Palette::SoftLight];
 
-    /// The Dark Theme row, in PhotoCraft's order.
+    /// The Dark Theme row, in Paragon Photo's order.
     const DARK_ROW: [Palette; 7] =
         [Palette::ProMedium, Palette::Pro, Palette::Studio, Palette::SolarizedDark, Palette::AdwaitaDark, Palette::BreezeDark, Palette::SoftDark];
 
     /// Photoshop's four interface brightnesses, darkest first.
     const BRIGHTNESSES: [Palette; 4] = [Palette::Pro, Palette::ProMedium, Palette::ProLightGray, Palette::ProLight];
 
-    /// The palette that draws suite theme `id` in the dark or light mode, if PhotoCraft has one.
+    /// The palette that draws suite theme `id` in the dark or light mode, if Paragon Photo has one.
     fn of(id: &ThemeId, dark: bool) -> Option<Palette> {
         Palette::ALL.into_iter().find(|p| p.theme() == (id.as_str(), dark))
     }
@@ -133,15 +133,15 @@ impl Palette {
     }
 }
 
-/// The theme on screen: a suite theme in the mode shown, with the tokens PhotoCraft draws it with.
-/// The themes PhotoCraft has palettes for (see [`AppTheme::all`]) keep them; any other suite theme
+/// The theme on screen: a suite theme in the mode shown, with the tokens Paragon Photo draws it with.
+/// The themes Paragon Photo has palettes for (see [`AppTheme::all`]) keep them; any other suite theme
 /// (a library theme, `craft.graphite`) takes its tokens from craft-theme's resolved tokens.
 #[derive(Clone, Debug)]
 pub struct AppTheme {
     id: ThemeId,
     tokens: Tokens,
     /// The definition the tokens were resolved from, which the runtime resolves its own from;
-    /// `None` for a theme shown with PhotoCraft's palette.
+    /// `None` for a theme shown with Paragon Photo's palette.
     library: Option<Arc<ThemeDef>>,
 }
 
@@ -186,7 +186,7 @@ palette_themes! {
 }
 
 impl AppTheme {
-    /// The themes PhotoCraft has palettes for, in the order of its Appearance settings.
+    /// The themes Paragon Photo has palettes for, in the order of its Appearance settings.
     pub fn all() -> [AppTheme; 14] {
         Palette::ALL.map(AppTheme::from)
     }
@@ -206,7 +206,7 @@ impl AppTheme {
         Palette::BRIGHTNESSES.map(AppTheme::from)
     }
 
-    /// PhotoCraft's palette for suite theme `id` in the dark or light mode, if it has one.
+    /// Paragon Photo's palette for suite theme `id` in the dark or light mode, if it has one.
     pub fn palette(id: &ThemeId, dark: bool) -> Option<Self> {
         Palette::of(id, dark).map(Self::from)
     }
@@ -216,7 +216,7 @@ impl AppTheme {
         AppTheme { id: def.id.clone(), tokens: Tokens::from_resolved(&resolved.tokens, dark), library: Some(def) }
     }
 
-    /// The name PhotoCraft's Appearance settings give a theme it has a palette for.
+    /// The name Paragon Photo's Appearance settings give a theme it has a palette for.
     pub fn palette_label(id: &str, dark: bool) -> Option<&'static str> {
         Palette::ALL.into_iter().find(|p| p.theme() == (id, dark)).map(Palette::label)
     }
@@ -225,7 +225,7 @@ impl AppTheme {
         &self.id
     }
 
-    /// The suite definition of a theme PhotoCraft has no palette for.
+    /// The suite definition of a theme Paragon Photo has no palette for.
     pub fn library(&self) -> Option<&Arc<ThemeDef>> {
         self.library.as_ref()
     }
@@ -306,7 +306,7 @@ pub struct Tokens {
 }
 
 impl Tokens {
-    /// The tokens PhotoCraft draws a suite theme with when it has no palette for it: craft-theme's
+    /// The tokens Paragon Photo draws a suite theme with when it has no palette for it: craft-theme's
     /// resolved colours and radii, in the Studio layout.
     fn from_resolved(t: &craft::theme::Tokens, dark: bool) -> Self {
         let c = |token: ColorToken| {
@@ -957,7 +957,7 @@ pub fn install_fonts(ctx: &egui::Context) {
     install_font_stack(ctx, &fonts);
 }
 
-/// PhotoCraft's faces as the craft framework's font stack: Inter for the interface with its
+/// Paragon Photo's faces as the craft framework's font stack: Inter for the interface with its
 /// `medium` and `semibold` families, JetBrains Mono for numbers. The framework puts egui's default
 /// faces after them, for symbols Inter lacks, and orders the craft-fonts faces this build embeds
 /// (`cjk_fonts::craft_faces`) by `ui_language`. A web build's served faces and their fetcher come
@@ -1221,7 +1221,7 @@ pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
         s.spacing.scroll = scroll;
         s.spacing.tooltip_width = 280.0;
     });
-    // egui selects its style branch using OS appearance, independently of PhotoCraft's fixed
+    // egui selects its style branch using OS appearance, independently of Paragon Photo's fixed
     // Dark/Light mode or platform appearance service. Both branches need the selected palette.
     let style = ctx.global_style();
     ctx.set_style_of(egui::Theme::Light, Arc::clone(&style));

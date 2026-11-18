@@ -1,4 +1,4 @@
-//! The mark a Layers panel row carries from the document: a warning on an adjustment PhotoCraft
+//! The mark a Layers panel row carries from the document: a warning on an adjustment Paragon Photo
 //! keeps as imported but cannot render (#6541).
 
 use craft::layers::ui::tree::LayerTree;

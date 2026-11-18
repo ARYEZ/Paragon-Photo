@@ -687,7 +687,7 @@ fn folders_moved_into_other_folders_persist() {
 
 #[test]
 fn a_group_file_that_failed_to_load_is_not_overwritten() {
-    // e.g. written by a newer PhotoCraft: skipped on load, so a save must not replace it.
+    // e.g. written by a newer Paragon Photo: skipped on load, so a save must not replace it.
     let mem = MemBackend::default();
     let file = group_file_name("");
     let newer = br#"{"format":"photocraft-brush-group","version":2,"group":"","presets":[]}"#.to_vec();
@@ -702,7 +702,7 @@ fn a_group_file_that_failed_to_load_is_not_overwritten() {
 
 #[test]
 fn an_actions_file_that_failed_to_load_is_not_overwritten() {
-    // e.g. written by a newer PhotoCraft: skipped on load, so recording an action must not replace it.
+    // e.g. written by a newer Paragon Photo: skipped on load, so recording an action must not replace it.
     let mem = MemBackend::default();
     let newer = br#"{"version":2,"actions":[{"name":"Keep","steps":[]}]}"#.to_vec();
     mem.files.lock().unwrap().insert(ACTIONS_FILE.into(), newer.clone());
@@ -715,7 +715,7 @@ fn an_actions_file_that_failed_to_load_is_not_overwritten() {
     assert!(!s.preset_store.as_mut().unwrap().take_warnings().is_empty());
 }
 
-// A PhotoCraft actions file that keyed calls and shortcuts by stored action id loads with names
+// A Paragon Photo actions file that keyed calls and shortcuts by stored action id loads with names
 // only: the calls and the `actions.playById:<id>` keys move to the names loading gave the ids, and
 // the file is written back once without them.
 #[test]

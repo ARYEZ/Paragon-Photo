@@ -181,7 +181,7 @@ fn appearance_choices_validate_and_legacy_theme_still_selects() {
     }
 }
 
-/// Names PhotoCraft saved before theme ids, in any spelling `ui.set` took, read as ids: in the
+/// Names Paragon Photo saved before theme ids, in any spelling `ui.set` took, read as ids: in the
 /// slots and the favorites. Old clients still read the single theme: the id the appearance mode
 /// shows.
 #[test]

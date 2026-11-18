@@ -1,9 +1,9 @@
-//! PhotoCraft desktop app.
+//! Paragon Photo desktop app.
 //!
 //! Usage: `photocraft [options] [--] [files…]`; `photocraft --help` lists the options, which are
 //! declared, with what makes a usage error (exit status 2), in `launch_args`.
 //!
-//! On Windows and Linux a launch hands its files to the PhotoCraft that is already running (new
+//! On Windows and Linux a launch hands its files to the Paragon Photo that is already running (new
 //! tabs in its window) and exits; `--new-instance` starts a separate copy instead, as does any
 //! `--control` launch (see `single_instance`).
 //!
@@ -141,11 +141,11 @@ fn control_port_for(cli: Option<u16>, prefs: &photocraft_engine::prefs::Integrat
 fn native_options(frame: &Frame) -> eframe::NativeOptions {
     let viewport = egui::ViewportBuilder::default().with_icon(app_icon::viewport_icon(std::env::current_exe().ok().as_deref()));
     let viewport =
-        viewport.with_app_id(APP_ID).with_title("PhotoCraft").with_inner_size([1440.0, 900.0]).with_min_inner_size(MIN_WINDOW_SIZE).with_drag_and_drop(true);
+        viewport.with_app_id(APP_ID).with_title("Paragon Photo").with_inner_size([1440.0, 900.0]).with_min_inner_size(MIN_WINDOW_SIZE).with_drag_and_drop(true);
     eframe::NativeOptions {
         viewport: window_policy::apply(viewport, frame),
         centered: true,
-        // PhotoCraft owns its fallback fonts (`cjk_fonts`, craft-fonts): eframe's system-font
+        // Paragon Photo owns its fallback fonts (`cjk_fonts`, craft-fonts): eframe's system-font
         // provider would compete with it and make glyph choice machine-dependent (#8512).
         system_font_fallback: false,
         // eframe saves native window geometry and egui panel/window sizes on exit.
@@ -157,7 +157,7 @@ fn native_options(frame: &Frame) -> eframe::NativeOptions {
 }
 
 /// The window eframe restores from `ui.ron`, corrected before it is created: at least the
-/// minimum size, and never full screen. PhotoCraft always starts in Standard Screen Mode, but
+/// minimum size, and never full screen. Paragon Photo always starts in Standard Screen Mode, but
 /// eframe also saves and restores full screen, and a window closed in a full-screen mode is
 /// saved full screen and maximized at once: the overlap the window's screen-mode sequence
 /// (`AppShell`'s `ScreenModeFollow`) keeps apart at run time. [OBSERVED 2026-10-12, Windows 11] Restored that way, View › Screen Mode ›
@@ -168,7 +168,7 @@ fn restored_window(builder: egui::ViewportBuilder) -> egui::ViewportBuilder {
 
 /// Grow a restored window that is smaller than the minimum size, keeping its centre. On
 /// Windows, eframe saves a minimized window's size (160 pt wide, 64 pt tall once eframe has
-/// clamped it), and the minimum size isn't applied to a restored one: PhotoCraft then reopened
+/// clamped it), and the minimum size isn't applied to a restored one: Paragon Photo then reopened
 /// as a 160 × 64 strip on every launch.
 fn at_least_min_size(mut builder: egui::ViewportBuilder) -> egui::ViewportBuilder {
     let (Some(size), Some(min)) = (builder.inner_size, builder.min_inner_size) else { return builder };
@@ -185,16 +185,16 @@ fn at_least_min_size(mut builder: egui::ViewportBuilder) -> egui::ViewportBuilde
 fn attach_log_file(logger: Option<&'static logging::AppLogger>) {
     if let (Some(logger), Some(dir)) = (logger, services::config_dir()) {
         match logger.attach_dir(&dir.join("logs")) {
-            Ok(path) => log::info!("PhotoCraft {}, log file {}", photocraft_engine::build_info::long_version(), path.display()),
+            Ok(path) => log::info!("Paragon Photo {}, log file {}", photocraft_engine::build_info::long_version(), path.display()),
             // Standard error only by now (`attach_dir` gave up on the file); unlike `eprintln!`, never panics.
             Err(e) => log::warn!("no log file: {e}"),
         }
     }
 }
 
-/// One PhotoCraft per user (#3708). Only with the per-user settings folder (a portable copy's may
+/// One Paragon Photo per user (#3708). Only with the per-user settings folder (a portable copy's may
 /// be shared between users), and not for automation, `--new-instance` or per-process options.
-/// `Break` when the files were handed to the running PhotoCraft and this launch is done.
+/// `Break` when the files were handed to the running Paragon Photo and this launch is done.
 #[cfg(not(target_os = "macos"))]
 fn claim_single_instance(
     files: &[String],
@@ -219,7 +219,7 @@ fn claim_single_instance(
     };
     match (single_instance::skip_reason(&context), services::config_dir()) {
         (Some(reason), _) => {
-            log::info!("running as a separate PhotoCraft: {reason}");
+            log::info!("running as a separate Paragon Photo: {reason}");
             Continue(None)
         }
         (None, None) => Continue(None),
@@ -227,12 +227,12 @@ fn claim_single_instance(
             let paths: Vec<String> = files.iter().map(|f| single_instance::absolute(f)).collect();
             match single_instance::claim(&dir, &paths) {
                 single_instance::Launch::Forwarded => {
-                    log::info!("handed {} file(s) to the running PhotoCraft", paths.len());
+                    log::info!("handed {} file(s) to the running Paragon Photo", paths.len());
                     Break(())
                 }
                 single_instance::Launch::Primary(primary) => Continue(Some(primary)),
                 single_instance::Launch::Standalone(reason) => {
-                    log::warn!("starting a separate PhotoCraft: {reason}");
+                    log::warn!("starting a separate Paragon Photo: {reason}");
                     Continue(None)
                 }
             }
@@ -377,7 +377,7 @@ fn main() -> eframe::Result {
     #[cfg(not(target_arch = "wasm32"))]
     if let Some(done) = craft_update::self_update::finish(&photocraft_ui_egui::UPDATE_APP, &std::env::args_os().skip(1).collect::<Vec<_>>()) {
         if let Err(e) = done {
-            eprintln!("PhotoCraft update helper failed: {e}");
+            eprintln!("Paragon Photo update helper failed: {e}");
             std::process::exit(1);
         }
         return Ok(());
@@ -416,7 +416,7 @@ fn main() -> eframe::Result {
     if gpu_startup::adapter_override_is_process_specific(std::env::var("PHOTOCRAFT_GPU_ADAPTER").ok().as_deref(), rendering_mode, gpu_startup::ADAPTER_CHOICE) {
         launch_options.push(launch_args::PerProcess::GpuAdapterEnv);
     }
-    // One PhotoCraft per user (#3708): files opened from Explorer or a file manager while it runs
+    // One Paragon Photo per user (#3708): files opened from Explorer or a file manager while it runs
     // become tabs in its window. Lives until the event loop returns, then `shutdown` lets the next
     // launch become the primary.
     #[cfg(not(target_os = "macos"))]
@@ -529,7 +529,7 @@ fn main() -> eframe::Result {
     let created_in_callback = app_created.clone();
     let started_sentinel = sentinel.clone();
     let result = eframe::run_native(
-        "PhotoCraft",
+        "Paragon Photo",
         options,
         Box::new(move |cc| {
             created_in_callback.store(true, std::sync::atomic::Ordering::Relaxed);
@@ -794,7 +794,7 @@ fn main() -> eframe::Result {
     // file to attach (#7643). A terminal or automation launch can read standard error or the
     // exit status instead, so it keeps the silent exit.
     if let Err(error) = &result {
-        log::error!("PhotoCraft could not start: {error}");
+        log::error!("Paragon Photo could not start: {error}");
         if startup_report::needs_dialog(control_port.is_some()) {
             startup_report::show(&error.to_string(), &started_renderer, started_note.as_deref(), logger.and_then(logging::AppLogger::path).as_deref());
         }
@@ -887,7 +887,7 @@ mod tests {
             .with_fullscreen(true)
             .with_maximized(true);
         let opened = hook(saved);
-        assert_eq!(opened.fullscreen, Some(false), "Standard Screen Mode is where PhotoCraft starts");
+        assert_eq!(opened.fullscreen, Some(false), "Standard Screen Mode is where Paragon Photo starts");
         assert_eq!(opened.maximized, Some(true), "the rest of the saved geometry is kept");
         assert_eq!(opened.inner_size, Some(egui::vec2(2560.0, 1392.0)));
     }
@@ -1110,7 +1110,7 @@ mod tests {
     /// so it has to be the class the window carries: the app id, on Wayland and X11 alike.
     #[test]
     fn the_desktop_entry_names_the_window_class() {
-        let entry = include_str!("../../../packaging/linux/ai.storyteller.photocraft.desktop");
+        let entry = include_str!("../../../packaging/linux/io.github.aryez.paragonphoto.desktop");
         let class = entry.lines().find_map(|line| line.strip_prefix("StartupWMClass="));
         assert_eq!(class, Some(super::APP_ID));
     }
@@ -1124,7 +1124,7 @@ mod tests {
         let rev = std::fs::read_to_string(root.join("craft-i18n.rev")).unwrap();
         let rev = rev.trim();
         assert!(rev.len() == 40 && rev.bytes().all(|b| b.is_ascii_hexdigit()), "craft-i18n.rev holds one full SHA: {rev:?}");
-        for manifest in ["ai.storyteller.photocraft.yml", "ai.storyteller.photocraft.bundle.yml"] {
+        for manifest in ["io.github.aryez.paragonphoto.yml", "io.github.aryez.paragonphoto.bundle.yml"] {
             let text = std::fs::read_to_string(root.join("packaging/linux/flatpak").join(manifest)).unwrap();
             let source = text.split("url: https://github.com/storytold/craft-i18n").nth(1).unwrap_or_else(|| panic!("{manifest}: a craft-i18n git source"));
             let source = source.split("- type:").next().unwrap_or(source);

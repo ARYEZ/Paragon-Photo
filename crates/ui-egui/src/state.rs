@@ -36,7 +36,7 @@ pub use transform::{CamTransform, ContentAwareOptions, Extras, FreeTransform, Ma
 pub struct Panels {
     pub options_bar: bool,
     pub status_bar: bool,
-    /// The title bar with the in-window menus. An app that embeds PhotoCraft's UI and draws its own
+    /// The title bar with the in-window menus. An app that embeds Paragon Photo's UI and draws its own
     /// bar can hide it; the caption buttons of a custom title bar go with it.
     #[serde(default = "yes")]
     pub menu_bar: bool,

@@ -1,4 +1,4 @@
-# PhotoCraft architecture
+# Paragon Photo architecture
 
 > **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-20 · **Change:** minor (accurate GPU matrix/TRC display conversion; large payloads in the document model are `Arc`-shared, #4535; original design plan retained) · **Target:** Adobe Photoshop 2026
 
@@ -7,7 +7,7 @@
 What exists on `main` today. The numbered sections below are the original design plan of
 2026-09-30; where the code differs, this summary wins.
 
-- **Workspace:** 25 library crates under `crates/`, 4 apps (`photocraft` desktop, `photocraft-cli`,
+- **Workspace:** 25 library crates under `crates/`, 4 apps (`paragon-photo` desktop, `paragon-photo-cli`,
   `photocraft-web`, `photocraft-web-boot`), `xtask`, an example plug-in and 5 fuzz crates; ~539,000 lines of Rust in
   ~1,310 files; ~8,040 `#[test]` functions (ui-egui 2,809, engine 1,796, algo 572, io 539,
   codecs 426, psd 341), counted 2026-10-13. Crate map and layers: [`AGENTS.md`](../AGENTS.md) §2 and
@@ -103,7 +103,7 @@ The test is simple: **adding 64-bit float, a new colour model, or a new file for
 ## 2. Workspace layout
 
 ```text
-photocraft/
+paragon-photo/
 ├─ Cargo.toml                  # [workspace], shared deps, lints, profiles
 ├─ crates/
 │  │  ── foundation (no_std-friendly where practical, wasm-safe) ──
@@ -142,8 +142,8 @@ photocraft/
 │  ├─ automation/              photocraft-automation  MCP server (rmcp) + JSON-RPC over the command registry
 │  └─ testkit/                 photocraft-testkit   golden images, perceptual diff, fixtures, PSD corpus helpers
 ├─ apps/
-│  ├─ photocraft/              desktop binary (winit + wgpu + ui-egui + platform-native)
-│  ├─ photocraft-cli/          headless batch CLI (open → commands → export), also hosts `mcp` subcommand
+│  ├─ paragon-photo/              desktop binary (winit + wgpu + ui-egui + platform-native)
+│  ├─ paragon-photo-cli/          headless batch CLI (open → commands → export), also hosts `mcp` subcommand
 │  ├─ photocraft-web/          wasm32 binary (ui-egui + platform-web), demo
 │  └─ photocraft-web-boot/     wasm32 binary that starts the packaged web app from parts of its wasm
 ├─ shaders/                    (or inside gpu/) WGSL, with generated struct headers
@@ -219,7 +219,7 @@ Each command registers the following:
 **Consumers:**
 - The GUI builds the menu bar, the ⌘F palette and the shortcut editor from it.
 - `automation` exposes the registry as MCP tools.
-- `photocraft-cli` exposes `photocraft-cli run in.psd --cmd filter.blur.gaussianBlur --params '{"radius":4}' --out out.png`.
+- `paragon-photo-cli` exposes `paragon-photo-cli run in.psd --cmd filter.blur.gaussianBlur --params '{"radius":4}' --out out.png`.
 - Action recording is simply `Vec<CommandInvocation>`.
 
 ### 4.3 Tools: pointer events in, ops and overlays out
@@ -348,7 +348,7 @@ Both backends consume the same plan. This is the only place that encodes Photosh
 
 - Blending happens in document space by default, which is Photoshop-compatible. A per-document "linear light blending" option is also available.
 - **Display transform** (`engine/src/display_color.rs`): the canvas is always colour-managed, document profile → monitor profile (relative colorimetric + BPC), cached per (document profile, mode, monitor). On the GPU canvas RGB matrix/TRC transforms retain separate full-float input curves, matrix/offsets and inverse output curves (sampled densely near black); this avoids the shadow darkening of a uniform RGB cube (#7958). Other transforms and Gamut Warning retain the 33³ display LUT, and the shader applies 32-bit preview before either conversion; the CPU canvas runs an 8-bit `photocraft-cms` transform on the composite. When the document profile matches the monitor (sRGB on sRGB) there is no LUT and no transform. Linear composites (EXR/HDR, tagged linear sRGB on import) are stored sRGB-encoded in the 8-bit canvas texture. CMYK documents are read through their embedded CMYK profile (`photocraft_color::convert::with_cmyk_space`, entered by the compositors and composite exports).
-- **Monitor profile:** Edit › Color Settings › Monitor Profile: `auto`, a built-in RGB profile or an `.icc` path. In `auto` each window uses the profile of the display it is on (#569): the desktop app reads every display's id, name, frame and ICC profile at launch and again when the app comes back to the front, when any window is on an unknown or resized display (at most every 30 s; a trigger inside that window is deferred) and when Edit › Color Settings opens (`ui-egui/src/monitor_status.rs`). macOS reads AppKit `NSScreen` through `osascript` (no FFI); X11 reads RandR outputs and the default colord profile matched by exact `XRANDR_name`; native Wayland and Xwayland windows from a Wayland session stay on sRGB because eframe/winit cannot safely set the app surface's Wayland image description. The macOS helper is stopped after 10 s. There is deliberately no periodic re-read (#569 decision: a read costs about 0.2 s of CPU), so a profile reassigned while PhotoCraft stays in front with no window moving is picked up at the next return to the front or Color Settings. X11 selects the root window's RandR output by winit's current-monitor name and other windows by their overlapping RandR frame; macOS follows `NSWindow.screen`. Elsewhere `auto` is sRGB. The GPU canvas keeps one texture per document and a display LUT per (document, display); CPU canvas textures are per (document, display). `ColorState::monitor_status_for` says what is applied per display: `auto`, `manual`, or `fallback` to sRGB with the reason (missing, unreadable, non-RGB or unusable as a destination), and whether the reading is an earlier one kept after a failed re-read; `edit.colorSettings` (`monitorStatus`, `displays`), Help › System Info and the Color Settings dialog show it, and a fallback in `auto` posts a notice. Letting macOS colour-match the canvas instead is #581 (an architecture decision).
+- **Monitor profile:** Edit › Color Settings › Monitor Profile: `auto`, a built-in RGB profile or an `.icc` path. In `auto` each window uses the profile of the display it is on (#569): the desktop app reads every display's id, name, frame and ICC profile at launch and again when the app comes back to the front, when any window is on an unknown or resized display (at most every 30 s; a trigger inside that window is deferred) and when Edit › Color Settings opens (`ui-egui/src/monitor_status.rs`). macOS reads AppKit `NSScreen` through `osascript` (no FFI); X11 reads RandR outputs and the default colord profile matched by exact `XRANDR_name`; native Wayland and Xwayland windows from a Wayland session stay on sRGB because eframe/winit cannot safely set the app surface's Wayland image description. The macOS helper is stopped after 10 s. There is deliberately no periodic re-read (#569 decision: a read costs about 0.2 s of CPU), so a profile reassigned while Paragon Photo stays in front with no window moving is picked up at the next return to the front or Color Settings. X11 selects the root window's RandR output by winit's current-monitor name and other windows by their overlapping RandR frame; macOS follows `NSWindow.screen`. Elsewhere `auto` is sRGB. The GPU canvas keeps one texture per document and a display LUT per (document, display); CPU canvas textures are per (document, display). `ColorState::monitor_status_for` says what is applied per display: `auto`, `manual`, or `fallback` to sRGB with the reason (missing, unreadable, non-RGB or unusable as a destination), and whether the reading is an earlier one kept after a failed re-read; `edit.colorSettings` (`monitorStatus`, `displays`), Help › System Info and the Color Settings dialog show it, and a fallback in `auto` posts a notice. Letting macOS colour-match the canvas instead is #581 (an architecture decision).
 - **Spot dot gain:** Edit › Color Settings › Spot (`spotDotGain`, % at a 50 % dot; Photoshop's default Dot Gain 20 %, menu 10–30 % or custom). The ink preview of Multichannel documents (`compose/src/multichannel.rs`, CPU only) and spot channel overlays in the Channels view print each channel value through `1 − (1 − v)^γ`, γ chosen so a 50 % dot shows at 50 % + gain (the curve family of the built-in Dot Gain 20 %-compatible gray). It is process-wide (`multichannel::set_spot_dot_gain`), set with the colour settings like the text gamma, and folded into the canvas display key so changing it redraws open Multichannel documents. Separation data is unchanged: only the preview gains.
 - **HDR/EDR output** (an `rgba16float` surface with an extended-range colorspace) is a later-phase feature. The interfaces already carry `f32` pixels.
 
@@ -389,7 +389,7 @@ psd/src/
   5. Text layers: shaped with `text`; the original descriptors are kept for round-trip.
   6. Smart objects: embedded and linked, live both ways (`io::smart_map`). Import reads the
      placed-layer data (`SoLd`: file id, transform quad, warp), the smart filter stack
-     (`filterFX`: modelled filters become their PhotoCraft command and params; any other filter
+     (`filterFX`: modelled filters become their Paragon Photo command and params; any other filter
      stays verbatim and is listed as not editable) and the filter mask (global `FEid`). Export
      writes `PlLd` + `SoLd`, embeds the source in `lnk2` (a `.pcraft` source becomes a PSB of the
      nested document, written by our own PSD writer) and a filter cache with the unfiltered
@@ -578,7 +578,7 @@ Each phase ends with a demoable build and green CI on all targets. Phases 8–10
 ## 16. Open decisions
 
 1. **License.** MIT/Apache-2.0 is maximally reusable. GPL-3.0 is the Krita/GIMP model and protects against proprietary forks. Note that some candidate deps are LGPL (rawler) or GPL-or-commercial (Slint), and MIT/Apache would constrain which of them we can use.
-2. **Project name.** `photocraft` (the repo name) is assumed.
+2. **Project name.** `paragon-photo` (the repo name) is assumed.
 3. **PSD crate.** Build our own, or adopt or fork `ag-psd`/`psd`. Decide after the week-1 spike.
 4. **Default working depth and blending.** 8-bit + gamma-space blending matches Photoshop. 16-bit/float + linear is the modern default. The proposal is to follow Photoshop by default and make the other a per-document option.
 

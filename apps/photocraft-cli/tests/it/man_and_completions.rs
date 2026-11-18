@@ -13,7 +13,7 @@ fn command_is_consistent() {
 fn completions_generate_for_every_shell() {
     for &shell in Shell::value_variants() {
         let mut out = Vec::new();
-        clap_complete::generate(shell, &mut photocraft_cli::command(), "photocraft-cli", &mut out);
+        clap_complete::generate(shell, &mut photocraft_cli::command(), "paragon-photo-cli", &mut out);
         assert!(!out.is_empty(), "{shell}");
     }
 }
@@ -29,7 +29,7 @@ fn man_pages_render_for_the_command_and_every_subcommand() {
 }
 
 /// The example's two `generate_to` calls, repeated here, write the five completion files under the
-/// names `packaging/linux/package.sh` and `packaging/freebsd/package.sh` install, `photocraft-cli.1`
+/// names `packaging/linux/package.sh` and `packaging/freebsd/package.sh` install, `paragon-photo-cli.1`
 /// and a page per subcommand, and no pages for the `help` subcommand.
 #[test]
 fn the_example_writes_the_files_the_packages_install() {
@@ -38,17 +38,17 @@ fn the_example_writes_the_files_the_packages_install() {
     std::fs::create_dir_all(&dir).unwrap();
     let mut cmd = photocraft_cli::command();
     for &shell in Shell::value_variants() {
-        clap_complete::generate_to(shell, &mut cmd, "photocraft-cli", &dir).unwrap();
+        clap_complete::generate_to(shell, &mut cmd, "paragon-photo-cli", &dir).unwrap();
     }
     clap_mangen::generate_to(photocraft_cli::command(), &dir).unwrap();
 
     let mut written: Vec<String> = std::fs::read_dir(&dir).unwrap().map(|e| e.unwrap().file_name().into_string().unwrap()).collect();
     written.sort();
-    let completions = ["photocraft-cli.bash", "_photocraft-cli", "photocraft-cli.fish", "photocraft-cli.elv", "_photocraft-cli.ps1"];
+    let completions = ["paragon-photo-cli.bash", "_paragon-photo-cli", "paragon-photo-cli.fish", "paragon-photo-cli.elv", "_paragon-photo-cli.ps1"];
     let subcommands = ["convert", "info", "run", "batch", "droplet", "commands", "mcp", "serve"];
     let mut expected: Vec<String> = completions.map(String::from).into();
-    expected.push("photocraft-cli.1".into());
-    expected.extend(subcommands.iter().map(|s| format!("photocraft-cli-{s}.1")));
+    expected.push("paragon-photo-cli.1".into());
+    expected.extend(subcommands.iter().map(|s| format!("paragon-photo-cli-{s}.1")));
     expected.sort();
     assert_eq!(written, expected);
     std::fs::remove_dir_all(&dir).unwrap();

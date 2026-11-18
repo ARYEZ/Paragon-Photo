@@ -3,9 +3,13 @@ name = "photocraft"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-default-run = "photocraft"
-description = "PhotoCraft: an open-source, native image editor"
+default-run = "paragon-photo"
+description = "Paragon Photo: a personal build of PhotoCraft, an open-source native image editor"
 build = "build.rs"
+
+[[bin]]
+name = "paragon-photo"
+path = "src/main.rs"
 
 [features]
 # Open HEIC/HEIF photos (the optional craft-heif crate). Not default so distributors choose

@@ -85,7 +85,7 @@ These proposals are pending parent semantic review. Mechanical moved-test/catalo
 - [#3461](https://github.com/storytold/photocraft/pull/3461) Replay recorded layer visibility on the intended named layer — INTEGRATED
 - [#3748](https://github.com/storytold/photocraft/pull/3748) control: suggest near matches for unknown command ids and methods (#3674) — INTEGRATED
 - [#4993](https://github.com/storytold/photocraft/pull/4993) Prevent control-channel engine commands from editing behind modal dialogs — INTEGRATED
-- [#5090](https://github.com/storytold/photocraft/pull/5090) Actions: add editable PhotoCraft Essentials starter presets — INTEGRATED
+- [#5090](https://github.com/storytold/photocraft/pull/5090) Actions: add editable Paragon Photo Essentials starter presets — INTEGRATED
 - [#5176](https://github.com/storytold/photocraft/pull/5176) Play CopyCat, AJ and Line and Color action sets; keep patterns across restarts; Shift Edge scale — INTEGRATED
 - [#6492](https://github.com/storytold/photocraft/pull/6492) Fail control startup promptly when its port is occupied — INTEGRATED
 - [#6510](https://github.com/storytold/photocraft/pull/6510) Automation: resolve configured root aliases for absolute paths (#6426) — INTEGRATED
@@ -148,7 +148,7 @@ These proposals are pending parent semantic review. Mechanical moved-test/catalo
 ### Platform and reliability (8)
 
 - [#3554](https://github.com/storytold/photocraft/pull/3554) fix(packaging): launch bundled CLI directly from AppImage — INTEGRATED
-- [#4742](https://github.com/storytold/photocraft/pull/4742) fix(macos): bundle photocraft-cli and resolve it from droplet scripts — INTEGRATED
+- [#4742](https://github.com/storytold/photocraft/pull/4742) fix(macos): bundle paragon-photo-cli and resolve it from droplet scripts — INTEGRATED
 - [#6383](https://github.com/storytold/photocraft/pull/6383) Windows releases ship a symbols zip: the release build's PDBs for profilers (#688) — INTEGRATED
 - [#7743](https://github.com/storytold/photocraft/pull/7743) packaging: the portable zip holds the files, not a folder with the files in it — INTEGRATED
 - [#9015](https://github.com/storytold/photocraft/pull/9015) fix(xtask): reject leading zeroes in numeric prerelease identifiers — INTEGRATED
@@ -187,7 +187,7 @@ These proposals are pending parent semantic review. Mechanical moved-test/catalo
 - [#3520](https://github.com/storytold/photocraft/pull/3520) fix(ui): restore square color chips in Studio Dark theme — INTEGRATED
 - [#4023](https://github.com/storytold/photocraft/pull/4023) i18n(es): add 548 missing rows, fix five filter and video terms — INTEGRATED
 - [#4042](https://github.com/storytold/photocraft/pull/4042) feat(canvas): rotate view with Shift + middle-mouse drag — INTEGRATED
-- [#4547](https://github.com/storytold/photocraft/pull/4547) fix(icons): PhotoCraft icon corner radius matches other Craft apps (#4478) — INTEGRATED
+- [#4547](https://github.com/storytold/photocraft/pull/4547) fix(icons): Paragon Photo icon corner radius matches other Craft apps (#4478) — INTEGRATED
 - [#4883](https://github.com/storytold/photocraft/pull/4883) feat(ui): show selection and active-layer bounds in the status bar — INTEGRATED
 - [#4890](https://github.com/storytold/photocraft/pull/4890) Add scrollbar visibility preferences (#3262) — INTEGRATED
 - [#4938](https://github.com/storytold/photocraft/pull/4938) Layer Style: one dialog size on every page, and it fits short screens — INTEGRATED
@@ -1773,7 +1773,7 @@ index 9e8eb6cb7..decaed9a7 100644
 +    LongExact,
      Dbl,
      Bool,
-     /// An enumeration: its type id and the Photoshop ↔ PhotoCraft value pairs.
+     /// An enumeration: its type id and the Photoshop ↔ Paragon Photo value pairs.
 @@ -406,7 +420,7 @@ fn fields_from(d: &Descriptor, fields: &[F]) -> Option<Map<String, Value>> {
      let mut m = Map::new();
      for F(key, param, kind) in fields {
@@ -1959,13 +1959,13 @@ index 30ae610b7..f8462e73f 100644
 -    let listener = match TcpListener::bind(("127.0.0.1", port)) {
 -        Ok(l) => l,
 -        Err(e) => {
--            eprintln!("photocraft: control server failed to bind 127.0.0.1:{port}: {e}");
+-            eprintln!("paragon-photo: control server failed to bind 127.0.0.1:{port}: {e}");
 -            return rx;
 -        }
 -    };
--    eprintln!("photocraft: control server listening on 127.0.0.1:{port}");
+-    eprintln!("paragon-photo: control server listening on 127.0.0.1:{port}");
 +    if let Ok(address) = listener.local_addr() {
-+        eprintln!("photocraft: control server listening on {address}");
++        eprintln!("paragon-photo: control server listening on {address}");
 +    }
      std::thread::spawn(move || {
          let limiter = ConnectionLimiter::new(MAX_CONNECTIONS);
@@ -2741,7 +2741,7 @@ index ebeda4868..6d2793a22 100644
 +++ b/crates/engin
 ```
 
-### #5090: Actions: add editable PhotoCraft Essentials starter presets
+### #5090: Actions: add editable Paragon Photo Essentials starter presets
 
 `crates/engine/src/actions_cmds.rs`, `crates/engine/src/lib.rs`, `crates/engine/src/preset_store.rs`, `crates/ui-egui/src/actions.rs`
 
@@ -4296,7 +4296,7 @@ index db908ae23..d97556f36 100644
          "appearanceMode" => return "Appearance Mode".into(),
          "darkTheme" => return "Dark Theme".into(),
          "lightTheme" => return "Light Theme".into(),
-+        "nativeGradientIcons" => return "Use PhotoCraft-native gradient icons".into(),
++        "nativeGradientIcons" => return "Use ParagonPhoto-native gradient icons".into(),
          _ => {}
      }
      // These controls appear only for WebP, so reuse the existing translated labels.

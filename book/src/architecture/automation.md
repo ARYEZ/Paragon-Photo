@@ -1,9 +1,9 @@
 # Automation architecture
 
-PhotoCraft exposes the same engine through several transports:
+Paragon Photo exposes the same engine through several transports:
 
 ```text
-photocraft-cli commands/run/batch
+paragon-photo-cli commands/run/batch
              |
 MCP stdio ---+--> photocraft-automation::Headless --> engine Session
 

@@ -177,12 +177,12 @@ pub(crate) fn close(app: &mut PhotocraftApp) {
     app.ui.brush_picker = None;
 }
 
-/// PhotoCraft's view before the user changes it: name and stroke shown, tip hidden, search bar on, scale 1.
+/// Paragon Photo's view before the user changes it: name and stroke shown, tip hidden, search bar on, scale 1.
 fn default_settings() -> BrushPickerSettings {
     BrushPickerSettings::new(BrushCardParts::ALL.set(BrushCardPart::Tip, false), 1.0)
 }
 
-/// Restores the picker's remembered view at launch. A missing or malformed key keeps PhotoCraft's default; the
+/// Restores the picker's remembered view at launch. A missing or malformed key keeps Paragon Photo's default; the
 /// framework clamps the scale and turns the parts on when none is.
 pub fn restore(app: &mut PhotocraftApp) {
     let mut saved = app.session.prefs().brush_picker.clone();

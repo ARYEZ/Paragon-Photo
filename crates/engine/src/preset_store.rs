@@ -545,7 +545,7 @@ pub struct Opened {
     pub warnings: Vec<String>,
     /// Recorded actions (`actions.json`). Empty when the file is missing or unreadable.
     pub actions: ActionList,
-    /// The stored action ids of a PhotoCraft file and the names loading gave them, for the
+    /// The stored action ids of a Paragon Photo file and the names loading gave them, for the
     /// shortcut keys attaching moves to names ([`MergedFile::ids`](craft::automation::actions::MergedFile::ids)).
     action_ids: Vec<(String, String)>,
     /// Imported and defined patterns (`patterns.json`), in library order; large ones as previews.

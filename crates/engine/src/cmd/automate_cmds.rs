@@ -2,9 +2,9 @@
 //! and Script Events Manager, plus the session state the File-menu commands share
 //! ([`FileMenuState`]).
 //!
-//! "Scripts" are PhotoCraft action scripts: JSON (`[[id, params], …]`, `{"steps": …}` or a
+//! "Scripts" are Paragon Photo action scripts: JSON (`[[id, params], …]`, `{"steps": …}` or a
 //! droplet) or a plain-text list with one `command.id {json params}` per line (`#` comments).
-//! Droplets are JSON files (`.pcdroplet`) holding an action plus batch options; `photocraft-cli
+//! Droplets are JSON files (`.pcdroplet`) holding an action plus batch options; `paragon-photo-cli
 //! droplet <file> <inputs…>` runs one, and on Unix a `.command` shim makes it
 //! double-clickable / drop-target-able from the shell.
 //!
@@ -24,7 +24,7 @@ fn bad(cmd: &str, msg: impl Into<String>) -> EngineError {
     EngineError::BadParams { cmd: cmd.into(), msg: msg.into() }
 }
 
-/// Photoshop ExtendScript / UXP script suffixes — not PhotoCraft JSON or command lists.
+/// Photoshop ExtendScript / UXP script suffixes — not Paragon Photo JSON or command lists.
 fn extendscript_ext(path: &str) -> Option<&str> {
     let name = path.rsplit(['/', '\\']).next().unwrap_or(path);
     let dot = name.rfind('.')?;
@@ -35,7 +35,7 @@ fn extendscript_ext(path: &str) -> Option<&str> {
 
 fn reject_extendscript(cmd: &str, path: &str) -> Result<()> {
     match extendscript_ext(path) {
-        Some(_) => Err(bad(cmd, "PhotoCraft scripts are JSON or command lists (one command.id {json} per line), not Photoshop ExtendScript (.js/.jsx)")),
+        Some(_) => Err(bad(cmd, "Paragon Photo scripts are JSON or command lists (one command.id {json} per line), not Photoshop ExtendScript (.js/.jsx)")),
         None => Ok(()),
     }
 }
@@ -403,15 +403,15 @@ fn write_shim(droplet: &str) -> Result<String> {
     let quoted_abs = format!("'{}'", abs.replace('\'', "'\\''"));
     let body = format!(
         r#"#!/bin/sh
-# PhotoCraft droplet: runs the action on the files given (or dropped).
+# Paragon Photo droplet: runs the action on the files given (or dropped).
 if [ -n "${{PHOTOCRAFT_CLI:-}}" ]; then
   cli="$PHOTOCRAFT_CLI"
-elif [ -x /Applications/PhotoCraft.app/Contents/MacOS/photocraft-cli ]; then
-  cli=/Applications/PhotoCraft.app/Contents/MacOS/photocraft-cli
-elif [ -x "$HOME/Applications/PhotoCraft.app/Contents/MacOS/photocraft-cli" ]; then
-  cli="$HOME/Applications/PhotoCraft.app/Contents/MacOS/photocraft-cli"
+elif [ -x /Applications/ParagonPhoto.app/Contents/MacOS/paragon-photo-cli ]; then
+  cli=/Applications/ParagonPhoto.app/Contents/MacOS/paragon-photo-cli
+elif [ -x "$HOME/Applications/ParagonPhoto.app/Contents/MacOS/paragon-photo-cli" ]; then
+  cli="$HOME/Applications/ParagonPhoto.app/Contents/MacOS/paragon-photo-cli"
 else
-  cli=photocraft-cli
+  cli=paragon-photo-cli
 fi
 exec "$cli" droplet {quoted_abs} "$@"
 "#
@@ -439,7 +439,7 @@ fn run_droplet(s: &mut Session, p: &Value) -> Result<Value> {
     let path = p.get("droplet").or_else(|| p.get("path")).and_then(Value::as_str).ok_or_else(|| bad(cmd, "missing \"droplet\""))?;
     let v: Value = serde_json::from_slice(&read_file(path)?).map_err(|e| bad(cmd, format!("{path}: {e}")))?;
     if v.get("photocraftDroplet").is_none() {
-        return Err(bad(cmd, format!("{path} is not a PhotoCraft droplet")));
+        return Err(bad(cmd, format!("{path} is not a Paragon Photo droplet")));
     }
     let steps = v.get("action").and_then(|a| a.get("steps")).cloned().ok_or_else(|| bad(cmd, "droplet has no action"))?;
     let opts = v.get("options").cloned().unwrap_or(json!({}));
@@ -668,7 +668,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "file.automate.createDroplet",
             "Create Droplet…",
             &["File", "Automate"],
-            r##"{"path":str (.pcdroplet),"steps":[[id,params]…]?,"action":name|index|[steps]? (used only when steps is absent; named actions exclude disabled steps),"set":str? (with a named action: that set's action of the name),"name":str?,"output":folder?,"format":"same|png|jpg|…"?,"quality":0..12?,"shim":bool=true on Unix (writes <name>.command calling `photocraft-cli droplet`)} → {path, shim} (the actions its Play Action and Conditional steps call are saved in the droplet)"##,
+            r##"{"path":str (.pcdroplet),"steps":[[id,params]…]?,"action":name|index|[steps]? (used only when steps is absent; named actions exclude disabled steps),"set":str? (with a named action: that set's action of the name),"name":str?,"output":folder?,"format":"same|png|jpg|…"?,"quality":0..12?,"shim":bool=true on Unix (writes <name>.command calling `paragon-photo-cli droplet`)} → {path, shim} (the actions its Play Action and Conditional steps call are saved in the droplet)"##,
             native,
             create_droplet
         ),

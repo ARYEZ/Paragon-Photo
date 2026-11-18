@@ -1,4 +1,4 @@
-//! Plain `photocraft-cli mcp` with agents allowed (the ArtCraft Launcher's switch): the MCP server finds the desktop
+//! Plain `paragon-photo-cli mcp` with agents allowed (the ArtCraft Launcher's switch): the MCP server finds the desktop
 //! app through its connection file before every call, follows it to a new port and token, and
 //! applies the closed-app choice (start it, headless, or an error) when no app answers.
 
@@ -72,7 +72,7 @@ fn fake_app(dir: &Path, name: &'static str) -> FakeApp {
     let port = listener.local_addr().unwrap().port();
     let token_file = dir.join(agents::TOKEN_FILE);
     let token = photocraft_automation::security::replace_token_file(&token_file).unwrap();
-    agents::write_connection(dir, &Connection::new(port, token_file, "PhotoCraft test")).unwrap();
+    agents::write_connection(dir, &Connection::new(port, token_file, "Paragon Photo test")).unwrap();
     let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
     let stopped = stop.clone();
     std::thread::spawn(move || {
@@ -145,7 +145,7 @@ async fn a_closed_app_is_a_tool_error_that_says_what_to_do() {
     let gone = TcpListener::bind("127.0.0.1:0").unwrap();
     let port = gone.local_addr().unwrap().port();
     drop(gone);
-    agents::write_connection(&dir, &Connection::new(port, dir.join(agents::TOKEN_FILE), "PhotoCraft test")).unwrap();
+    agents::write_connection(&dir, &Connection::new(port, dir.join(agents::TOKEN_FILE), "Paragon Photo test")).unwrap();
     let r = call(&client, "ui_inspect", json!({})).await;
     assert!(text(&r).contains("isn't running"), "{}", text(&r));
     client.cancel().await.unwrap();
@@ -250,11 +250,11 @@ async fn a_launch_that_never_listens_times_out_with_advice() {
     c.launch = Some(Box::new(|| Err("no such file".into())));
     let client2 = connect(PhotocraftMcp::live(c)).await;
     let r = call(&client2, "ui_inspect", json!({})).await;
-    assert!(text(&r).contains("couldn't start PhotoCraft: no such file"), "{}", text(&r));
+    assert!(text(&r).contains("couldn't start Paragon Photo: no such file"), "{}", text(&r));
     // No launcher (Flatpak, the app not installed beside the CLI): ask the user.
     let client3 = connect(PhotocraftMcp::live(live(&dir, Some(WhenAppClosed::Launch)))).await;
     let r = call(&client3, "ui_inspect", json!({})).await;
-    assert!(text(&r).contains("open PhotoCraft"), "{}", text(&r));
+    assert!(text(&r).contains("open Paragon Photo"), "{}", text(&r));
     for c in [client, client2, client3] {
         c.cancel().await.unwrap();
     }

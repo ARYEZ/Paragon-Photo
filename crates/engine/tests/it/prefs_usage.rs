@@ -114,7 +114,7 @@ fn inherent_impls(src: &str, name: &str) -> String {
 }
 
 /// Agent settings the framework's `AgentSettings` reads itself (the control link binds
-/// `control_port`; `read_folder()` supplies the read root), so no PhotoCraft source names the field.
+/// `control_port`; `read_folder()` supplies the read root), so no Paragon Photo source names the field.
 const READ_BY_THE_FRAMEWORK: &[&str] = &["integrations.controlPort", "integrations.readRoot"];
 
 #[test]

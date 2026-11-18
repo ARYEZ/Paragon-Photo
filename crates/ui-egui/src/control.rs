@@ -1,4 +1,4 @@
-//! PhotoCraft's control methods, for agents, tests and (soon) MCP: the method table that
+//! Paragon Photo's control methods, for agents, tests and (soon) MCP: the method table that
 //! craft-automation's control channel runs.
 //!
 //! A transport thread (TCP in the desktop app, a channel in tests) sends [`ControlRequest`]s;

@@ -55,9 +55,9 @@ pub fn take_log(ctx: &egui::Context) -> Vec<(String, Outcome)> {
     ctx.data_mut(|d| d.remove_temp::<Vec<(String, Outcome)>>(log_id())).unwrap_or_default()
 }
 
-/// The framework command a PhotoCraft command is: the runtime's own command carries out the row
+/// The framework command a Paragon Photo command is: the runtime's own command carries out the row
 /// (the chrome toggles, the canvas's view commands, the momentary tools), and the user's keys for the
-/// PhotoCraft id bind it.
+/// Paragon Photo id bind it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Bridged {
     /// A command the document canvas runs on its view.
@@ -66,9 +66,9 @@ pub(crate) enum Bridged {
     Chrome(ChromeCommand),
     /// A tool in effect while its key is held.
     Momentary(MomentaryCommands),
-    /// A framework edit command that owns the chord of a PhotoCraft action; PhotoCraft runs the action when it fires.
+    /// A framework edit command that owns the chord of a Paragon Photo action; Paragon Photo runs the action when it fires.
     Edit(EditCommands),
-    /// A Layers panel stacking command that owns the chord of a `layer.arrange.*` action; PhotoCraft runs the
+    /// A Layers panel stacking command that owns the chord of a `layer.arrange.*` action; Paragon Photo runs the
     /// action when it fires.
     Stack(LayersPanelCommands),
     /// A Swatches panel menu command under the id the engine's command of that name has; the panel runs it
@@ -96,9 +96,9 @@ impl Bridged {
     }
 }
 
-/// PhotoCraft's commands the craft runtime carries out, with the framework command each one is. Their
+/// Paragon Photo's commands the craft runtime carries out, with the framework command each one is. Their
 /// keys reach the runtime as keymap overrides ([`overrides`]) and the menu bar's rows fire them. App code (the menus
-/// PhotoCraft runs, action steps, automation) asks the active document's canvas for a view row's command
+/// Paragon Photo runs, action steps, automation) asks the active document's canvas for a view row's command
 /// (`actions::runner::run_view`), which journals it; the other rows it fires through [`fire_bridged`]. The action
 /// recorder records the view commands a canvas ran from the runtime ([`record_view_commands`]). They are not rows of
 /// [`catalog`]: the runtime defines them.
@@ -121,7 +121,7 @@ pub(crate) const RUNTIME_COMMANDS: &[(&str, Bridged)] = &[
     ("tools.temporary.zoomIn", Bridged::Momentary(MomentaryCommands::ZoomIn)),
     ("tools.temporary.zoomOut", Bridged::Momentary(MomentaryCommands::ZoomOut)),
     ("select.all", Bridged::Edit(EditCommands::SelectAll)),
-    // The ids the framework's sets give these commands are PhotoCraft's own ids, so the engine's rows of the same
+    // The ids the framework's sets give these commands are Paragon Photo's own ids, so the engine's rows of the same
     // names are not catalog rows either.
     ("edit.undo", Bridged::Edit(EditCommands::Undo)),
     ("edit.redo", Bridged::Edit(EditCommands::Redo)),
@@ -146,7 +146,7 @@ pub(crate) const RUNTIME_COMMANDS: &[(&str, Bridged)] = &[
     ("view.screenMode.cycleBack", Bridged::ScreenMode(ScreenModeCommands::CycleBack)),
 ];
 
-/// The PhotoCraft id and bridge row of a framework command, if a row bridges it.
+/// The Paragon Photo id and bridge row of a framework command, if a row bridges it.
 fn bridge_of(command: &CommandRef) -> Option<(&'static str, Bridged)> {
     RUNTIME_COMMANDS.iter().find(|(_, bridged)| bridged.command() == *command).map(|(id, bridged)| (*id, *bridged))
 }
@@ -174,7 +174,7 @@ pub(crate) fn is_screen_mode(id: &str) -> bool {
     RUNTIME_COMMANDS.iter().any(|(row, bridged)| *row == id && matches!(bridged, Bridged::ScreenMode(_)))
 }
 
-/// The PhotoCraft row of a screen-mode command of the shell: the command gate judges the framework command as the
+/// The Paragon Photo row of a screen-mode command of the shell: the command gate judges the framework command as the
 /// menus judge that row.
 pub(crate) fn screen_mode_row(command: &CommandRef) -> Option<&'static str> {
     bridge_of(command).filter(|(_, bridged)| matches!(bridged, Bridged::ScreenMode(_))).map(|(id, _)| id)
@@ -324,7 +324,7 @@ pub(crate) fn keymap_command(id: &str) -> CommandRef {
     CommandRef::new(crate::menus::panel_alias(id).unwrap_or(id))
 }
 
-/// The rows of the commands the runtime defines ([`RUNTIME_COMMANDS`]) under their PhotoCraft ids, as the engine's
+/// The rows of the commands the runtime defines ([`RUNTIME_COMMANDS`]) under their Paragon Photo ids, as the engine's
 /// catalog gives them with their default keys. The Keyboard Shortcuts dialog and a `.kys` import edit them with the
 /// rows of [`command_rows`]; the runtime's own catalog holds them under the framework commands.
 pub(crate) fn bridged_rows() -> Vec<CommandDef> {
@@ -357,8 +357,8 @@ pub(crate) fn same_rows(a: &[CommandDef], b: &[CommandDef]) -> bool {
 
 /// The user's bindings for the runtime's keymap: Edit › Keyboard Shortcuts changes (`prefs.shortcuts`,
 /// `prefs.alternate_shortcuts`), the panel alias rule (#1272), and each row of [`RUNTIME_COMMANDS`] with its
-/// effective keys, so the framework command carries PhotoCraft's keys. The pane moves stay unbound
-/// (`app::framework`: PhotoCraft binds F6 and Shift+F6).
+/// effective keys, so the framework command carries Paragon Photo's keys. The pane moves stay unbound
+/// (`app::framework`: Paragon Photo binds F6 and Shift+F6).
 pub(crate) fn overrides(app: &PhotocraftApp) -> Overrides {
     let prefs = app.session.prefs();
     // PLAN: `keymap_defs::prefs_overrides` is top-w20's tp.PT25 row, assumed as `prefs_overrides(&Preferences) -> Overrides`.
@@ -513,7 +513,7 @@ pub(crate) fn fire_bridged(ctx: &egui::Context, id: &str) -> Option<bool> {
 }
 
 /// Records each view row of [`RUNTIME_COMMANDS`] a canvas ran from the runtime since the last frame, by its chord or its
-/// menu-bar row, as PhotoCraft's view command: an action being recorded gets `view.fitOnScreen` for ⌘0 and for the menu
+/// menu-bar row, as Paragon Photo's view command: an action being recorded gets `view.fitOnScreen` for ⌘0 and for the menu
 /// item alike. The ones app code asked for (`run_view`) never reach the runtime and are journaled when asked.
 /// The screen-mode rows the shell ran go to the shortcut log only.
 pub(crate) fn record_view_commands(app: &mut PhotocraftApp) {
@@ -546,7 +546,7 @@ pub(crate) fn record_chrome_toggles(ctx: &egui::Context, toggles: &[(egui::Viewp
 ///
 /// Per command: the held erase key; the opacity and blend keys (their own rules); a tool letter picks its
 /// group's tool on the press and releases the spring on the key-up; every other command runs on its press only.
-/// A framework command goes to [`crate::app::framework::run_command`], a PhotoCraft id to [`dispatch_as`].
+/// A framework command goes to [`crate::app::framework::run_command`], a Paragon Photo id to [`dispatch_as`].
 pub(crate) fn run_fired(app: &mut PhotocraftApp, ctx: &egui::Context, fired: &[Fired]) {
     for f in fired {
         if f.target.is_some() {
@@ -630,7 +630,7 @@ fn pick_tool(app: &mut PhotocraftApp, letter: char, step: PickStep, plain: bool,
     }
 }
 
-/// Runs the press of a command that is not a tool key: the framework's command sources first, else PhotoCraft's own
+/// Runs the press of a command that is not a tool key: the framework's command sources first, else Paragon Photo's own
 /// through [`dispatch_as`].
 fn run_pressed(app: &mut PhotocraftApp, ctx: &egui::Context, f: &Fired) {
     let id = f.command.id.as_str();

@@ -637,7 +637,7 @@ impl RasterSource for BackdropView {
     }
 }
 
-/// What PhotoCraft gives the Liquify workspace to show: the warped proxy, the freeze mask, the
+/// What Paragon Photo gives the Liquify workspace to show: the warped proxy, the freeze mask, the
 /// displaced mesh, the backdrop and the layer names.
 pub struct PcLiquifySource {
     picture: PictureView,

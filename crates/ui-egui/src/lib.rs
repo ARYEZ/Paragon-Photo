@@ -1,4 +1,4 @@
-//! PhotoCraft's first UI shell, built on egui/eframe.
+//! Paragon Photo's first UI shell, built on egui/eframe.
 //!
 //! This crate is deliberately thin. Every action goes through
 //! [`photocraft_engine::Session::execute`], and all UI state lives in [`state::UiState`] (plain
@@ -9,12 +9,22 @@
 #![recursion_limit = "256"]
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
-/// PhotoCraft as craft-update knows it, with its 128 px icon and accent colour: the update
-/// prompt shows both, and an AppImage's menu entry gets the icon.
+/// Paragon Photo as craft-update knows it, with its 128 px icon and accent colour: the update
+/// prompt shows both, and an AppImage's menu entry gets the icon. Releases are only ever looked
+/// for in Paragon Photo's own repository, so an update can never replace it with upstream
+/// PhotoCraft; until that repository publishes a release there is nothing to update to. // paragon:keep
 #[cfg(not(target_arch = "wasm32"))]
 pub const UPDATE_APP: craft::update::app::App = craft::update::app::App {
-    icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ai.storyteller.photocraft.png")),
-    accent: Some([0x2f, 0x7b, 0xf5]),
+    id: "paragon-photo",
+    name: "Paragon Photo",
+    repo: "ARYEZ/Paragon-Photo",
+    former_ids: &[],
+    former_names: &[],
+    icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/io.github.aryez.paragonphoto.png")),
+    // The Paragon family's pink (the PR7 marks' 7).
+    accent: Some([0xde, 0x06, 0x39]),
+    developer: "Paragon",
+    bundle_id_override: Some("io.github.aryez.paragonphoto"),
     ..craft::update::suite::PHOTOCRAFT
 };
 

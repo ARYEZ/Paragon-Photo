@@ -2,7 +2,7 @@
 
 use craft::ui::primitives::AppIcons;
 
-/// PhotoCraft's own icon set, registered by `icons::register`. The documents draw with
+/// Paragon Photo's own icon set, registered by `icons::register`. The documents draw with
 /// `stroke-width="2"`.
 pub static PHOTOCRAFT_ICONS: AppIcons = AppIcons::new("photocraft", Some(2.0), ICONS);
 

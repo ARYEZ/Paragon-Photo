@@ -174,7 +174,7 @@ impl AuthorizedWorkspace {
         let root = self.write.as_ref().ok_or_else(|| AutomationError::BadRequest(format!("{DENIED}: write authority is absent")))?;
         let leaf = relative.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
         // The bytes are an image or document whatever the name says (`format` picks them), so
-        // only a file of a kind PhotoCraft writes is replaced: never source, settings or notes
+        // only a file of a kind Paragon Photo writes is replaced: never source, settings or notes
         // that share the root (`src/main.rs`, `.env`; #9439). A new file may have any name, and
         // an image saved under one (`out` with `format: png`) can be saved over again.
         let exists = root.dir.symlink_metadata(&relative).is_ok();
@@ -186,7 +186,7 @@ impl AuthorizedWorkspace {
         }
         if exists && !written_kind(&leaf) && !holds_image(&root.dir, &relative) {
             return Err(AutomationError::BadRequest(format!(
-                "automation write refused: `{path}` already exists and is not an image or document file PhotoCraft writes; save to a new name"
+                "automation write refused: `{path}` already exists and is not an image or document file Paragon Photo writes; save to a new name"
             )));
         }
         let parent = relative.parent().map(Path::to_path_buf).unwrap_or_default();
@@ -248,8 +248,8 @@ impl Drop for TempRemoval<'_> {
     }
 }
 
-/// Whether `name`'s extension is one of the formats PhotoCraft saves or exports. The image codec
-/// registry, not `photocraft_formats`: that one also names text and office files PhotoCraft only
+/// Whether `name`'s extension is one of the formats Paragon Photo saves or exports. The image codec
+/// registry, not `photocraft_formats`: that one also names text and office files Paragon Photo only
 /// reads (`txt`, `md`, `csv`, `rtf`…), and notes must never be replaced (#14355). A codec counts
 /// only if this build writes it: PCX, XPM, DICOM and HEIF are read-only.
 fn written_kind(name: &str) -> bool {
@@ -259,7 +259,7 @@ fn written_kind(name: &str) -> bool {
         || photocraft_codecs::from_extension(&ext).is_some_and(|format| format.caps().write)
 }
 
-/// Whether the file at `relative` starts like an image PhotoCraft writes (PSD/PSB or a writable
+/// Whether the file at `relative` starts like an image Paragon Photo writes (PSD/PSB or a writable
 /// codec's magic). Containers that also hold other things (zip, PDF) are judged by name only.
 fn holds_image(dir: &Dir, relative: &Path) -> bool {
     let mut head = [0u8; 64];

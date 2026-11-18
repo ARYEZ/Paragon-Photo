@@ -162,7 +162,7 @@ fn droplets_are_written_and_run() {
         let shim = r["shim"].as_str().unwrap();
         let text = std::fs::read_to_string(shim).unwrap();
         assert!(text.starts_with("#!/bin/sh") && text.contains("droplet"));
-        assert!(text.contains("/Applications/PhotoCraft.app/Contents/MacOS/photocraft-cli"));
+        assert!(text.contains("/Applications/ParagonPhoto.app/Contents/MacOS/paragon-photo-cli"));
         assert!(text.contains("${PHOTOCRAFT_CLI:-}"), "an explicit CLI path must take priority");
         use std::os::unix::fs::PermissionsExt;
         assert_ne!(std::fs::metadata(shim).unwrap().permissions().mode() & 0o111, 0, "executable");
@@ -337,7 +337,7 @@ fn droplets_carry_the_actions_their_play_steps_call() {
     let names: Vec<&str> = v["calledActions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap()).collect();
     assert_eq!(names, ["Rotate", "Outer"], "only the called actions, transitively");
 
-    // A fresh session, as `photocraft-cli droplet` and the droplet shim use.
+    // A fresh session, as `paragon-photo-cli droplet` and the droplet shim use.
     let mut fresh = Session::new();
     let r = fresh.execute("file.automate.runDroplet", json!({"droplet": dp, "input": [dir.clone()]})).unwrap();
     assert_eq!(r["files"].as_array().unwrap().len(), inputs.len(), "{r}");
@@ -557,7 +557,7 @@ fn droplets_carry_the_actions_their_conditional_steps_call() {
     let names: Vec<&str> = v["calledActions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap()).collect();
     assert_eq!(names, ["Rotate", "Wide", "Tall"], "both branches and what they call");
 
-    // A fresh session, as `photocraft-cli droplet` and the droplet shim use.
+    // A fresh session, as `paragon-photo-cli droplet` and the droplet shim use.
     let mut fresh = Session::new();
     let r = fresh.execute("file.automate.runDroplet", json!({"droplet": dp, "input": [dir.clone()]})).unwrap();
     assert_eq!(r["files"].as_array().unwrap().len(), inputs.len(), "{r}");

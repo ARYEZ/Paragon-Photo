@@ -10,7 +10,7 @@ fn app() -> PhotocraftApp {
 
 #[test]
 fn the_saved_view_round_trips_through_the_prefs_and_old_keys_still_restore() {
-    // Nothing saved: PhotoCraft's default (name and stroke on, tip off, search on).
+    // Nothing saved: Paragon Photo's default (name and stroke on, tip off, search on).
     let mut a = app();
     restore(&mut a);
     let st = &a.ui.brush_picker_state;

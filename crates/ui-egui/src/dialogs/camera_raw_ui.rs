@@ -159,7 +159,7 @@ pub(crate) struct SourceInit {
     pub(crate) ctx: egui::Context,
 }
 
-/// PhotoCraft's develop for the RAW Develop workspace: the proxy, the selection coverage, the GPU handle and the
+/// Paragon Photo's develop for the RAW Develop workspace: the proxy, the selection coverage, the GPU handle and the
 /// result slot the develop jobs fill. Nothing in it is kept across passes beyond those results.
 pub(crate) struct PcRawSource {
     /// Proxy pixels (straight RGBA) and size.

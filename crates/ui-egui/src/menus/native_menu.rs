@@ -3,7 +3,7 @@
 //! backend.
 //!
 //! craft-menu owns the layout, the clash rules, the key equivalents and the driver. This module
-//! supplies what is PhotoCraft's: the app name, the translated labels, the shortcuts bound outside
+//! supplies what is Paragon Photo's: the app name, the translated labels, the shortcuts bound outside
 //! the menus, the gate and modal rules ([`crate::menus::menu_gate`]) and the hash of the state the
 //! menus show ([`state_hash`]).
 //!
@@ -20,7 +20,7 @@ use crate::PhotocraftApp;
 use crate::menus::items;
 
 /// The name the app menu, About, Hide and Quit show.
-pub const APP_NAME: &str = "PhotoCraft";
+pub const APP_NAME: &str = "Paragon Photo";
 
 /// [`items::model`]'s menus laid out as a Mac menu bar, in the UI language.
 ///
@@ -69,7 +69,7 @@ pub fn sync(app: &mut PhotocraftApp, ctx: &egui::Context) {
     native.set_modal_rules(rules);
     let state = state_hash(app, craft::menu::had_input(ctx).then_some(app.frame));
     for c in native.sync_with(state, || laid_out(app, ctx)) {
-        log::info!("menu: {} is {} on macOS and {} in PhotoCraft; {}", c.shortcut.portable(), c.system, c.command.id, c.resolution);
+        log::info!("menu: {} is {} on macOS and {} in Paragon Photo; {}", c.shortcut.portable(), c.system, c.command.id, c.resolution);
     }
     app.services.native_menu = Some(native);
 }

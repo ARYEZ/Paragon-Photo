@@ -185,7 +185,7 @@ fn app_with_document() -> PhotocraftApp {
     app
 }
 
-/// A key pressed in a panel's own window reaches PhotoCraft's shortcut dispatch: the runtime routes each
+/// A key pressed in a panel's own window reaches Paragon Photo's shortcut dispatch: the runtime routes each
 /// window's input, and the dispatch must not read the main window only.
 #[test]
 fn keys_pressed_in_a_panel_window_run_photocrafts_shortcuts() {
@@ -239,7 +239,7 @@ fn a_menu_key_typed_in_a_panel_windows_text_field_goes_to_the_field() {
     assert!(desktop.host.borrow().windows[&viewport].paste_requested, "the field's window asks for the clipboard text");
 }
 
-/// PhotoCraft's dialogs are framework layers, so the runtime's modal blocking reaches the panel windows:
+/// Paragon Photo's dialogs are framework layers, so the runtime's modal blocking reaches the panel windows:
 /// under a dialog the window takes no click and no key, and once it is closed the window works again.
 #[test]
 fn a_dialog_blocks_the_panel_windows() {

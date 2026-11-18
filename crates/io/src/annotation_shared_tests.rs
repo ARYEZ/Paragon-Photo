@@ -1,4 +1,4 @@
-//! Frozen valid-wire writer oracle from PhotoCraft5bdbcc118.
+//! Frozen valid-wire writer oracle from ParagonPhoto5bdbcc118.
 //! Original wire writer Brandon Thomas aa87012a; saturating icon fix wstock0d6e58e2.
 use super::*;
 fn pascal(out: &mut Vec<u8>, s: &str) {

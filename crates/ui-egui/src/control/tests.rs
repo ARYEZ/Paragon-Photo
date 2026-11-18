@@ -899,7 +899,7 @@ fn ui_set_rejects_view_numbers_beyond_f32_range() {
     assert!(app.ui.views[0].zoom.is_finite() && app.ui.views[0].zoom > zoom, "{}", app.ui.views[0].zoom);
 }
 
-/// `ui.set {theme}` takes a suite theme id, shown in the mode on screen, or a name PhotoCraft took
+/// `ui.set {theme}` takes a suite theme id, shown in the mode on screen, or a name Paragon Photo took
 /// before theme ids, shown in its own mode; a theme the suite doesn't have is refused.
 #[test]
 fn ui_set_theme_takes_ids_and_pre_id_names_and_refuses_unknown_themes() {

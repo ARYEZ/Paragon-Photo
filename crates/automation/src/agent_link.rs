@@ -1,9 +1,9 @@
-//! PhotoCraft's side of agents in the open desktop app: its agent settings as `photocraft-cli mcp`
+//! Paragon Photo's side of agents in the open desktop app: its agent settings as `paragon-photo-cli mcp`
 //! reads them from the saved preferences, and whether the person lets agents in now. The switch,
 //! the connection file and the link host are the framework's (`craft::automation::agents`): the
 //! app serves its control channel on loopback while agents may connect and publishes where in its
-//! settings folder, and `photocraft-cli mcp` ([`crate::live`]) reads that file on every tool call,
-//! so MCP client configurations never hold a port or a token. Adding PhotoCraft to MCP clients is
+//! settings folder, and `paragon-photo-cli mcp` ([`crate::live`]) reads that file on every tool call,
+//! so MCP client configurations never hold a port or a token. Adding Paragon Photo to MCP clients is
 //! the ArtCraft Launcher's job (one entry for every Craft app).
 
 use std::path::Path;
@@ -21,7 +21,7 @@ pub fn read_integrations(dir: &Path) -> Integrations {
 
 // ---- The agents switch -------------------------------------------------------------------------
 
-/// The id the ArtCraft Launcher's app list names PhotoCraft by.
+/// The id the ArtCraft Launcher's app list names Paragon Photo by.
 pub const LAUNCHER_APP_ID: &str = "photocraft";
 
 /// Whether agents may use the open window now ([`agents::agents_allowed`]): with the suite's

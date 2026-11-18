@@ -9,7 +9,7 @@
 //! A missing or malformed file gives empty tables (or no names) and a warning.
 //!
 //! - `CRAFT_I18N_DIR`, a craft-i18n checkout (storytold/craft-i18n, at the SHA in
-//!   `craft-i18n.rev`): `craft_i18n.rs` holds `CRAFT_I18N`, one (locale, shared catalog, PhotoCraft
+//!   `craft-i18n.rev`): `craft_i18n.rs` holds `CRAFT_I18N`, one (locale, shared catalog, Paragon Photo
 //!   catalog) entry per locale that has a `photocraft.tsv`, embedded raw. Unset, or not a checkout
 //!   (a warning), it is empty and the interface is English only; with `CRAFT_I18N_REQUIRED=1` (CI
 //!   and releases) that is an error instead. Recipe: craft-i18n's `docs/integration.md`.
@@ -59,9 +59,12 @@ fn craft_i18n() -> String {
             Vec::new()
         }
     };
-    let mut o = String::from("/// (locale, shared catalog, PhotoCraft's catalog), one entry per locale; `\"\"` for a missing file.\n");
+    let mut o = String::from("/// (locale, shared catalog, Paragon Photo's catalog), one entry per locale; `\"\"` for a missing file.\n");
     o.push_str("pub static CRAFT_I18N: &craft_i18n::Embedded = &[\n");
     for (code, shared, app) in entries {
+        // Paragon Photo: embed rebranded copies, so keys match the rebranded sources.
+        let shared = shared.map(|p| rebranded(&p, &code, "common.tsv"));
+        let app = rebranded(&app, &code, APP_CATALOG);
         // `{:?}` escapes the path (Windows backslashes) as a Rust string literal.
         let shared = shared.map_or_else(|| "\"\"".to_string(), |p| format!("include_str!({p:?})"));
         let _ = writeln!(o, "    ({code:?}, {shared}, include_str!({app:?})),");
@@ -70,10 +73,31 @@ fn craft_i18n() -> String {
     o
 }
 
-/// One embedded locale: its code, its `common.tsv` if it has one, and its PhotoCraft catalog.
+/// Paragon Photo: craft-i18n's catalogs name the product "PhotoCraft", in their English keys and in // paragon:keep
+/// the translations, while the sources say "Paragon Photo" (`scripts/paragon_rebrand.py`). So the
+/// catalog is copied into `OUT_DIR` with the name replaced, and the copy is embedded. Falls back to
+/// the original file (unbranded, still correct) if the copy can't be made.
+fn rebranded(path: &std::path::Path, code: &str, file: &str) -> std::path::PathBuf {
+    let Some(out) = std::env::var_os("OUT_DIR").map(|d| std::path::PathBuf::from(d).join("i18n").join(code)) else {
+        return path.to_path_buf();
+    };
+    let copy = out.join(file);
+    let made = std::fs::read_to_string(path)
+        .and_then(|text| std::fs::create_dir_all(&out).map(|()| text))
+        .and_then(|text| std::fs::write(&copy, text.replace("PhotoCraft", "Paragon Photo"))); // paragon:keep
+    match made {
+        Ok(()) => copy,
+        Err(e) => {
+            println!("cargo::warning={}: {e}; embedding it unbranded", path.display());
+            path.to_path_buf()
+        }
+    }
+}
+
+/// One embedded locale: its code, its `common.tsv` if it has one, and its Paragon Photo catalog.
 type Locale = (String, Option<std::path::PathBuf>, std::path::PathBuf);
 
-/// Every locale under `dir` with PhotoCraft's catalog, by code. An error when `dir` isn't a
+/// Every locale under `dir` with Paragon Photo's catalog, by code. An error when `dir` isn't a
 /// craft-i18n `locales/` directory.
 fn locales(dir: &std::path::Path) -> Result<Vec<Locale>, String> {
     // Build scripts run in the crate's directory and `include_str!` resolves against the

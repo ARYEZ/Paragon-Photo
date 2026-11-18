@@ -57,7 +57,7 @@ commands:
                   print the workspace version, or set it (Cargo.toml + Cargo.lock)
   ico <out.ico> <in.png>...
                   pack square PNGs (<= 256 px) into a Windows .ico (see packaging/icons.sh)
-  psd-write-oracle <recipes.json> <corpus-dir> <photocraft-cli> <new-output-dir>
+  psd-write-oracle <recipes.json> <corpus-dir> <paragon-photo-cli> <new-output-dir>
                   run PSD export recipes and write a JSON report and manifest
 ";
 

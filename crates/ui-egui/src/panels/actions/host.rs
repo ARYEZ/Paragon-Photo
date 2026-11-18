@@ -1,4 +1,4 @@
-//! What the framework Actions panel asks of PhotoCraft while it draws.
+//! What the framework Actions panel asks of Paragon Photo while it draws.
 
 use craft::automation::actions::{Action, ActionStep};
 use craft::automation::ui::actions::{ActionsHost, ShortcutChoice};
@@ -52,7 +52,7 @@ impl ActionsHost for PhotoActions<'_> {
         } else if id == photocraft_engine::atn_cmds::STOP_MESSAGE {
             format!("{}: {}", label_of(id), params.get("message").and_then(Value::as_str).unwrap_or_default())
         } else if id == photocraft_engine::atn_cmds::PHOTOSHOP_STEP {
-            // A step from a .atn file PhotoCraft can't play yet: its Photoshop name, marked.
+            // A step from a .atn file Paragon Photo can't play yet: its Photoshop name, marked.
             let name = params.get("name").and_then(Value::as_str).filter(|n| !n.is_empty()).unwrap_or("?");
             crate::i18n::fmt(tl!("{name} (Photoshop)"), &[("name", name)])
         } else {

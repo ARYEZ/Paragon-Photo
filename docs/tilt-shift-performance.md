@@ -2,7 +2,7 @@
 
 Starting base: `a28d786638ffbb84c5fb7d5d30ea1c3d594cd3bc`, freshly fetched
 `origin/main`. Branch: `codex/tilt-shift-performance-20261010`. Worktree:
-`C:\Users\Colum\.codex\worktrees\6c32\photocraft`. At investigation time,
+`C:\Users\Colum\.codex\worktrees\6c32\paragon-photo`. At investigation time,
 `upstream/main` was `5963e5b7f0aefa0d94b5cf67ef3c1c9b6d3399dd`, two commits ahead:
 [Recent entries](https://github.com/storytold/photocraft/commit/b773a39efa4a65888fcce4a5d8dffcf4fa45700a)
 and [temporary Move](https://github.com/storytold/photocraft/commit/5963e5b7f0aefa0d94b5cf67ef3c1c9b6d3399dd).
@@ -246,7 +246,7 @@ limited to this Windows x86_64 machine. `cargo xtask test-corpus --changed`
 correctly skips its suites because no format, IO, compositor, GPU or text crate
 changed. Command registrations and UI code are unchanged.
 
-The measurements establish equivalence to the starting PhotoCraft kernel, not a
+The measurements establish equivalence to the starting Paragon Photo kernel, not a
 new Photoshop oracle or broader parity increase. Cold startup, actual GUI
 input/frame latency, allocation counts and other platforms' native performance
 remain unmeasured. No performance budget, scorecard checklist or parity floor is

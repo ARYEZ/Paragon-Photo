@@ -570,7 +570,7 @@ fn scripts_browse_extendscript_picks_report_the_error() {
 fn save_and_export_dialogs_start_beside_the_document() {
     let (mut app, files, _) = app();
     let ctx = app.ctx().clone();
-    let dir = std::env::temp_dir().join("PhotoCraft projects").join("图像");
+    let dir = std::env::temp_dir().join("Paragon Photo projects").join("图像");
     let source = dir.join("original.psd");
     app.session.active_mut().unwrap().path = Some(source.to_string_lossy().into_owned());
     for command in ["file.saveAs", "file.export.exportAs", "file.export.saveForWebLegacy"] {
@@ -1600,7 +1600,7 @@ fn save_types(suggested: &str) -> Vec<(String, Vec<String>)> {
     save_request("document", suggested).filters.into_iter().map(|f| (f.name, f.extensions)).collect()
 }
 
-/// Every flat format Save As offers is one PhotoCraft writes, and ICO is among them (#4357).
+/// Every flat format Save As offers is one Paragon Photo writes, and ICO is among them (#4357).
 #[test]
 fn save_as_offers_only_writable_formats_including_ico() {
     // Layered formats, and PDF, are written by `photocraft-io`, not a codec.
@@ -1682,11 +1682,11 @@ fn psb_is_its_own_save_type() {
 #[test]
 fn save_types_list_the_document_formats_then_the_rest_by_name() {
     let names: Vec<&str> = filters::SAVE_FILTERS.iter().map(|(name, _)| *name).collect();
-    assert_eq!(names[..3], ["PSD Document", "PSB Large Document", "PhotoCraft"]);
+    assert_eq!(names[..3], ["PSD Document", "PSB Large Document", "Paragon Photo"]);
     let key = |name: &&str| name.to_ascii_lowercase();
     assert!(names[3..].is_sorted_by_key(key), "{:?}", &names[3..]);
     let names: Vec<&str> = filters::OPEN_FILTERS.iter().map(|(name, _)| *name).collect();
-    assert_eq!(names[..2], ["Photoshop", "PhotoCraft"]);
+    assert_eq!(names[..2], ["Photoshop", "Paragon Photo"]);
     let formats = names.iter().position(|name| *name == "Brushes").expect("the app's own resources");
     assert!(names[2..formats].is_sorted_by_key(key), "{:?}", &names[2..formats]);
 }
