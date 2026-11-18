@@ -1,6 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "apps/*", "xtask"]
+members = ["crates/*", "apps/photocraft", "apps/photocraft-cli", "xtask"]
+# Paragon Photo is a desktop app: the browser build (trunk + wasm-bindgen) is not built. Its sources
+# stay in the tree so upstream changes keep merging; add them back to `members` to build them.
+exclude = ["apps/photocraft-web", "apps/photocraft-web-boot"]
 default-members = ["crates/*", "apps/photocraft", "apps/photocraft-cli", "xtask"]
 
 [workspace.package]
