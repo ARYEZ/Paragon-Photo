@@ -17,7 +17,8 @@ craft crate still comes from git.
   - `src/primitives/paragon.rs` (new): fills of the finishes' exact colours paint as the family
     gradient, the dim gradient with the "on" bar, the selected-row gradient, and black piano keys
     with a red glow on hover. No other theme uses those colours.
-  - `src/primitives/surface.rs`, `src/primitives/draw.rs`: call it for surface and rect fills.
+  - `src/primitives/surface.rs`, `src/primitives/draw.rs`, `src/primitives/state_layer.rs`: call it for
+    surface, rect and state-layer (hover, pressed, selected, on) fills.
   - `src/fonts/stack/install.rs`, `src/fonts/stack.rs`, `src/fonts/mod.rs`, `src/style/tokens.rs`:
     Title and Heading text in the app's `display` family (Bebas Neue) at 1.3×, when it has one.
   - `Cargo.toml`: `craft-font-catalog` from git (it was a sibling path).

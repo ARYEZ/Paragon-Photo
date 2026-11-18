@@ -23,7 +23,9 @@ impl StateLayer {
     pub fn shapes(kind: StateLayerKind, color: StyleColor, rect: Rect, radius: CornerRadius, width: f32) -> Vec<Shape> {
         let color = color.egui();
         match kind {
-            StateLayerKind::Fill => vec![Shape::Rect(RectShape::filled(rect, radius, color))],
+            // Paragon Photo: the finishes' keyed state colours (selected, on, pressed, hover) paint as the PR7
+            // plugins paint them (see `paragon`); a one-point feather, as egui's.
+            StateLayerKind::Fill => super::paragon::fill(rect, radius, color, 1.0).unwrap_or_else(|| vec![Shape::Rect(RectShape::filled(rect, radius, color))]),
             StateLayerKind::Outline => vec![Shape::Rect(RectShape::stroke(rect, radius, Stroke::new(width, color), StrokeKind::Inside))],
         }
     }
