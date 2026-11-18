@@ -13,7 +13,7 @@
     "status": { "good": "#ffb38a", "warn": "#ffa53b", "bad": "#ff3b2f", "info": "#de0639" }
   },
   "shape": {
-    "radius": { "control": 4, "popup": 4, "window": 8, "panel": 8, "button": 4 },
+    "radius": { "control": 4, "surface": 4, "window": 8, "panel": 8, "button": 4 },
     "edge": "flat",
     "knob": "round",
     "wells": "square"

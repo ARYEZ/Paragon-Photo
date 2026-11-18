@@ -244,7 +244,8 @@ fn auto_uses_native_system_theme_when_egui_does_not_report_one() {
     // The reader reports light; no `Event::SystemTheme` reaches egui (X11, and Wayland without the settings portal).
     craft::ui::testing::style::report_os_theme(&ctx, false);
     tick(&mut app, &ctx);
-    assert_eq!(app.ui.theme, AppTheme::pro_light());
+    // The light mode's default: the Paragon family's AURORA.
+    assert_eq!((app.ui.theme.id().as_str(), app.ui.theme.is_dark()), (crate::theme::AURORA, false));
 }
 
 #[test]
@@ -267,6 +268,8 @@ fn appearance_button_cycles_modes_without_losing_theme_choices() {
 fn darken_and_lighten_interface_step_through_photoshops_brightnesses_and_stop_at_the_ends() {
     let mut app = PhotocraftApp::new(photocraft_engine::Session::new(), crate::Services::default());
     let ctx = app.ctx().clone();
+    // Paragon Photo starts in OBSIDIAN; the steps begin from Photoshop's default brightness.
+    app.run("prefs.set", json!({"path": "interface.darkTheme", "value": "craft.artcraft"})).unwrap();
     sync_appearance(&mut app, &ctx);
     assert_eq!(app.ui.theme, AppTheme::pro_medium(), "Photoshop's default brightness");
     let press = |app: &mut PhotocraftApp, id: &str| crate::menus::invoke(app, &ctx, id, json!({})).unwrap();
