@@ -34,6 +34,16 @@ cargo build --release -p photocraft -p photocraft-cli
 Settings live in `~/.config/paragon-photo` on Linux, `~/Library/Application Support/ParagonPhoto` on
 macOS and `%APPDATA%\ParagonPhoto` on Windows, separate from any PhotoCraft install.
 
+## What's in it
+
+PhotoCraft's editor, unchanged: layers, masks, adjustment layers, layer styles, type, vectors, a
+real brush engine, Camera Raw and real PSD files.
+
+<h4>🧰 69 tools</h4>
+Move · Artboard · Rectangular and Elliptical Marquee · Single Row Marquee · Single Column Marquee · Lasso · Polygonal Lasso · Magnetic Lasso · Object Selection · Quick Selection · Magic Wand · Crop · Perspective Crop · Slice · Slice Select · Frame · Eyedropper · Color Sampler · Ruler · Note · Count · Remove · Spot Healing Brush · Healing Brush · Patch · Content-Aware Move · Red Eye · Brush · Pencil · Mixer Brush · Color Replacement · Clone Stamp · Pattern Stamp · History Brush · Art History Brush · Eraser · Background Eraser · Magic Eraser · Gradient · Paint Bucket · Blur · Sharpen · Smudge · Dodge · Burn · Sponge · Pen · Freeform Pen · Curvature Pen · Add Anchor Point · Delete Anchor Point · Convert Point · Horizontal and Vertical Type · Horizontal and Vertical Type Mask · Path Selection · Direct Selection · Rectangle · Ellipse · Triangle · Polygon · Star · Line · Custom Shape · Hand · Rotate View · Zoom
+
+`state::tests::readme_tool_list_matches_tool_all` checks this list against the app's tools.
+
 ## Automation and AI agents (MCP)
 
 `paragon-photo-cli` can drive the editor from scripts, and it is an
