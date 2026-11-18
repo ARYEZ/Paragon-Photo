@@ -77,6 +77,8 @@ tempfile = "3"
 # The framework's test helpers, e.g. the thumbnail and fx badge rects of a Layers panel row
 # (`craft::layers::testing`), and the in-memory settings files (`craft::settings::testing`).
 craft = { workspace = true, features = ["screen-testing", "settings-testing"] }
+# `toml::to_string` in the preferences tests needs the `display` feature.
+toml = { version = "1.1", default-features = false, features = ["std", "serde", "display"] }
 
 [build-dependencies]
 serde_json = { workspace = true }
