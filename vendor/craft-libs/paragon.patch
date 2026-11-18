@@ -117,20 +117,20 @@ diff -ruN a/crates/ui-contract/src/primitives/draw.rs ui-contract/src/primitives
              PaintShape::Circle(center, radius) => Shape::Circle(CircleShape { center: *center, radius: *radius, fill: fill_color, stroke }),
 diff -ruN a/crates/ui-contract/src/primitives/mod.rs ui-contract/src/primitives/mod.rs
 --- a/crates/ui-contract/src/primitives/mod.rs	2026-11-18 13:58:19.142140262 +0000
-+++ b/crates/ui-contract/src/primitives/mod.rs	2026-11-18 13:55:14.777270469 +0000
++++ b/crates/ui-contract/src/primitives/mod.rs	2026-11-18 16:23:13.208943319 +0000
 @@ -13,6 +13,8 @@
  mod kit;
  mod marker;
  mod paint_slot;
 +/// Paragon Photo: the Paragon family's finishes painted into surfaces and fills.
-+mod paragon;
++pub mod paragon;
  pub(crate) mod pointer_art;
  mod record;
  mod reset_mark;
 diff -ruN a/crates/ui-contract/src/primitives/paragon.rs ui-contract/src/primitives/paragon.rs
 --- a/crates/ui-contract/src/primitives/paragon.rs	1970-01-01 00:00:00.000000000 +0000
-+++ b/crates/ui-contract/src/primitives/paragon.rs	2026-11-18 15:49:56.440512203 +0000
-@@ -0,0 +1,249 @@
++++ b/crates/ui-contract/src/primitives/paragon.rs	2026-11-18 16:23:13.201401641 +0000
+@@ -0,0 +1,354 @@
 +//! Paragon Photo: the Paragon family's finishes (OBSIDIAN, AURORA) painted into craft's surfaces.
 +//!
 +//! The Paragon PR7 plugins draw their lit accent as a pink → red → orange gradient wherever a fill
@@ -148,12 +148,16 @@ diff -ruN a/crates/ui-contract/src/primitives/paragon.rs ui-contract/src/primiti
 +//! | strong `#DE0639` (primary buttons, both finishes) | the family gradient × 1.18 |
 +//! | AURORA selected / on `#E4B6B9` | the family gradient × 1.18 at 22% over the pearl; on a control, the gradient bar too |
 +//! | AURORA pressed `#C8BFC3` | the family gradient × 1.18 at 30% |
++//! | knob `#1A1216` (both finishes) | a black knob in a neon ring (the PR7 keys' and knobs' rings) |
++//! | OBSIDIAN outlined button: clear fill, `#8A8A92` edge | a black piano key, as a raised one |
++//! | AURORA pearl surfaces | the satin grain over them, when the app registered its texture |
 +//!
 +//! Everything is a mesh built from [`super::kit::fill_polygon`] and recoloured per vertex, so edges
 +//! keep their anti-aliasing and no texture (per egui context) is needed.
 +
 +use egui::epaint::{CornerRadius, Mesh, RectShape};
-+use egui::{Color32, Pos2, Rect, Shape, Stroke, StrokeKind, pos2};
++use egui::{Color32, Pos2, Rect, Shape, Stroke, StrokeKind, TextureId, pos2};
++use std::sync::RwLock;
 +
 +/// The family red, lit (`ParagonColours::accent`).
 +const ACCENT: [u8; 3] = [0xF4, 0x35, 0x3A];
@@ -169,6 +173,28 @@ diff -ruN a/crates/ui-contract/src/primitives/paragon.rs ui-contract/src/primiti
 +/// AURORA's selected row and on control (the accent at 22% over its pearl panel), and its pressed fill.
 +const AURORA_SELECTED: [u8; 3] = [0xE4, 0xB6, 0xB9];
 +const AURORA_PRESSED: [u8; 3] = [0xC8, 0xBF, 0xC3];
++/// The knob both finishes pin (`surface.knob`): the PR7 key surround's inner fill.
++const KNOB: [u8; 3] = [0x1A, 0x12, 0x16];
++/// OBSIDIAN's outlined (secondary) button edge at rest: its muted text colour, which it uses for no border.
++const OUTLINE_EDGE: [u8; 3] = [0x8A, 0x8A, 0x92];
++/// AURORA's pearl surfaces (panel, raised, background, chrome, sunken), dimmed 10% as the finish draws them.
++const AURORA_PEARL: [[u8; 3]; 5] = [[0xE0, 0xDB, 0xDD], [0xE1, 0xDC, 0xDE], [0xD9, 0xD0, 0xD4], [0xD6, 0xCC, 0xD2], [0xE6, 0xE4, 0xE5]];
++/// The satin grain tile's side, in points: the texture repeats every this many points.
++const GRAIN_TILE: f32 = 128.0;
++
++/// The satin grain texture the app registered ([`set_grain_texture`]), tiled over AURORA's pearl.
++static GRAIN: RwLock<Option<TextureId>> = RwLock::new(None);
++
++/// Registers the satin grain the pearl surfaces show (a repeating texture, alpha only over white), or
++/// `None` for none. The app makes the texture once per context (`theme::install_runtime`).
++pub fn set_grain_texture(texture: Option<TextureId>) {
++    *GRAIN.write().unwrap_or_else(std::sync::PoisonError::into_inner) = texture;
++}
++
++fn grain() -> Option<TextureId> {
++    *GRAIN.read().unwrap_or_else(std::sync::PoisonError::into_inner)
++}
++
 +/// The red-orange edge light (`ParagonColours::glow`).
 +const GLOW: Color32 = Color32::from_rgb(0xFF, 0x4A, 0x3A);
 +
@@ -300,9 +326,81 @@ diff -ruN a/crates/ui-contract/src/primitives/paragon.rs ui-contract/src/primiti
 +    out
 +}
 +
++/// The neon of the PR7 rings at `t` across the ring: the family gradient at 75% (`Finish::neonGradient`),
++/// each stop `brighter(0.35)` as the knob rings draw it.
++fn neon(t: f32) -> [f32; 3] {
++    family(t, 0.75).map(|c| 255.0 - (255.0 - c) / 1.35)
++}
++
++/// A knob over `rect`: a faint neon glow round it, a neon ring and a black body inside it (the PR7 knobs and
++/// keys, black in neon rings on both finishes).
++fn knob(rect: Rect, radius: CornerRadius, opacity: f32, feather: f32) -> Vec<Shape> {
++    let side = rect.width().min(rect.height());
++    let ring = (side * 0.16).clamp(1.5, 3.0);
++    let width = rect.width().max(1.0);
++    let neon_at = |p: Pos2, alpha: f32| {
++        let [r, g, b] = neon((p.x - rect.left()) / width);
++        [r, g, b, alpha]
++    };
++    let grow = |r: CornerRadius, by: f32| {
++        let f = |c: u8| (f32::from(c) + by).clamp(0.0, 255.0) as u8;
++        CornerRadius { nw: f(r.nw), ne: f(r.ne), sw: f(r.sw), se: f(r.se) }
++    };
++    let glow = rect.expand(ring * 0.8);
++    let body = rect.shrink(ring);
++    vec![
++        Shape::mesh(shaded(&rounded_rect(glow, grow(radius, ring * 0.8)), feather * 2.0, |p| neon_at(p, 0.3 * opacity))),
++        Shape::mesh(shaded(&rounded_rect(rect, radius), feather, |p| neon_at(p, opacity))),
++        vertical(body, grow(radius, -ring), [0x2A, 0x29, 0x30], [0x08, 0x08, 0x0A], opacity, feather),
++    ]
++}
++
++/// The Paragon painting of a whole surface (fill and edge): `None` when it is none of the finishes' keyed
++/// surfaces. `edge` is its border colour, if it has a plain border. The edge is the caller's to draw only when
++/// the result says so (`true`): a key or a knob draws its own.
++pub(crate) fn surface(rect: Rect, radius: CornerRadius, fill: Color32, edge: Option<Color32>, feather: f32) -> Option<(Vec<Shape>, bool)> {
++    let control = rect.height() <= CONTROL_MAX_HEIGHT;
++    let rgb = rgb_of(fill);
++    if rgb == Some(KNOB) && rect.width().max(rect.height()) <= CONTROL_MAX_HEIGHT {
++        return Some((knob(rect, radius, opacity_of(fill), feather), false));
++    }
++    // An outlined button at rest: a clear fill inside OBSIDIAN's muted edge.
++    if control && rgb.is_none() && edge.and_then(rgb_of) == Some(OUTLINE_EDGE) {
++        return Some((piano_key(rect, radius, false, 1.0, feather), false));
++    }
++    if control && (rgb == Some(KEY_REST) || rgb == Some(KEY_HOVER)) {
++        return Some((piano_key(rect, radius, rgb == Some(KEY_HOVER), opacity_of(fill), feather), false));
++    }
++    if let Some(shapes) = fill_shapes(rect, radius, fill, feather) {
++        return Some((shapes, true));
++    }
++    // AURORA's pearl: its flat fill, then the satin grain over it.
++    if let (Some(c), Some(texture)) = (rgb, grain())
++        && AURORA_PEARL.contains(&c)
++    {
++        let uv = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(rect.width() / GRAIN_TILE, rect.height() / GRAIN_TILE));
++        return Some((
++            vec![
++                Shape::Rect(RectShape::filled(rect, radius, fill)),
++                Shape::Rect(RectShape::filled(rect, radius, Color32::WHITE).with_texture(texture, uv)),
++            ],
++            true,
++        ));
++    }
++    None
++}
++
 +/// The Paragon painting of a fill of `color` over `rect`, or `None` when `color` is not one of the
 +/// finishes' keyed colours (paint it as craft does).
 +pub(crate) fn fill(rect: Rect, radius: CornerRadius, color: Color32, feather: f32) -> Option<Vec<Shape>> {
++    if rgb_of(color) == Some(KNOB) && rect.width().max(rect.height()) <= CONTROL_MAX_HEIGHT {
++        return Some(knob(rect, radius, opacity_of(color), feather));
++    }
++    fill_shapes(rect, radius, color, feather)
++}
++
++/// [`fill`] for the gradients and keys (everything but the knob).
++fn fill_shapes(rect: Rect, radius: CornerRadius, color: Color32, feather: f32) -> Option<Vec<Shape>> {
 +    let rgb = rgb_of(color)?;
 +    let opacity = opacity_of(color);
 +    let control = rect.height() <= CONTROL_MAX_HEIGHT;
@@ -364,6 +462,13 @@ diff -ruN a/crates/ui-contract/src/primitives/paragon.rs ui-contract/src/primiti
 +        assert!(fill(row, r, aurora, 1.0).is_some_and(|s| s.len() == 1));
 +        assert!(fill(tool, r, aurora, 1.0).is_some_and(|s| s.len() == 2));
 +        assert!(fill(rect, r, Color32::from_rgb(0xDE, 0x06, 0x39), 1.0).is_some(), "primary buttons");
++        // A knob: glow, neon ring, black body.
++        let knob_rect = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(14.0, 14.0));
++        assert!(fill(knob_rect, CornerRadius::same(7), Color32::from_rgb(0x1A, 0x12, 0x16), 1.0).is_some_and(|s| s.len() == 3));
++        // OBSIDIAN's outlined button is a key; the same clear fill with another edge (AURORA's) is not.
++        let edge = |c: [u8; 3]| Some(Color32::from_rgb(c[0], c[1], c[2]));
++        assert!(surface(rect, r, Color32::TRANSPARENT, edge([0x8A, 0x8A, 0x92]), 1.0).is_some_and(|(_, edge)| !edge));
++        assert!(surface(rect, r, Color32::TRANSPARENT, edge([0x6B, 0x65, 0x69]), 1.0).is_none());
 +        // A raised panel (taller than a control) keeps its flat fill.
 +        let panel = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(300.0, 200.0));
 +        assert!(fill(panel, r, Color32::from_rgb(0x1C, 0x1C, 0x20), 1.0).is_none());
@@ -396,17 +501,30 @@ diff -ruN a/crates/ui-contract/src/primitives/state_layer.rs ui-contract/src/pri
      }
 diff -ruN a/crates/ui-contract/src/primitives/surface.rs ui-contract/src/primitives/surface.rs
 --- a/crates/ui-contract/src/primitives/surface.rs	2026-11-18 13:58:19.143015128 +0000
-+++ b/crates/ui-contract/src/primitives/surface.rs	2026-11-18 13:55:14.777946645 +0000
-@@ -29,7 +29,11 @@
++++ b/crates/ui-contract/src/primitives/surface.rs	2026-11-18 16:23:20.998402459 +0000
+@@ -28,8 +28,23 @@
+             out.push(Shape::Rect(shadow.as_shape(rect, radius)));
          }
          let fill = fill.unwrap_or(style.fill);
-         if fill != Color32::TRANSPARENT {
+-        if fill != Color32::TRANSPARENT {
 -            out.push(Shape::Rect(RectShape::filled(rect, radius, fill)));
-+            // Paragon Photo: the finishes' keyed colours paint as gradients and piano keys (see `paragon`).
-+            match super::paragon::fill(rect, radius, fill, 1.0 / pixels_per_point) {
-+                Some(shapes) => out.extend(shapes),
-+                None => out.push(Shape::Rect(RectShape::filled(rect, radius, fill))),
++        // Paragon Photo: the finishes' keyed surfaces paint as gradients, piano keys, neon-ringed knobs and grained
++        // pearl (see `paragon`); a key or a knob draws its own edge.
++        let border = match style.edge {
++            SurfaceEdge::Border(stroke) => Some(stroke.color),
++            _ => None,
++        };
++        let mut edge = true;
++        match super::paragon::surface(rect, radius, fill, border, 1.0 / pixels_per_point) {
++            Some((shapes, keep_edge)) => {
++                out.extend(shapes);
++                edge = keep_edge;
 +            }
++            None if fill != Color32::TRANSPARENT => out.push(Shape::Rect(RectShape::filled(rect, radius, fill))),
++            None => {}
++        }
++        if !edge {
++            return out;
          }
          match style.edge {
              SurfaceEdge::Border(stroke) => out.push(Shape::Rect(RectShape::stroke(rect, radius, stroke, StrokeKind::Inside))),

@@ -282,3 +282,16 @@ fn paragon_themes_have_readable_text() {
         assert!(contrast(t.text_faint, t.card) >= 2.0, "{:?} text_faint", theme.id());
     }
 }
+
+/// AURORA's satin grain: faint everywhere (speckle up to 9/255), with the odd bright fleck, about 1 in 500.
+#[test]
+fn the_satin_grain_is_faint_speckle_with_rare_flecks() {
+    let grain = satin_grain(256, 1234);
+    assert_eq!(grain.size, [256, 256]);
+    let flecks = grain.pixels.iter().filter(|p| p.a() >= 60).count();
+    let total = grain.pixels.len();
+    assert!(flecks > total / 1000 && flecks < total / 250, "{flecks} flecks in {total}");
+    assert!(grain.pixels.iter().all(|p| p.a() <= 9 || p.a() >= 60), "speckle stays at or below 9/255");
+    // Seeded: the same grain every launch.
+    assert_eq!(grain.pixels, satin_grain(256, 1234).pixels);
+}

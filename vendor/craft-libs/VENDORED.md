@@ -17,7 +17,9 @@ craft crate still comes from git.
   - `src/primitives/paragon.rs` (new): fills of the finishes' exact colours paint as the family
     gradient, the dim gradient with the "on" bar, the selected-row gradient, primary buttons in
     the gradient, AURORA's selected and on fills as the gradient over the pearl, and (OBSIDIAN)
-    black piano keys with a red glow on hover. No other theme uses those colours.
+    black piano keys with a red glow on hover (raised and outlined buttons), knobs as black bodies in
+    neon rings, and AURORA's pearl with the satin grain the app registers
+    (`primitives::paragon::set_grain_texture`, now a public module). No other theme uses those colours.
   - `src/primitives/surface.rs`, `src/primitives/draw.rs`, `src/primitives/state_layer.rs`: call it for
     surface, rect and state-layer (hover, pressed, selected, on) fills.
   - `src/fonts/stack/install.rs`, `src/fonts/stack.rs`, `src/fonts/mod.rs`, `src/style/tokens.rs`:

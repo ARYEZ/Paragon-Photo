@@ -1038,6 +1038,58 @@ pub fn install_runtime(ctx: &egui::Context, frame: Option<craft::window::policy:
     let fonts = ui_fonts(ctx, crate::i18n::current().code());
     crate::app::framework::install(ctx, &fonts, frame);
     install_font_stack(ctx, &fonts);
+    install_satin_grain(ctx);
+}
+
+/// The satin grain AURORA's pearl surfaces show, kept alive for as long as the app runs (the painter only holds its id).
+static SATIN_GRAIN: std::sync::Mutex<Option<egui::TextureHandle>> = std::sync::Mutex::new(None);
+
+/// Makes the satin grain texture on `ctx` and registers it with craft's Paragon painting, which tiles it over
+/// AURORA's pearl (`craft::ui::primitives::paragon`).
+fn install_satin_grain(ctx: &egui::Context) {
+    let options = egui::TextureOptions { wrap_mode: egui::TextureWrapMode::Repeat, ..egui::TextureOptions::LINEAR };
+    let texture = ctx.load_texture("paragon-satin-grain", satin_grain(SATIN_GRAIN_SIDE, 1234), options);
+    craft::ui::primitives::paragon::set_grain_texture(Some(texture.id()));
+    *SATIN_GRAIN.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(texture);
+}
+
+/// The grain tile's side in pixels; craft repeats it every 128 points.
+const SATIN_GRAIN_SIDE: usize = 256;
+
+/// AURORA's satin grain (the Paragon PR7 plugins' `Finish::makeSatinGrain`): a fine speckle with no direction,
+/// white or a dusty rose at up to 9/255, and the odd bright mica fleck (1 in 500: white or a pale pink at
+/// 60–119/255). Drawn with JUCE's random generator, so it has the plugins' character.
+pub(crate) fn satin_grain(side: usize, seed: i64) -> egui::ColorImage {
+    struct JuceRandom(i64);
+    impl JuceRandom {
+        fn next_int(&mut self) -> i32 {
+            self.0 = (self.0.wrapping_mul(0x5DEE_CE66D).wrapping_add(11)) & 0xFFFF_FFFF_FFFF;
+            (self.0 >> 16) as i32
+        }
+        fn below(&mut self, max: u32) -> u32 {
+            ((u64::from(self.next_int() as u32) * u64::from(max)) >> 32) as u32
+        }
+        fn next_float(&mut self) -> f32 {
+            (self.next_int() as u32) as f32 / (u32::MAX as f32 + 1.0)
+        }
+        fn next_bool(&mut self) -> bool {
+            (self.next_int() & 0x4000_0000) != 0
+        }
+    }
+    let mut random = JuceRandom(seed);
+    let mut pixels = Vec::with_capacity(side * side);
+    for _ in 0..side * side {
+        let pixel = if random.below(500) == 0 {
+            let [r, g, b] = if random.next_bool() { [255, 255, 255] } else { [0xFF, 0xD8, 0xE6] };
+            Color32::from_rgba_unmultiplied(r, g, b, 60 + random.below(60) as u8)
+        } else {
+            let s = random.next_float() * 2.0 - 1.0;
+            let alpha = (s.abs() * 9.0).round() as u8;
+            if s > 0.0 { Color32::from_rgba_unmultiplied(255, 255, 255, alpha) } else { Color32::from_rgba_unmultiplied(0x5A, 0x3A, 0x4A, alpha) }
+        };
+        pixels.push(pixel);
+    }
+    egui::ColorImage { size: [side, side], pixels, source_size: egui::vec2(side as f32, side as f32) }
 }
 
 /// Every face of `fonts` at Interface › UI Font Size, egui's default faces the framework adds

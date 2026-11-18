@@ -14,7 +14,7 @@ mod kit;
 mod marker;
 mod paint_slot;
 /// Paragon Photo: the Paragon family's finishes painted into surfaces and fills.
-mod paragon;
+pub mod paragon;
 pub(crate) mod pointer_art;
 mod record;
 mod reset_mark;

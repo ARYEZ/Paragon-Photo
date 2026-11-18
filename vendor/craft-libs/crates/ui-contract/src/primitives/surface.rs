@@ -28,12 +28,23 @@ impl Surface {
             out.push(Shape::Rect(shadow.as_shape(rect, radius)));
         }
         let fill = fill.unwrap_or(style.fill);
-        if fill != Color32::TRANSPARENT {
-            // Paragon Photo: the finishes' keyed colours paint as gradients and piano keys (see `paragon`).
-            match super::paragon::fill(rect, radius, fill, 1.0 / pixels_per_point) {
-                Some(shapes) => out.extend(shapes),
-                None => out.push(Shape::Rect(RectShape::filled(rect, radius, fill))),
+        // Paragon Photo: the finishes' keyed surfaces paint as gradients, piano keys, neon-ringed knobs and grained
+        // pearl (see `paragon`); a key or a knob draws its own edge.
+        let border = match style.edge {
+            SurfaceEdge::Border(stroke) => Some(stroke.color),
+            _ => None,
+        };
+        let mut edge = true;
+        match super::paragon::surface(rect, radius, fill, border, 1.0 / pixels_per_point) {
+            Some((shapes, keep_edge)) => {
+                out.extend(shapes);
+                edge = keep_edge;
             }
+            None if fill != Color32::TRANSPARENT => out.push(Shape::Rect(RectShape::filled(rect, radius, fill))),
+            None => {}
+        }
+        if !edge {
+            return out;
         }
         match style.edge {
             SurfaceEdge::Border(stroke) => out.push(Shape::Rect(RectShape::stroke(rect, radius, stroke, StrokeKind::Inside))),

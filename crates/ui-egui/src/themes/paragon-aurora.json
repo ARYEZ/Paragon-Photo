@@ -45,6 +45,7 @@
     "text.on_accent": "#ffffff",
     "text.on_strong": "#ffffff",
     "caption.close_hover": "#de0639",
-    "caption.close_text": "#ffffff"
+    "caption.close_text": "#ffffff",
+    "surface.knob": "#1a1216"
   }
 }
