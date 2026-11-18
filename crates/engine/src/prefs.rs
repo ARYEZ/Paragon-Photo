@@ -430,8 +430,8 @@ impl Default for Interface {
     fn default() -> Self {
         Self {
             appearance_mode: AppearanceMode::Dark,
-            dark_theme: "craft.artcraft".into(),
-            light_theme: "craft.pro".into(),
+            dark_theme: "paragon.obsidian".into(),
+            light_theme: "paragon.aurora".into(),
             favorite_themes: Vec::new(),
             canvas_color: CanvasColor::Default,
             canvas_custom_color: "#282828".into(),

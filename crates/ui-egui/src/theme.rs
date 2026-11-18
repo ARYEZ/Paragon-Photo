@@ -20,6 +20,26 @@
 
 use craft::theme::{ColorToken, ThemeDef, ThemeId};
 use craft::ui::fonts::UiFonts;
+
+// ---- Paragon Photo's own themes ----------------------------------------------------------------
+
+/// The Paragon family's OBSIDIAN finish (pearl black): Paragon Photo's default dark theme.
+pub const OBSIDIAN: &str = "paragon.obsidian";
+/// The Paragon family's AURORA finish (pearl white, dimmed 10%): Paragon Photo's default light theme.
+pub const AURORA: &str = "paragon.aurora";
+
+/// The two finishes as suite theme files (`craft-design-theme` v1), built into the binary. Their
+/// values come from the Paragon PR7-D plugin; see `docs/paragon-finish-spec.md`.
+pub const PARAGON_THEME_FILES: [&[u8]; 2] = [include_bytes!("themes/paragon-obsidian.json"), include_bytes!("themes/paragon-aurora.json")];
+
+/// The Paragon theme `id` (OBSIDIAN or AURORA), parsed once from the built-in file. `None` for any
+/// other id, or if a built-in file failed to parse (a test guards against that).
+pub fn paragon_theme(id: &str) -> Option<Arc<ThemeDef>> {
+    static DEFS: std::sync::LazyLock<Vec<Arc<ThemeDef>>> = std::sync::LazyLock::new(|| {
+        PARAGON_THEME_FILES.iter().filter_map(|bytes| craft::theme::format::parse(bytes).ok()).map(|file| Arc::new(file.theme)).collect()
+    });
+    DEFS.iter().find(|def| def.id.as_str() == id).cloned()
+}
 use egui::{Color32, CornerRadius, FontData, FontFamily, FontId, Stroke, TextStyle, Visuals};
 use photocraft_engine::prefs::UiFontSize;
 use std::sync::Arc;
@@ -157,9 +177,19 @@ impl PartialEq for AppTheme {
 }
 
 impl Default for AppTheme {
-    /// The suite default, Pro (Medium Gray).
+    /// Paragon Photo's default, OBSIDIAN, at the standard appearance (the framework resolves it
+    /// again under the window's real appearance on the first frame). Pro (Medium Gray) only if the
+    /// built-in theme file failed to parse, which a test rules out.
     fn default() -> Self {
-        Self::from(Palette::ProMedium)
+        use craft::theme::{Appearance, Contrast, Mode, Size, TextSize};
+        match paragon_theme(OBSIDIAN) {
+            Some(def) => {
+                let appearance = Appearance { mode: Mode::Dark, contrast: Contrast::Standard, size: Size::default(), text_size: TextSize::default(), reduced_motion: false };
+                let resolved = craft::theme::resolve(&def, appearance, None);
+                Self::resolved(def, true, &resolved)
+            }
+            None => Self::from(Palette::ProMedium),
+        }
     }
 }
 
@@ -977,13 +1007,17 @@ fn ui_fonts(ctx: &egui::Context, ui_language: &str) -> UiFonts<'static> {
     add("Inter-Medium", bundled(photocraft_text::fonts::INTER_MEDIUM.as_slice()), std::slice::from_ref(&medium));
     add("Inter-SemiBold", bundled(photocraft_text::fonts::INTER_SEMIBOLD.as_slice()), std::slice::from_ref(&semibold));
     add("JetBrainsMono", bundled(photocraft_text::fonts::JETBRAINS_MONO_REGULAR.as_slice()), std::slice::from_ref(&monospace));
-    add("Inter", bundled(photocraft_text::fonts::INTER_REGULAR.as_slice()), &[proportional.clone(), medium.clone(), semibold.clone()]);
+    // The Paragon display face for titles (`display`), with Inter behind it for what it lacks.
+    let display = FontRef::named(DISPLAY);
+    add("BebasNeue", bundled(photocraft_text::fonts::BEBAS_NEUE_REGULAR.as_slice()), std::slice::from_ref(&display));
+    add("Inter", bundled(photocraft_text::fonts::INTER_REGULAR.as_slice()), &[proportional.clone(), medium.clone(), semibold.clone(), display.clone()]);
     // The monochrome emoji face egui's `default_fonts` would add; the last resort after the system fonts.
     let mut emoji = Emoji::default();
     emoji.monochrome = craft::ui::fonts::noto_emoji();
     let mut fonts = UiFonts::new(&I18nScripts)
         .family(Family::named("medium").weight(500))
         .family(Family::named(SEMIBOLD).weight(600))
+        .family(Family::named(DISPLAY))
         .craft_faces(&crate::cjk_fonts::craft_faces())
         .ui_language(ui_language)
         .emoji(emoji);
@@ -1142,6 +1176,15 @@ pub fn mono(size: f32) -> FontId {
     FontId::monospace(size)
 }
 
+/// The Paragon family's display face (Bebas Neue, upper case by design) for titles the app draws.
+const DISPLAY: &str = "display";
+
+/// Bebas Neue at `size`. The Paragon PR7-S plugin draws it 1.3× the size Inter would take for the
+/// same line (its `bebasScale`), so pass the Inter size and this scales it.
+pub fn display(size: f32) -> FontId {
+    FontId::new(size * 1.3, FontFamily::Name(DISPLAY.into()))
+}
+
 /// Apply a theme to egui's global style and publish its tokens.
 pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
     // Keep native windows at SystemDefault so macOS continues reporting OS appearance changes,
@@ -1195,7 +1238,8 @@ pub fn apply(ctx: &egui::Context, theme: &AppTheme) {
             (TextStyle::Small, FontId::proportional(10.5)),
             (TextStyle::Body, FontId::proportional(if t.pro { 12.0 } else { 12.5 })),
             (TextStyle::Button, FontId::proportional(if t.pro { 12.0 } else { 12.5 })),
-            (TextStyle::Heading, semibold(15.0)),
+            // Titles in the Paragon display face (Bebas Neue), as the Paragon PR7-S plugin draws them.
+            (TextStyle::Heading, display(15.0)),
             (TextStyle::Monospace, FontId::monospace(12.0)),
         ]
         .into();

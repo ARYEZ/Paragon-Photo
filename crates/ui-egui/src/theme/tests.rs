@@ -190,3 +190,95 @@ fn every_palette_holds_text_contrast() {
         assert!(contrast(t.caption_close_text, t.caption_close) >= 4.0, "{kind:?}: close button glyph");
     }
 }
+
+// ---- Paragon Photo's own themes (OBSIDIAN and AURORA) ------------------------------------------
+
+/// OBSIDIAN and AURORA, resolved as the default appearance shows them.
+fn paragon_themes() -> [(AppTheme, bool); 2] {
+    use craft::theme::{Appearance, Contrast, Mode, Size, TextSize};
+    [(OBSIDIAN, true), (AURORA, false)].map(|(id, dark)| {
+        let def = paragon_theme(id).unwrap_or_else(|| panic!("{id} parses"));
+        let mode = if dark { Mode::Dark } else { Mode::Light };
+        let appearance = Appearance { mode, contrast: Contrast::Standard, size: Size::default(), text_size: TextSize::default(), reduced_motion: false };
+        (AppTheme::resolved(Arc::clone(&def), dark, &craft::theme::resolve(&def, appearance, None)), dark)
+    })
+}
+
+#[test]
+fn paragon_theme_files_parse_with_their_ids_and_modes() {
+    for (bytes, id, mode) in [(PARAGON_THEME_FILES[0], OBSIDIAN, "dark"), (PARAGON_THEME_FILES[1], AURORA, "light")] {
+        let file = craft::theme::format::parse(bytes).unwrap_or_else(|e| panic!("{id}: {e:?}"));
+        assert_eq!(file.theme.id.as_str(), id);
+        let raw: serde_json::Value = serde_json::from_slice(bytes).unwrap();
+        assert_eq!(raw["variants"], mode, "{id} is a {mode} theme");
+        assert!(paragon_theme(id).is_some(), "{id} is built in");
+    }
+    assert!(paragon_theme("craft.artcraft").is_none());
+}
+
+#[test]
+fn the_default_theme_is_obsidian() {
+    let theme = AppTheme::default();
+    assert_eq!(theme.id().as_str(), OBSIDIAN);
+    assert!(theme.is_dark());
+}
+
+/// The Paragon family's colour rule: only hues from about 318° through 0° to 42° (pink, red,
+/// orange), plus pearl white, onyx and greys. No green, blue, purple, yellow or cyan.
+#[test]
+fn paragon_themes_keep_the_family_colour_rule() {
+    let hue_and_saturation = |hex: &str| {
+        let h = hex.trim_start_matches('#');
+        let c = |i: usize| f32::from(u8::from_str_radix(&h[i..i + 2], 16).unwrap()) / 255.0;
+        let (r, g, b) = (c(0), c(2), c(4));
+        let (max, min) = (r.max(g).max(b), r.min(g).min(b));
+        let delta = max - min;
+        let saturation = if max == 0.0 { 0.0 } else { delta / max };
+        let hue = if delta == 0.0 {
+            0.0
+        } else if max == r {
+            60.0 * (((g - b) / delta).rem_euclid(6.0))
+        } else if max == g {
+            60.0 * ((b - r) / delta + 2.0)
+        } else {
+            60.0 * ((r - g) / delta + 4.0)
+        };
+        (hue, saturation, max)
+    };
+    for bytes in PARAGON_THEME_FILES {
+        let raw: serde_json::Value = serde_json::from_slice(bytes).unwrap();
+        let mut colours: Vec<(String, String)> = Vec::new();
+        for mode in ["light", "dark"] {
+            if let Some(pins) = raw[mode].as_object() {
+                colours.extend(pins.iter().filter_map(|(k, v)| v.as_str().map(|v| (format!("{mode}.{k}"), v.to_owned()))));
+            }
+        }
+        for (k, v) in raw["seeds"]["status"].as_object().unwrap() {
+            colours.push((format!("seeds.status.{k}"), v.as_str().unwrap().to_owned()));
+        }
+        for key in ["neutral", "accent"] {
+            colours.push((format!("seeds.{key}"), raw["seeds"][key].as_str().unwrap().to_owned()));
+        }
+        for (key, hex) in colours {
+            let (hue, saturation, value) = hue_and_saturation(&hex);
+            // Near-greys (pearl, panel greys) and near-blacks (PR7-D's onyx: #060407 leans violet, but
+            // at 3% brightness no hue shows) may lean any way; real colour must be in the family.
+            let in_family = saturation < 0.25 || value < 0.12 || hue >= 318.0 || hue <= 42.0;
+            assert!(in_family, "{} {key} = {hex}: hue {hue:.0}°, saturation {saturation:.2}", raw["id"]);
+        }
+    }
+}
+
+/// The text of both finishes stays readable on their panels (the floors the other palettes meet).
+#[test]
+fn paragon_themes_have_readable_text() {
+    for (theme, dark) in paragon_themes() {
+        let t = theme.tokens();
+        assert_eq!(t.dark, dark);
+        for (name, surface) in [("card", t.card), ("dock", t.dock), ("field", t.field), ("chrome", t.chrome)] {
+            assert!(contrast(t.text, surface) >= 4.0, "{:?} text on {name}: {:.2}", theme.id(), contrast(t.text, surface));
+            assert!(contrast(t.text_dim, surface) >= 2.5, "{:?} text_dim on {name}: {:.2}", theme.id(), contrast(t.text_dim, surface));
+        }
+        assert!(contrast(t.text_faint, t.card) >= 2.0, "{:?} text_faint", theme.id());
+    }
+}

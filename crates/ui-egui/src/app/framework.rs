@@ -17,7 +17,7 @@ use craft::host::target::{Backend, ShellInfo};
 use craft::host::{AppInfo, Files, Host, SectionStore};
 use craft::i18n::Direction;
 use craft::keymap::Overrides;
-use craft::theme::{AppDefaults, AppSizes, ModeChoice, Size, SuiteChoice, ThemeId, ThemePair, resolve_sized};
+use craft::theme::{AppDefaults, AppSizes, ModeChoice, Size, SuiteChoice, ThemeDef, ThemeId, ThemePair, resolve_sized};
 use craft::theme_store::{SelectionChange, SuiteClient};
 use craft::ui::dialog::DialogHost;
 use craft::ui::fonts::UiFonts;
@@ -191,13 +191,23 @@ fn mode_choice(mode: AppearanceMode) -> ModeChoice {
     }
 }
 
-/// Paragon Photo's theme in the dark mode when nobody chose one: Pro (Medium Gray).
-const DEFAULT_DARK: &str = "craft.artcraft";
-/// Paragon Photo's theme in the light mode when nobody chose one: Pro (Light).
-const DEFAULT_LIGHT: &str = "craft.pro";
+/// Paragon Photo's theme in the dark mode when nobody chose one: the Paragon family's OBSIDIAN.
+const DEFAULT_DARK: &str = crate::theme::OBSIDIAN;
+/// Paragon Photo's theme in the light mode when nobody chose one: the Paragon family's AURORA.
+const DEFAULT_LIGHT: &str = crate::theme::AURORA;
 
-/// What Paragon Photo shows for each suite field nobody has chosen: Pro (Medium Gray) in the dark
-/// mode, Pro in the light, and the dark mode.
+/// Puts Paragon Photo's built-in themes (OBSIDIAN and AURORA) in the suite's library, so choosing
+/// one is saved and the Appearance settings list them like any library theme. The store answers
+/// "already in the library" after the first time, which is fine: the app resolves them from its
+/// own copies (`theme::paragon_theme`) whatever the library holds.
+fn import_paragon_themes(suite: &SuiteClient) {
+    for bytes in crate::theme::PARAGON_THEME_FILES {
+        suite.watch().request(craft::theme_store::Op::Import { bytes: Arc::from(bytes), as_copy: false });
+    }
+}
+
+/// What Paragon Photo shows for each suite field nobody has chosen: OBSIDIAN in the dark mode,
+/// AURORA in the light, and the dark mode.
 fn defaults() -> AppDefaults {
     let theme = |id: &str| ThemeId::parse(id).unwrap_or_else(|_| ThemeId::suite_default());
     AppDefaults {
@@ -353,6 +363,7 @@ impl Framework {
         let ctx = ctx.clone();
         let options = StoreOptions::new(concat!("photocraft ", env!("CARGO_PKG_VERSION")));
         self.suite = SuiteClient::new(SuiteWatch::open(&SuiteDir::resolve(false), options, move || ctx.request_repaint()));
+        import_paragon_themes(&self.suite);
         self.synced = None;
         self.synced_rev = None;
         self.started = false;
@@ -431,13 +442,26 @@ impl Framework {
         if let Some(theme) = AppTheme::palette(id, dark) {
             return theme;
         }
-        let Some(def) = self.suite.theme(id) else {
+        // Paragon Photo's own themes resolve from the built-in copies, so they show from the first
+        // frame, before the suite's library has loaded.
+        let def = crate::theme::paragon_theme(id.as_str()).or_else(|| self.suite.theme(id).map(Arc::new));
+        let Some(def) = def else {
             let defaults = defaults().theme;
-            return AppTheme::palette(if dark { &defaults.dark } else { &defaults.light }, dark).unwrap_or_default();
+            let fallback = if dark { &defaults.dark } else { &defaults.light };
+            return match crate::theme::paragon_theme(fallback.as_str()) {
+                Some(def) => Self::resolve_theme(def, dark, ctx),
+                None => AppTheme::palette(fallback, dark).unwrap_or_default(),
+            };
         };
+        Self::resolve_theme(def, dark, ctx)
+    }
+
+    /// Theme `def`'s tokens in the dark or light mode under the root's contrast, size and sizes, as
+    /// the runtime resolves its own.
+    fn resolve_theme(def: Arc<ThemeDef>, dark: bool, ctx: &egui::Context) -> AppTheme {
         let root = base_root().mode(if dark { ModeChoice::Dark } else { ModeChoice::Light });
         let resolved = resolve_sized(&def, root.appearance(ctx), None, &root.sizes);
-        AppTheme::resolved(Arc::new(def), dark, &resolved)
+        AppTheme::resolved(def, dark, &resolved)
     }
 
     /// The suite: the Preferences window's theme rows read it, and tests put themes in its library.
@@ -457,7 +481,7 @@ impl Framework {
 
     /// Whether theme `id` can show now: the suite has it as a built-in or a loaded library theme.
     pub(crate) fn theme_availability(&self, id: &ThemeId) -> Result<(), ThemeUnavailable> {
-        if self.suite.has_theme(id) {
+        if self.suite.has_theme(id) || crate::theme::paragon_theme(id.as_str()).is_some() {
             Ok(())
         } else if self.suite.is_loading(id) {
             Err(ThemeUnavailable::Loading)
@@ -472,6 +496,7 @@ impl Framework {
     pub(crate) fn theme_name(&self, id: &ThemeId, dark: bool) -> String {
         AppTheme::palette_label(id.as_str(), dark)
             .map(str::to_owned)
+            .or_else(|| crate::theme::paragon_theme(id.as_str()).map(|def| def.name.clone()))
             .or_else(|| self.suite.theme(id).map(|def| def.name))
             .unwrap_or_else(|| id.as_str().to_owned())
     }
