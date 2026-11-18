@@ -12,6 +12,9 @@
 //! | accent dim `#4E1016` (on / pressed) | the family gradient × 0.42, and on a control the 2 px gradient bar at its foot |
 //! | selected `#411418` | the family gradient × 1.18 at 22% (the PR7 selected list row) |
 //! | raised `#1C1C20`, hover `#303034` (a control) | a piano key: dark face gradient, gloss, red glow edge on hover |
+//! | strong `#DE0639` (primary buttons, both finishes) | the family gradient × 1.18 |
+//! | AURORA selected / on `#E4B6B9` | the family gradient × 1.18 at 22% over the pearl; on a control, the gradient bar too |
+//! | AURORA pressed `#C8BFC3` | the family gradient × 1.18 at 30% |
 //!
 //! Everything is a mesh built from [`super::kit::fill_polygon`] and recoloured per vertex, so edges
 //! keep their anti-aliasing and no texture (per egui context) is needed.
@@ -28,6 +31,11 @@ const SELECTED: [u8; 3] = [0x41, 0x14, 0x18];
 /// OBSIDIAN's raised control (`drawButtonBackground`'s 1C1C20) and its hover.
 const KEY_REST: [u8; 3] = [0x1C, 0x1C, 0x20];
 const KEY_HOVER: [u8; 3] = [0x30, 0x30, 0x34];
+/// The strong accent (primary buttons) both finishes pin: the family pink.
+const STRONG: [u8; 3] = [0xDE, 0x06, 0x39];
+/// AURORA's selected row and on control (the accent at 22% over its pearl panel), and its pressed fill.
+const AURORA_SELECTED: [u8; 3] = [0xE4, 0xB6, 0xB9];
+const AURORA_PRESSED: [u8; 3] = [0xC8, 0xBF, 0xC3];
 /// The red-orange edge light (`ParagonColours::glow`).
 const GLOW: Color32 = Color32::from_rgb(0xFF, 0x4A, 0x3A);
 
@@ -165,7 +173,9 @@ pub(crate) fn fill(rect: Rect, radius: CornerRadius, color: Color32, feather: f3
     let rgb = rgb_of(color)?;
     let opacity = opacity_of(color);
     let control = rect.height() <= CONTROL_MAX_HEIGHT;
-    if rgb == ACCENT {
+    // A list row is much wider than tall; a tool button or a key is not.
+    let compact_control = control && rect.width() < rect.height() * 4.0;
+    if rgb == ACCENT || rgb == STRONG {
         Some(vec![gradient(rect, radius, LIT, opacity, feather)])
     } else if rgb == ACCENT_DIM {
         let mut out = vec![gradient(rect, radius, DIM, opacity, feather)];
@@ -175,6 +185,15 @@ pub(crate) fn fill(rect: Rect, radius: CornerRadius, color: Color32, feather: f3
         Some(out)
     } else if rgb == SELECTED {
         Some(vec![gradient(rect, radius, LIT, 0.22 * opacity, feather)])
+    } else if rgb == AURORA_SELECTED {
+        // The pearl shows through, as PR7-D's row gradient at 22% over the panel.
+        let mut out = vec![gradient(rect, radius, LIT, 0.22 * opacity, feather)];
+        if compact_control {
+            out.extend(on_bar(rect, feather));
+        }
+        Some(out)
+    } else if rgb == AURORA_PRESSED {
+        Some(vec![gradient(rect, radius, LIT, 0.30 * opacity, feather)])
     } else if control && (rgb == KEY_REST || rgb == KEY_HOVER) {
         Some(piano_key(rect, radius, rgb == KEY_HOVER, opacity, feather))
     } else {
@@ -205,6 +224,13 @@ mod tests {
         // Another theme's accent, a panel, a clear fill: as craft paints them.
         assert!(fill(rect, r, Color32::from_rgb(0x37, 0x8E, 0xF0), 1.0).is_none());
         assert!(fill(rect, r, Color32::TRANSPARENT, 1.0).is_none());
+        // AURORA: a selected row is a translucent gradient; a selected tool gets the bar as well.
+        let row = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(300.0, 28.0));
+        let tool = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(36.0, 32.0));
+        let aurora = Color32::from_rgb(0xE4, 0xB6, 0xB9);
+        assert!(fill(row, r, aurora, 1.0).is_some_and(|s| s.len() == 1));
+        assert!(fill(tool, r, aurora, 1.0).is_some_and(|s| s.len() == 2));
+        assert!(fill(rect, r, Color32::from_rgb(0xDE, 0x06, 0x39), 1.0).is_some(), "primary buttons");
         // A raised panel (taller than a control) keeps its flat fill.
         let panel = Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(300.0, 200.0));
         assert!(fill(panel, r, Color32::from_rgb(0x1C, 0x1C, 0x20), 1.0).is_none());
