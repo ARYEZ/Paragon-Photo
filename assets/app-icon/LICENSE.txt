@@ -1,13 +1,8 @@
-PhotoCraft app icon (photocraft.svg, photocraft-small.svg and every file derived from them in
+Paragon Photo app icon (photocraft.svg, photocraft-small.svg and every file derived from them in
 this directory: photocraft-1024.png, photocraft.icns, photocraft.ico, hicolor/).
 
-Original artwork made for this project by the project owner: an engraving-style drawing created
-in ArtCraft, then vectorised. No third-party material. Licensed like the rest of PhotoCraft,
-under either of
+Original artwork for Paragon Photo, part of the Paragon family's look (the PR7 plugins' icon),
+drawn from vector outlines by scripts/paragon_logo.py. No third-party material.
 
-  * Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
-  * MIT license (https://opensource.org/licenses/MIT)
-
-at your option.
-
-Regenerate the derived files with packaging/icons.sh.
+The icon and the Paragon Photo name belong to the repository owner. They are not open source and
+are not covered by the MIT / Apache-2.0 licence of the code. All rights reserved.

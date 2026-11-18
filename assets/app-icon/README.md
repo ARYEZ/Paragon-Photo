@@ -1,46 +1,34 @@
-# PhotoCraft app icon
+# Paragon Photo app icon
 
-A **nine-tailed kitsune with a brow diamond**: an engraving portrait, seated, looking back at the
-viewer, in the Crafting Apps' owl-template framing (full-bleed field, head and body filling the
-tile, tails running off the edges).
+The Paragon family's app icon, as the PR7 plugins draw it (Paragon-PR7-S `source/ui/Logo.cpp`,
+`Logo::drawAppIcon`), with a **PP** monogram and the **PARAGON PHOTO** mark.
 
-## Palette
+Every file here is generated. Change `scripts/paragon_logo.py` and run, from the repository root:
 
-Exactly three colours:
+```bash
+python3 scripts/paragon_logo.py
+```
 
-| Colour | Hex | Used for |
-|---|---|---|
-| Ink | `#0b0b0c` | line work and contours |
-| Paper | `#efe9dc` | the figure |
-| PhotoCraft blue (app colour) | `#2f7bf5` | the full-bleed field |
+## Design
 
-## Geometry
-
-A 512-unit tile (`viewBox="0 0 512 512"`), rounded square with `rx=112`, no border. The macOS
-renders pad it onto Apple's 824/1024 icon grid; the Windows and Linux renders use the whole tile,
-as the other Crafting Apps do.
-
-## Provenance
-
-The owner's original drawing, made in ArtCraft (2880 px, engraving style, keyed to the palette),
-vectorised. License: see `LICENSE.txt`.
+- **Tile:** a rounded square (corner 20% of the size) in pearl onyx, `#1d171c` at the top to
+  `#070508` at the foot, with the family's red glow edge `#ff4a3a` and a fainter inner glow ring.
+- **Monogram:** heavy, wide, forward-slanted block letters (slant 0.3), drawn from vector outlines
+  on the PR7 mark's grid (1 unit tall, stems 0.24, bars 0.2, bevelled corners), with two "speed
+  cuts" through their lower half (63–68% and 79–83% of the height). The first P is in the family
+  gradient, pink `#de0639` to orange `#cd6619`; the second in pearl white `#f4eeea`.
+- **Name:** the family's neon stripe (pink → red → orange at 75%), then PARAGON in pearl white and
+  PHOTO in the accent red `#e0103c`, as the PR7 mark draws its 7. Left out at 16 and 32 px, where it
+  can't be read.
 
 ## Files
 
-- `photocraft.svg`: canonical master (traced at 2048 px).
-- `photocraft-small.svg`: lighter trace (traced at 1024 px); also the hicolor scalable icon.
-- `photocraft-1024.png`: 1024 px render on the macOS grid.
-- `photocraft.icns`: macOS bundle icon (`CFBundleIconFile`).
+File names are PhotoCraft's, so the build and packaging scripts find them unchanged. <!-- paragon:keep -->
+
+- `photocraft.svg`, `photocraft-small.svg`: vector master (1024-unit tile).
+- `photocraft-1024.png`: 1024 px render on Apple's 824/1024 icon grid; `photocraft.icns` from it.
 - `photocraft.ico`: Windows icon, 16–256 px, embedded in the `.exe` by `apps/photocraft/build.rs`.
-- `hicolor/<size>/apps/ai.storyteller.photocraft.png` (16–512) and `hicolor/scalable/...svg`:
-  Linux icon theme.
+- `hicolor/<size>/apps/io.github.aryez.paragonphoto.png` (16–512) and
+  `hicolor/scalable/apps/io.github.aryez.paragonphoto.svg`: Linux icon theme.
 
-The app also sets the window icon and Wayland app ID at runtime (`apps/photocraft/src/app_icon.rs`,
-`main.rs`). On Windows the taskbar shows the icon of the Start Menu shortcut that launches the
-exe, so the MSI's `<Icon Id>` keeps the `.exe` extension (ICE50); `app_icon.rs` documents the
-details and tests the `.ico` sizes and the WiX icon references.
-
-## Regenerate
-
-Replace `photocraft.svg` (and `photocraft-small.svg`), then run `packaging/icons.sh`. It needs
-`resvg`, plus `iconutil` on macOS; the `.ico` is packed by `cargo xtask ico`.
+Licence: see `LICENSE.txt` (the repository owner's; not covered by the code licence).
