@@ -191,13 +191,15 @@ def fill(base, colour_or_image, mask):
     base.paste(layer, (0, 0), mask)
 
 
-def render_icon(px: int, with_name: bool) -> Image.Image:
-    """The app icon as an RGBA image px x px (Logo::drawAppIcon)."""
+def render_icon(px: int, with_name: bool, margin: float = 0.0) -> Image.Image:
+    """The app icon as an RGBA image px x px (Logo::drawAppIcon). `margin` insets the tile by that fraction of
+    the size: PR7-S's own icon uses 0.02; Windows and Linux icons are full bleed (0), only their round corners
+    transparent, or the shells crop them (PhotoCraft #4478, guarded by `app_icon.rs`'s tests)."""
     S = px * SS
     size = (S, S)
     img = Image.new("RGBA", size, (0, 0, 0, 0))
 
-    m = S * 0.02
+    m = S * margin
     tile = (m, m, S - m, S - m)
     corner = S * 0.2
     tile_mask = rounded_mask(size, tile, corner)
@@ -282,9 +284,9 @@ def render_icon(px: int, with_name: bool) -> Image.Image:
 
 # ---- SVG (vector master) ----------------------------------------------------------------------
 
-def svg_icon(with_name: bool = True) -> str:
+def svg_icon(with_name: bool = True, margin: float = 0.0) -> str:
     S = 1024.0
-    m = S * 0.02
+    m = S * margin
     t0, t1 = m, S - m
     corner = S * 0.2
     inset = (t1 - t0) * 0.13
@@ -403,7 +405,7 @@ def write_all(root: pathlib.Path, app_id: str) -> list[pathlib.Path]:
 
     # macOS: the tile on Apple's 824/1024 grid.
     mac = Image.new("RGBA", (1024, 1024), (0, 0, 0, 0))
-    mac.paste(render_icon(824, True), (100, 100))
+    mac.paste(render_icon(824, True, margin=0.02), (100, 100))
     save(mac, icons / "photocraft-1024.png")
     save(mac, icons / "photocraft.icns")
     save(icon(256), icons / "photocraft.ico", sizes=[(s, s) for s in (16, 24, 32, 48, 64, 128, 256)])

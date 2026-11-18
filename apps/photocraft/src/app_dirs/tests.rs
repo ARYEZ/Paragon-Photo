@@ -41,7 +41,7 @@ fn no_marker_uses_the_platform_dir() {
     } else if cfg!(windows) {
         assert_eq!(dir, root.join("appdata").join("ParagonPhoto"));
     } else {
-        assert_eq!(dir, root.join("home/.config/photocraft"));
+        assert_eq!(dir, root.join("home/.config/paragon-photo"));
     }
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -147,7 +147,7 @@ fn autosaves_go_to_the_xdg_state_folder() {
     let platform = DataDir { dir: Some(settings.clone()), mode: Mode::Platform, warning: None };
     let xdg = !cfg!(windows) && !cfg!(target_os = "macos");
     let expect = |xdg_path: PathBuf| Some(if xdg { xdg_path } else { settings.join("Recovery") });
-    assert_eq!(resolve_recovery(&platform, env_of(&[("XDG_STATE_HOME", &state), ("HOME", &home)])), expect(state.join("photocraft").join("Recovery")));
+    assert_eq!(resolve_recovery(&platform, env_of(&[("XDG_STATE_HOME", &state), ("HOME", &home)])), expect(state.join("paragon-photo").join("Recovery")));
     let default = home.join(".local").join("state").join("paragon-photo").join("Recovery");
     assert_eq!(resolve_recovery(&platform, env_of(&[("HOME", &home)])), expect(default.clone()));
     let relative = PathBuf::from("relative/state");

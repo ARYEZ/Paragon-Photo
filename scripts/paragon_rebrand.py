@@ -122,6 +122,13 @@ RUST_EDITS = [
     ("apps/photocraft/build.rs", '.set("InternalName", "photocraft")', f'.set("InternalName", "{BIN}")'),
     ("apps/photocraft/tests/it/main.rs", 'NEXTEST_BIN_EXE_photocraft"', 'NEXTEST_BIN_EXE_paragon_photo"'),
     ("apps/photocraft-cli/tests/it/main.rs", "NEXTEST_BIN_EXE_photocraft_cli", "NEXTEST_BIN_EXE_paragon_photo_cli"),
+    # The desktop app's tests of what those name: its config and recovery folders, --version, the X11 fallback
+    # command, and the flatpak build folder (the manifests' module is renamed with the binary).
+    ("apps/photocraft/src/app_dirs/tests.rs", 'root.join("home/.config/photocraft")', f'root.join("home/.config/{BIN}")'),
+    ("apps/photocraft/src/app_dirs/tests.rs", 'expect(state.join("photocraft").join("Recovery"))', f'expect(state.join("{BIN}").join("Recovery"))'),
+    ("apps/photocraft/src/launch_args.rs", 'format!("photocraft {}\\n", photocraft_engine', f'format!("{BIN} {{}}\\n", photocraft_engine'),
+    ("apps/photocraft/src/services/tests.rs", 'Some("WAYLAND_DISPLAY= photocraft")', f'Some("WAYLAND_DISPLAY= {BIN}")'),
+    ("apps/photocraft/src/main.rs", 'CRAFT_I18N_DIR: /run/build/photocraft/craft-i18n', f'CRAFT_I18N_DIR: /run/build/{BIN}/craft-i18n'),
     # The case-sensitivity probe makes `.ParagonPhotoCaseProbe-*` and looks for its lower-case twin:
     # the name it replaces must be the probe's (identifier form), not the prose form.
     ("crates/engine/src/cmd/file_cmds/paths.rs", 'name.replacen("Paragon Photo", "photocraft", 1)', 'name.replacen("ParagonPhoto", "paragonphoto", 1)'),

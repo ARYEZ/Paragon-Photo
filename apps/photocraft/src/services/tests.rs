@@ -99,8 +99,8 @@ fn xwayland_command_matches_how_photocraft_was_installed() {
     let bare = xwayland_command(None, Some("/opt/photocraft-0.3.0-linux-x86_64.AppImage"), true);
     assert_eq!(bare.as_deref(), Some("WAYLAND_DISPLAY= /opt/photocraft-0.3.0-linux-x86_64.AppImage"));
     // deb, rpm, AUR, tarball: the binary on the PATH.
-    assert_eq!(xwayland_command(None, None, true).as_deref(), Some("WAYLAND_DISPLAY= photocraft"));
-    assert_eq!(xwayland_command(Some(""), Some(""), true).as_deref(), Some("WAYLAND_DISPLAY= photocraft"));
+    assert_eq!(xwayland_command(None, None, true).as_deref(), Some("WAYLAND_DISPLAY= paragon-photo"));
+    assert_eq!(xwayland_command(Some(""), Some(""), true).as_deref(), Some("WAYLAND_DISPLAY= paragon-photo"));
     // No X server (XWayland disabled): nothing to suggest.
     assert_eq!(xwayland_command(None, Some("/opt/p.AppImage"), false), None);
 }
