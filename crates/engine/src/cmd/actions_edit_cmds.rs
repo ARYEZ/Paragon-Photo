@@ -699,7 +699,7 @@ mod tests {
     fn record_conditional(width: u32, height: u32) -> (Session, usize) {
         let mut s = Session::new();
         s.execute("file.new", json!({"width": width, "height": height})).unwrap();
-        s.actions.list.push(Action::new("Tall", vec![("layer.new.layer".into(), json!({"name": "Tall"}))]));
+        s.actions.list.push(Action::new("Tall", vec![("layer.new.layer".to_owned(), json!({"name": "Tall"})).into()]));
         let layers = s.active().unwrap().doc.walk().len();
         s.execute("actions.record", json!({"name": "Parent"})).unwrap();
         s.execute("actions.conditional", json!({"if": "portrait", "then": "Tall", "else": null})).unwrap();
@@ -708,7 +708,8 @@ mod tests {
     }
 
     fn parent_steps(s: &Session) -> Vec<(String, Value)> {
-        s.actions.list.iter().find(|a| a.name == "Parent").unwrap().steps.clone()
+        let parent = s.actions.list.actions().iter().find(|a| a.name == "Parent").unwrap();
+        parent.steps.iter().map(|step| (step.command.clone(), step.params.clone())).collect()
     }
 
     #[test]
