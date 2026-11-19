@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Check the macOS release artifacts exactly as users download them:
 #
-#   $DIST/photocraft-<version>-macos-<arch>.dmg       signed, notarized, ticket stapled
+#   $DIST/paragon-photo-<version>-macos-<arch>.dmg       signed, notarized, ticket stapled
 #   $DIST/paragon-photo-cli-<version>-macos-<arch>.zip   unpacked here; the binary inside must be
 #                                                    Developer ID signed with the hardened runtime,
 #                                                    timestamped and notarized
@@ -37,7 +37,7 @@ case "$ARCH" in
   *) echo "unknown --arch $ARCH" >&2; exit 2 ;;
 esac
 
-DMG="$DIST/photocraft-$VERSION-macos-$ARCH.dmg"
+DMG="$DIST/paragon-photo-$VERSION-macos-$ARCH.dmg"
 CLI_ZIP="$DIST/paragon-photo-cli-$VERSION-macos-$ARCH.zip"
 IDENTITY="${MACOS_SIGN_IDENTITY:--}"
 STRICT=0

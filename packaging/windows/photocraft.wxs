@@ -3,8 +3,8 @@
   <?ifndef HasCraftFontLicences ?>
   <?define HasCraftFontLicences=0 ?>
   <?endif?>
-  <Package Name="Paragon Photo" Manufacturer="Learning Machines LLC" Version="$(var.Version)" UpgradeCode="D9660F32-2D0A-4ABE-B73D-17BE25F1542C" Scope="perUserOrMachine" Compressed="yes" Language="1033">
-    <SummaryInformation Description="Paragon Photo image editor" Manufacturer="Learning Machines LLC" />
+  <Package Name="Paragon Photo" Manufacturer="Paragon" Version="$(var.Version)" UpgradeCode="39556261-EBF9-45B1-A598-0799CD533032" Scope="perUserOrMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Paragon Photo image editor" Manufacturer="Paragon" />
     <?include $(sys.SOURCEFILEDIR)install-policy.wxi?>
     <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
          (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
@@ -15,12 +15,12 @@
          .exe need an .exe icon identifier (ICE50), even when the source is an ICO. -->
     <Icon Id="PhotocraftIcon.exe" SourceFile="$(var.IconPath)" />
     <Property Id="ARPPRODUCTICON" Value="PhotocraftIcon.exe" />
-    <Property Id="ARPURLINFOABOUT" Value="https://getartcraft.com/apps/photocraft" />
-    <Property Id="ARPURLUPDATEINFO" Value="https://getartcraft.com/apps/photocraft" />
-    <Property Id="ARPHELPLINK" Value="https://discord.gg/artcraft" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/ARYEZ/Paragon-Photo" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://github.com/ARYEZ/Paragon-Photo/releases" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/ARYEZ/Paragon-Photo/issues" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="CraftSuiteFolder" Name="ArtCraft">
+      <Directory Id="CraftSuiteFolder" Name="Paragon">
         <Directory Id="INSTALLFOLDER" Name="Paragon Photo" />
       </Directory>
     </StandardDirectory>
@@ -67,7 +67,7 @@
     </ComponentGroup>
     <?endif?>
     <ComponentGroup Id="PhotocraftFiles" Directory="INSTALLFOLDER">
-      <Component Id="PhotocraftApp" Guid="A6DE41B7-A80F-4C59-A17E-BB68065BF67E">
+      <Component Id="PhotocraftApp" Guid="5D94451D-E75A-474B-A74A-4DAA89EBF855">
         <File Id="PhotocraftExe" Source="$(var.BinDir)\paragon-photo.exe" KeyPath="yes">
           <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Paragon Photo" Description="Paragon Photo image editor" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="PhotocraftIcon.exe" IconIndex="0" />
         </File>
@@ -129,7 +129,7 @@
         <RegistryValue Root="HKMU" Key="Software\Classes\Applications\paragon-photo.exe\SupportedTypes" Name=".qoi" Value="" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\Applications\paragon-photo.exe\SupportedTypes" Name=".ico" Value="" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\paragon-photo.exe" Value="[#PhotocraftExe]" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\ParagonPhoto" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Paragon Photo" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
       </Component>
 
       <Component Id="PhotocraftCli">

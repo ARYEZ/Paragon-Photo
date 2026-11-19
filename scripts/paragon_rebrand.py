@@ -129,6 +129,18 @@ RUST_EDITS = [
     ("apps/photocraft/src/launch_args.rs", 'format!("photocraft {}\\n", photocraft_engine', f'format!("{BIN} {{}}\\n", photocraft_engine'),
     ("apps/photocraft/src/services/tests.rs", 'Some("WAYLAND_DISPLAY= photocraft")', f'Some("WAYLAND_DISPLAY= {BIN}")'),
     ("apps/photocraft/src/main.rs", 'CRAFT_I18N_DIR: /run/build/photocraft/craft-i18n', f'CRAFT_I18N_DIR: /run/build/{BIN}/craft-i18n'),
+    # The Windows installer's default folders: the "Paragon" suite folder (not ArtCraft) and the product name as it
+    # shows in Explorer, matching the MSI's directory table and the policy checker (install-policy.json's name).
+    ("packaging/windows/install-policy.wxi", "\\ArtCraft\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
+    ("packaging/windows/install-policy.wxi", "\\Paragon\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
+    # ...and the registry key where the installer remembers its folder: install-policy.json's name too.
+    ("packaging/windows/photocraft.wxs", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
+    ("packaging/windows/install-policy.wxi", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
+    ("packaging/windows/install-policy.json", '"Software\\\\ParagonPhoto"', '"Software\\\\Paragon Photo"'),
+    # The linker names each binary's debug symbols after it (paragon-photo -> paragon_photo.pdb); the Windows
+    # packaging ships them, so it must look for the renamed files.
+    ("packaging/windows/package.ps1", "'photocraft.pdb', 'photocraft_cli.pdb'", "'paragon_photo.pdb', 'paragon_photo_cli.pdb'"),
+    ("packaging/windows/symbols.txt", "photocraft.pdb and photocraft_cli.pdb", "paragon_photo.pdb and paragon_photo_cli.pdb"),
     # The case-sensitivity probe makes `.ParagonPhotoCaseProbe-*` and looks for its lower-case twin:
     # the name it replaces must be the probe's (identifier form), not the prose form.
     ("crates/engine/src/cmd/file_cmds/paths.rs", 'name.replacen("Paragon Photo", "photocraft", 1)', 'name.replacen("ParagonPhoto", "paragonphoto", 1)'),
@@ -157,6 +169,12 @@ GLOBAL_RULES = [
     (re.compile(r"\bPhotocraft(?![A-Za-z0-9_])"), IDENT),
 ]
 CLI_RULE = (re.compile(r"photocraft-cli"), CLI)
+# Release file names (`photocraft-<version>-windows-x64.msi`, `$DIST/photocraft-${VERSION}-linux-...`): the
+# updater finds a release's files by the app id (`UPDATE_APP.id`, paragon-photo), so they carry it.
+RELEASE_NAME_RULE = (
+    re.compile(r"(?<![\w-])photocraft-(?=\$\{?[A-Za-z_]*(?:version|Version|VERSION)|\$\(\$?[A-Za-z_]*(?:version|Version)|<version>)"),
+    BIN + "-",
+)
 # Lowercase "photocraft" as a command or path word, outside Rust (docs, scripts, packaging).
 BARE_RULE = (
     re.compile(r"(?:(?<=^)|(?<=[\s/\"'`(\\=]))photocraft(?=$|[\s\"'`),/:\]]|\.exe\b|\.(?=\s|$))(?!::)", re.M),
@@ -207,6 +225,7 @@ def rebrand_text(path: str, text: str) -> str:
         body = r.sub(new, body)
     if path not in CLI_RULE_SKIP:
         body = CLI_RULE[0].sub(CLI_RULE[1], body)
+    body = RELEASE_NAME_RULE[0].sub(RELEASE_NAME_RULE[1], body)
     if not path.endswith(".rs"):
         body = BARE_RULE[0].sub(BARE_RULE[1], body)
     return unmask(body, saved)

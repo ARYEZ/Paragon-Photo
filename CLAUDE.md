@@ -36,7 +36,11 @@ architecture, the never-crash rules, "everything is a command", the tests) and `
   skips `vendor/`.
 - **Web build:** `apps/photocraft-web*` are excluded from the workspace; leave their sources.
 - **CI:** upstream's workflows are parked in `.github/upstream-workflows/` (inactive); don't move
-  them back without the owner asking.
+  them back without the owner asking. Paragon Photo's own: `.github/workflows/windows-installer.yml`
+  (the Windows MSI; a `v*` tag publishes a release).
+- **Windows installer identity:** `packaging/windows/photocraft.wxs` has Paragon Photo's own
+  UpgradeCode and component GUIDs (also in `install-policy.json`), manufacturer "Paragon", and the
+  `Paragon` suite folder. Never reuse PhotoCraft's GUIDs: Windows would treat the two as one product.
 - **Updates** come only from `ARYEZ/Paragon-Photo` releases (`UPDATE_APP` in
   `crates/ui-egui/src/lib.rs`), never from upstream.
 

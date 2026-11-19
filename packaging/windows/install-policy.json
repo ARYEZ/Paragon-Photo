@@ -1,7 +1,7 @@
 {
   "id": "paragon-photo",
   "name": "Paragon Photo",
-  "upgradeCode": "D9660F32-2D0A-4ABE-B73D-17BE25F1542C",
+  "upgradeCode": "39556261-EBF9-45B1-A598-0799CD533032",
   "sources": [
     "photocraft.wxs"
   ],
@@ -296,7 +296,7 @@
     ],
     [
       "-1",
-      "Software\\ParagonPhoto",
+      "Software\\Paragon Photo",
       "InstallDir",
       "[INSTALLFOLDER]"
     ]

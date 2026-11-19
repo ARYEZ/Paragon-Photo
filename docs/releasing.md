@@ -5,7 +5,7 @@ signed installers for macOS, Windows, Linux and the web, plus a FreeBSD tarball,
 or updates a **draft** GitHub Release named `Paragon Photo v<version>`. Nobody sees a draft until a
 maintainer publishes it.
 
-User-facing names say **Paragon Photo**. Files, binaries and ids stay lowercase (`photocraft-<version>-<platform>-<arch>.<ext>`, `io.github.aryez.paragonphoto`).
+User-facing names say **Paragon Photo**. Files, binaries and ids stay lowercase (`paragon-photo-<version>-<platform>-<arch>.<ext>`, `io.github.aryez.paragonphoto`).
 
 ## In-app update checks
 
@@ -255,7 +255,7 @@ Why these formats:
   ~/.local/share/icons/hicolor -name 'io.github.aryez.paragonphoto*' -delete`. The script is
   covered by `packaging/linux/apprun-test.sh` in the packaging-lint workflow.
   A leading `--cli` launches the bundled `usr/bin/paragon-photo-cli`, without desktop
-  integration: `./photocraft-<version>-linux-x86_64.AppImage --cli mcp` serves MCP on
+  integration: `./paragon-photo-<version>-linux-x86_64.AppImage --cli mcp` serves MCP on
   stdio. A symlink named `paragon-photo-cli` also selects that binary via the runtime's
   `ARGV0`. Arguments and process streams pass through unchanged; the entry point
   uses `exec` so signals and exit status reach the caller directly. CLI routing is

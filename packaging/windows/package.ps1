@@ -4,9 +4,9 @@
 
 .DESCRIPTION
   Produces, in $env:DIST (default: dist/release):
-    photocraft-<version>-windows-<arch>.msi            installer (WiX v5, per-user by default, per-machine optional)
-    photocraft-<version>-windows-<arch>-portable.zip   paragon-photo.exe + paragon-photo-cli.exe + portable.txt
-    photocraft-<version>-windows-<arch>-symbols.zip    photocraft.pdb + photocraft_cli.pdb (optional, for profilers)
+    paragon-photo-<version>-windows-<arch>.msi            installer (WiX v5, per-user by default, per-machine optional)
+    paragon-photo-<version>-windows-<arch>-portable.zip   paragon-photo.exe + paragon-photo-cli.exe + portable.txt
+    paragon-photo-<version>-windows-<arch>-symbols.zip    paragon_photo.pdb + paragon_photo_cli.pdb (optional, for profilers)
 
   The binaries link the C runtime statically (+crt-static), so neither the MSI nor the portable
   zip needs the Visual C++ redistributable. Signing is delegated to sign.ps1 (skipped with a
@@ -145,7 +145,7 @@ $Banner = Join-Path $Stage 'installer-banner.bmp'
 $Dialog = Join-Path $Stage 'installer-dialog.bmp'
 New-InstallerArt (Join-Path $Root 'assets\app-icon\hicolor\256x256\apps\io.github.aryez.paragonphoto.png') $Banner $Dialog
 
-$Msi = Join-Path $Dist "photocraft-$Version-windows-$Arch.msi"
+$Msi = Join-Path $Dist "paragon-photo-$Version-windows-$Arch.msi"
 & (Join-Path $PSScriptRoot 'check-icons.ps1')
 Invoke-Native 'wix build' {
   wix build (Join-Path $PSScriptRoot 'photocraft.wxs') -arch $Arch `
@@ -167,7 +167,7 @@ Remove-Item -Force -ErrorAction SilentlyContinue ([IO.Path]::ChangeExtension($Ms
 & (Join-Path $PSScriptRoot 'sign.ps1') $Msi
 
 # ---- portable zip ------------------------------------------------------------------------------
-$Portable = Join-Path $TargetDir "windows-package\photocraft-$Version-windows-$Arch-portable"
+$Portable = Join-Path $TargetDir "windows-package\paragon-photo-$Version-windows-$Arch-portable"
 Remove-Item -Recurse -Force $Portable -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Portable | Out-Null
 Copy-Item (Join-Path $Stage '*.exe') $Portable
@@ -186,7 +186,7 @@ if ($env:CRAFT_FONTS_DIR) {
 # portable.txt beside paragon-photo.exe switches on portable mode: settings, presets and recovery
 # files go to ParagonPhotoData\ next to the exe instead of %APPDATA% (#228; see app_dirs.rs).
 Copy-Item (Join-Path $PSScriptRoot 'portable.txt') $Portable
-$Zip = Join-Path $Dist "photocraft-$Version-windows-$Arch-portable.zip"
+$Zip = Join-Path $Dist "paragon-photo-$Version-windows-$Arch-portable.zip"
 Remove-Item -Force $Zip -ErrorAction SilentlyContinue
 # The archive holds the files themselves. `-Path <folder>` puts the folder *in* the archive, so
 # paragon-photo.exe came out one level down and portable mode needs portable.txt beside the exe
@@ -202,21 +202,21 @@ foreach ($f in 'paragon-photo.exe', 'paragon-photo-cli.exe', 'portable.txt') {
 Remove-Item -Recurse -Force $Check -ErrorAction SilentlyContinue
 
 # ---- debug symbols -----------------------------------------------------------------------------
-# The linker writes a PDB beside each exe, and the exe names it without a path (photocraft.pdb,
-# photocraft_cli.pdb). They ship as a separate, optional download so profilers (Windows Performance
+# The linker writes a PDB beside each exe, and the exe names it without a path (paragon_photo.pdb,
+# paragon_photo_cli.pdb: the binaries' names with underscores). They ship as a separate, optional download so profilers (Windows Performance
 # Analyzer, Superluminal, Visual Studio) show Paragon Photo's function names for the released
 # binaries (#688). Signing doesn't change the PDB signature an exe records, so they match the
 # signed exes; a rebuild of the same commit writes a PDB that doesn't.
-$Symbols = Join-Path $TargetDir "windows-package\photocraft-$Version-windows-$Arch-symbols"
+$Symbols = Join-Path $TargetDir "windows-package\paragon-photo-$Version-windows-$Arch-symbols"
 Remove-Item -Recurse -Force $Symbols -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Symbols | Out-Null
-foreach ($pdb in 'photocraft.pdb', 'photocraft_cli.pdb') {
+foreach ($pdb in 'paragon_photo.pdb', 'paragon_photo_cli.pdb') {
   $p = Join-Path $Bin $pdb
   if (-not (Test-Path $p)) { throw "$pdb is missing from $($Bin), where the release build writes it" }
   Copy-Item $p $Symbols
 }
 Copy-Item (Join-Path $PSScriptRoot 'symbols.txt') $Symbols
-$SymbolsZip = Join-Path $Dist "photocraft-$Version-windows-$Arch-symbols.zip"
+$SymbolsZip = Join-Path $Dist "paragon-photo-$Version-windows-$Arch-symbols.zip"
 Remove-Item -Force $SymbolsZip -ErrorAction SilentlyContinue
 Compress-Archive -Path $Symbols -DestinationPath $SymbolsZip
 

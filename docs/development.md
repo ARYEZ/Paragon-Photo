@@ -281,9 +281,9 @@ cargo run -p photocraft-cli --example man-and-completions -- out/       # man pa
 The Linux AppImage includes the same CLI. Select it with a leading `--cli`:
 
 ```sh
-./photocraft-<version>-linux-x86_64.AppImage --cli --help
-./photocraft-<version>-linux-x86_64.AppImage --cli mcp
-ln -s photocraft-<version>-linux-x86_64.AppImage paragon-photo-cli
+./paragon-photo-<version>-linux-x86_64.AppImage --cli --help
+./paragon-photo-<version>-linux-x86_64.AppImage --cli mcp
+ln -s paragon-photo-<version>-linux-x86_64.AppImage paragon-photo-cli
 ./paragon-photo-cli commands --filter blur
 ```
 
