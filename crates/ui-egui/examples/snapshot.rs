@@ -62,6 +62,11 @@ fn arg(args: &[String], name: &str) -> Option<String> {
     args.iter().position(|a| a == name).and_then(|i| args.get(i + 1).cloned())
 }
 
+/// Whether the last frame asked for another one at once (not a delayed one such as a caret blink).
+fn immediate(harness: &egui_kittest::Harness<'_, PhotocraftApp>) -> bool {
+    harness.output().viewport_output.get(&egui::ViewportId::ROOT).is_some_and(|v| v.repaint_delay.is_zero())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let out = arg(&args, "--out").unwrap_or_else(|| "snapshot.png".into());
@@ -161,6 +166,9 @@ fn main() {
         log::set_max_level(log::LevelFilter::Debug);
     }
     // SNAPSHOT_PRINT=1 prints every call's reply, not only the failures (to read state a script reaches).
+    // SNAPSHOT_IDLE=1 runs frames the way a window does: after each call, only while the app asks
+    // for an immediate repaint, and none to settle, so a change that never asks for its repaint shows stale.
+    let idle = std::env::var_os("SNAPSHOT_IDLE").is_some_and(|v| v == "1");
     let print_replies = std::env::var_os("SNAPSHOT_PRINT").is_some_and(|v| v == "1");
     for (method, params) in script {
         let t0 = std::time::Instant::now();
@@ -181,8 +189,19 @@ fn main() {
             }
             step(&mut harness, shown);
         }
-        for _ in 0..4 {
+        if idle {
+            // As a window's event loop: one pass for the call, then only the passes asked for at once.
             step(&mut harness, shown);
+            for _ in 0..60 {
+                if !immediate(&harness) {
+                    break;
+                }
+                step(&mut harness, shown);
+            }
+        } else {
+            for _ in 0..4 {
+                step(&mut harness, shown);
+            }
         }
         if timing {
             eprintln!("{:>8.1} ms  {label}", t0.elapsed().as_secs_f64() * 1000.0);
@@ -205,11 +224,11 @@ fn main() {
         harness.run_steps(4);
     }
     let t_settle = std::time::Instant::now();
-    while t_settle.elapsed() < std::time::Duration::from_millis(settle_ms) {
+    while !idle && t_settle.elapsed() < std::time::Duration::from_millis(settle_ms) {
         harness.step();
     }
     // Let fade animations settle.
-    for _ in 0..12 {
+    for _ in 0..if idle { 0 } else { 12 } {
         harness.step();
     }
     let (req, _rx) = ControlRequest::new("ui.inspect", Value::Null);
