@@ -137,6 +137,10 @@ RUST_EDITS = [
     ("packaging/windows/photocraft.wxs", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
     ("packaging/windows/install-policy.wxi", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
     ("packaging/windows/install-policy.json", '"Software\\\\ParagonPhoto"', '"Software\\\\Paragon Photo"'),
+    # The linker names each binary's debug symbols after it (paragon-photo -> paragon_photo.pdb); the Windows
+    # packaging ships them, so it must look for the renamed files.
+    ("packaging/windows/package.ps1", "'photocraft.pdb', 'photocraft_cli.pdb'", "'paragon_photo.pdb', 'paragon_photo_cli.pdb'"),
+    ("packaging/windows/symbols.txt", "photocraft.pdb and photocraft_cli.pdb", "paragon_photo.pdb and paragon_photo_cli.pdb"),
     # The case-sensitivity probe makes `.ParagonPhotoCaseProbe-*` and looks for its lower-case twin:
     # the name it replaces must be the probe's (identifier form), not the prose form.
     ("crates/engine/src/cmd/file_cmds/paths.rs", 'name.replacen("Paragon Photo", "photocraft", 1)', 'name.replacen("ParagonPhoto", "paragonphoto", 1)'),

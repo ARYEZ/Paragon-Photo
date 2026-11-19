@@ -6,7 +6,7 @@
   Produces, in $env:DIST (default: dist/release):
     paragon-photo-<version>-windows-<arch>.msi            installer (WiX v5, per-user by default, per-machine optional)
     paragon-photo-<version>-windows-<arch>-portable.zip   paragon-photo.exe + paragon-photo-cli.exe + portable.txt
-    paragon-photo-<version>-windows-<arch>-symbols.zip    photocraft.pdb + photocraft_cli.pdb (optional, for profilers)
+    paragon-photo-<version>-windows-<arch>-symbols.zip    paragon_photo.pdb + paragon_photo_cli.pdb (optional, for profilers)
 
   The binaries link the C runtime statically (+crt-static), so neither the MSI nor the portable
   zip needs the Visual C++ redistributable. Signing is delegated to sign.ps1 (skipped with a
@@ -202,15 +202,15 @@ foreach ($f in 'paragon-photo.exe', 'paragon-photo-cli.exe', 'portable.txt') {
 Remove-Item -Recurse -Force $Check -ErrorAction SilentlyContinue
 
 # ---- debug symbols -----------------------------------------------------------------------------
-# The linker writes a PDB beside each exe, and the exe names it without a path (photocraft.pdb,
-# photocraft_cli.pdb). They ship as a separate, optional download so profilers (Windows Performance
+# The linker writes a PDB beside each exe, and the exe names it without a path (paragon_photo.pdb,
+# paragon_photo_cli.pdb: the binaries' names with underscores). They ship as a separate, optional download so profilers (Windows Performance
 # Analyzer, Superluminal, Visual Studio) show Paragon Photo's function names for the released
 # binaries (#688). Signing doesn't change the PDB signature an exe records, so they match the
 # signed exes; a rebuild of the same commit writes a PDB that doesn't.
 $Symbols = Join-Path $TargetDir "windows-package\paragon-photo-$Version-windows-$Arch-symbols"
 Remove-Item -Recurse -Force $Symbols -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $Symbols | Out-Null
-foreach ($pdb in 'photocraft.pdb', 'photocraft_cli.pdb') {
+foreach ($pdb in 'paragon_photo.pdb', 'paragon_photo_cli.pdb') {
   $p = Join-Path $Bin $pdb
   if (-not (Test-Path $p)) { throw "$pdb is missing from $($Bin), where the release build writes it" }
   Copy-Item $p $Symbols
