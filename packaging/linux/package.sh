@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Build and package Paragon Photo for Linux (<arch> is x86_64, aarch64 or riscv64):
 #
-#   $DIST/photocraft-<version>-linux-<arch>.AppImage  any distro with glibc >= the build host's
-#   $DIST/photocraft-<version>-linux-<arch>.AppImage.zsync  delta updates (needs zsyncmake)
-#   $DIST/photocraft-<version>-linux-<arch>.deb       Debian, Ubuntu, Mint, Pop!_OS, ...
-#   $DIST/photocraft-<version>-linux-<arch>.rpm       Fedora, openSUSE, RHEL, ...
-#   $DIST/photocraft-<version>-linux-<arch>.tar.gz    plain FHS-style tree (bin/, share/)
+#   $DIST/paragon-photo-<version>-linux-<arch>.AppImage  any distro with glibc >= the build host's
+#   $DIST/paragon-photo-<version>-linux-<arch>.AppImage.zsync  delta updates (needs zsyncmake)
+#   $DIST/paragon-photo-<version>-linux-<arch>.deb       Debian, Ubuntu, Mint, Pop!_OS, ...
+#   $DIST/paragon-photo-<version>-linux-<arch>.rpm       Fedora, openSUSE, RHEL, ...
+#   $DIST/paragon-photo-<version>-linux-<arch>.tar.gz    plain FHS-style tree (bin/, share/)
 #
 # Usage: packaging/linux/package.sh [--skip-build] [--formats "appimage deb rpm tar"]
 #
@@ -44,7 +44,7 @@ case "$ARCH" in
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
 export PHOTOCRAFT_MAINTAINER="${PHOTOCRAFT_MAINTAINER:-Paragon Photo maintainers <photocraft@storyteller.ai>}"
-BASENAME="photocraft-$VERSION-linux-$ARCH"
+BASENAME="paragon-photo-$VERSION-linux-$ARCH"
 
 echo "==> Paragon Photo $VERSION for Linux $ARCH ($FORMATS)"
 

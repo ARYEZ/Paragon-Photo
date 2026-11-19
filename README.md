@@ -34,6 +34,21 @@ cargo build --release -p photocraft -p photocraft-cli
 Settings live in `~/.config/paragon-photo` on Linux, `~/Library/Application Support/ParagonPhoto` on
 macOS and `%APPDATA%\ParagonPhoto` on Windows, separate from any PhotoCraft install.
 
+## Windows installer
+
+`.github/workflows/windows-installer.yml` builds a Windows installer (`.msi`, per-user by default,
+for everyone optional) and a portable ZIP on a GitHub Windows runner:
+
+- **To get one:** GitHub, Actions, **Windows installer**, **Run workflow**. When the run finishes,
+  download `paragon-photo-windows-x64` from its Artifacts and run the `.msi`.
+- **To publish a release:** bump `version` under `[workspace.package]` in `Cargo.toml`, commit,
+  then push a matching tag (`git tag v0.24.0`, `git push origin v0.24.0`). The installer is attached
+  to a GitHub Release, which the app's updater checks.
+
+The installer is unsigned, so Windows SmartScreen warns the first time: **More info**, **Run anyway**.
+It installs to `%LOCALAPPDATA%\Programs\Paragon\Paragon Photo` (or `Program Files\Paragon\...` for
+everyone) and is its own product: it never replaces or removes a PhotoCraft install.
+
 ## What's in it
 
 PhotoCraft's editor, unchanged: layers, masks, adjustment layers, layer styles, type, vectors, a

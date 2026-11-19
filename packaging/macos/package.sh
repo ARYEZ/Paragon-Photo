@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build, sign and (optionally) notarize the macOS release artifacts:
 #
-#   $DIST/photocraft-<version>-macos-<arch>.dmg          ParagonPhoto.app on a drag-to-Applications DMG
+#   $DIST/paragon-photo-<version>-macos-<arch>.dmg          ParagonPhoto.app on a drag-to-Applications DMG
 #   $DIST/paragon-photo-cli-<version>-macos-<arch>.zip      the headless CLI
 #
 # Usage: packaging/macos/package.sh [--arch universal|aarch64|x86_64] [--skip-build]
@@ -40,7 +40,7 @@ IDENTITY="${MACOS_SIGN_IDENTITY:--}"
 SHORT_VERSION="${VERSION%%-*}"
 WORK="$CARGO_TARGET_DIR/macos-package"
 APP="$WORK/ParagonPhoto.app"
-DMG="$DIST/photocraft-$VERSION-macos-$ARCH.dmg"
+DMG="$DIST/paragon-photo-$VERSION-macos-$ARCH.dmg"
 CLI_ZIP="$DIST/paragon-photo-cli-$VERSION-macos-$ARCH.zip"
 
 NOTARIZE=0

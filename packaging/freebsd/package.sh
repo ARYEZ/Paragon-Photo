@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Build and package Paragon Photo for FreeBSD:
 #
-#   $DIST/photocraft-<version>-freebsd-<arch>.tar.gz   a /usr/local-style tree (arch x86_64 or aarch64):
-#       photocraft-<version>-freebsd-<arch>/{bin, man/man1, share/applications, share/icons,
+#   $DIST/paragon-photo-<version>-freebsd-<arch>.tar.gz   a /usr/local-style tree (arch x86_64 or aarch64):
+#       paragon-photo-<version>-freebsd-<arch>/{bin, man/man1, share/applications, share/icons,
 #       share/mime, share/metainfo, share/doc/paragon-photo, share/{bash-completion,zsh,fish}}
 #
 # Install by copying the tree's contents into /usr/local:
-#   tar -xzf photocraft-<version>-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
+#   tar -xzf paragon-photo-<version>-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
 #
 # Usage: packaging/freebsd/package.sh [--skip-build] [--dry-run]
 #   --dry-run   stage the tree from stub binaries and list it, without building (works on any OS)
@@ -60,7 +60,7 @@ if [[ "$DRY_RUN" = 0 ]] && [[ "$(uname -s)" != FreeBSD ]]; then
   echo "error: build on FreeBSD (or pass --dry-run to check the tree layout)" >&2
   exit 2
 fi
-BASENAME="photocraft-$VERSION-freebsd-$ARCH"
+BASENAME="paragon-photo-$VERSION-freebsd-$ARCH"
 
 echo "==> Paragon Photo $VERSION for FreeBSD $ARCH"
 

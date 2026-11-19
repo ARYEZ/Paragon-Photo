@@ -1,0 +1,85 @@
+# Paragon Photo's Windows installer: builds the app and packages it with
+# packaging/windows/package.ps1 on a Windows runner (WiX only runs on Windows).
+#
+#   - Run it by hand (Actions -> Windows installer -> Run workflow), or push a branch that changes
+#     the Windows packaging: the MSI and portable ZIP are attached to the run as an artifact.
+#   - Push a version tag (v0.23.1, matching [workspace.package] version in Cargo.toml): it also
+#     publishes them as a GitHub Release, which the app's updater reads (UPDATE_APP in
+#     crates/ui-egui/src/lib.rs looks only at this repository's releases).
+#
+# Unsigned unless signing secrets are set (see packaging/windows/sign.ps1): Windows SmartScreen will
+# warn on first run ("More info" -> "Run anyway").
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+    branches: ["claude/**"]
+    paths:
+      - "packaging/windows/**"
+      - ".github/workflows/windows-installer.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  msi:
+    name: MSI (x64)
+    runs-on: windows-latest
+    timeout-minutes: 240
+    env:
+      DIST: dist/release
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tag matches the app version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $tag = $env:GITHUB_REF_NAME.TrimStart('v')
+          $line = Select-String -Path Cargo.toml -Pattern '^\s*version\s*=\s*"([^"]+)"' | Select-Object -First 1
+          $version = $line.Matches[0].Groups[1].Value
+          if ($tag -ne $version) { throw "Tag $env:GITHUB_REF_NAME doesn't match Cargo.toml's version $version: bump [workspace.package] version first, or the updater sees no new version." }
+          Write-Output "Releasing $version"
+
+      - name: Rust (stable, MSVC)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+          rustc --version
+
+      - name: WiX 5
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 5.0.2
+          wix extension add -g WixToolset.UI.wixext/5.0.2 WixToolset.Util.wixext/5.0.2
+          wix --version
+
+      - name: Build and package
+        shell: pwsh
+        run: ./packaging/windows/package.ps1 -Arch x64
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: paragon-photo-windows-x64
+          path: |
+            dist/release/*.msi
+            dist/release/*-portable.zip
+          if-no-files-found: error
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $files = Get-ChildItem dist/release -File | Where-Object { $_.Name -like '*.msi' -or $_.Name -like '*-portable.zip' } | ForEach-Object FullName
+          gh release create $env:GITHUB_REF_NAME @files --title "Paragon Photo $($env:GITHUB_REF_NAME.TrimStart('v'))" --notes "Windows installer (.msi) and portable ZIP for x64. Unsigned: Windows SmartScreen may warn on first run (More info, Run anyway)."
