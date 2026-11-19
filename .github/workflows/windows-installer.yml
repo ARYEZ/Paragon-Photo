@@ -55,6 +55,14 @@ jobs:
           rustup default stable
           rustc --version
 
+      # The release build compiles ~870 crates (about 85 minutes on a hosted runner). Cache them, also when a later
+      # step fails, so a rerun recompiles only what changed.
+      - name: Cache the Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: windows-x64-release
+
       - name: WiX 5
         shell: pwsh
         run: |

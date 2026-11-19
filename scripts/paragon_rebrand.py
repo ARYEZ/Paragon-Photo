@@ -129,6 +129,10 @@ RUST_EDITS = [
     ("apps/photocraft/src/launch_args.rs", 'format!("photocraft {}\\n", photocraft_engine', f'format!("{BIN} {{}}\\n", photocraft_engine'),
     ("apps/photocraft/src/services/tests.rs", 'Some("WAYLAND_DISPLAY= photocraft")', f'Some("WAYLAND_DISPLAY= {BIN}")'),
     ("apps/photocraft/src/main.rs", 'CRAFT_I18N_DIR: /run/build/photocraft/craft-i18n', f'CRAFT_I18N_DIR: /run/build/{BIN}/craft-i18n'),
+    # The Windows installer's default folders: the "Paragon" suite folder (not ArtCraft) and the product name as it
+    # shows in Explorer, matching the MSI's directory table and the policy checker (install-policy.json's name).
+    ("packaging/windows/install-policy.wxi", "\\ArtCraft\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
+    ("packaging/windows/install-policy.wxi", "\\Paragon\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
     # The case-sensitivity probe makes `.ParagonPhotoCaseProbe-*` and looks for its lower-case twin:
     # the name it replaces must be the probe's (identifier form), not the prose form.
     ("crates/engine/src/cmd/file_cmds/paths.rs", 'name.replacen("Paragon Photo", "photocraft", 1)', 'name.replacen("ParagonPhoto", "paragonphoto", 1)'),
