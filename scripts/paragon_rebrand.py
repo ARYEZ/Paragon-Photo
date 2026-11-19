@@ -133,6 +133,10 @@ RUST_EDITS = [
     # shows in Explorer, matching the MSI's directory table and the policy checker (install-policy.json's name).
     ("packaging/windows/install-policy.wxi", "\\ArtCraft\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
     ("packaging/windows/install-policy.wxi", "\\Paragon\\ParagonPhoto\\", "\\Paragon\\Paragon Photo\\"),
+    # ...and the registry key where the installer remembers its folder: install-policy.json's name too.
+    ("packaging/windows/photocraft.wxs", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
+    ("packaging/windows/install-policy.wxi", 'Key="Software\\ParagonPhoto"', 'Key="Software\\Paragon Photo"'),
+    ("packaging/windows/install-policy.json", '"Software\\\\ParagonPhoto"', '"Software\\\\Paragon Photo"'),
     # The case-sensitivity probe makes `.ParagonPhotoCaseProbe-*` and looks for its lower-case twin:
     # the name it replaces must be the probe's (identifier form), not the prose form.
     ("crates/engine/src/cmd/file_cmds/paths.rs", 'name.replacen("Paragon Photo", "photocraft", 1)', 'name.replacen("ParagonPhoto", "paragonphoto", 1)'),

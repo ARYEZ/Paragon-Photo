@@ -129,7 +129,7 @@
         <RegistryValue Root="HKMU" Key="Software\Classes\Applications\paragon-photo.exe\SupportedTypes" Name=".qoi" Value="" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\Applications\paragon-photo.exe\SupportedTypes" Name=".ico" Value="" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\paragon-photo.exe" Value="[#PhotocraftExe]" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\ParagonPhoto" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Paragon Photo" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
       </Component>
 
       <Component Id="PhotocraftCli">

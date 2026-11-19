@@ -296,7 +296,7 @@
     ],
     [
       "-1",
-      "Software\\ParagonPhoto",
+      "Software\\Paragon Photo",
       "InstallDir",
       "[INSTALLFOLDER]"
     ]
