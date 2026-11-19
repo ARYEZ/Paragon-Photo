@@ -1,0 +1,78 @@
+# A few minutes: runs the real Windows packaging (packaging/windows/package.ps1 -SkipBuild) end to end on two
+# tiny stand-in binaries with the app's names, subsystems and release settings, instead of the ~85-minute app
+# build. Every step after the build runs for real: the PE checks, the MSI build and ICE50 validation, the
+# install-policy checks, the portable ZIP, the debug symbols (.pdb) and the CLI smoke test. The installer it
+# makes is a stand-in and is not uploaded.
+name: Installer smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - "packaging/windows/**"
+      - ".github/workflows/installer-smoke.yml"
+
+concurrency:
+  group: installer-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Package stand-in binaries
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust (stable, MSVC)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+
+      - name: WiX 5
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 5.0.2
+          wix extension add -g WixToolset.UI.wixext/5.0.2 WixToolset.Util.wixext/5.0.2
+
+      - name: Stand-in binaries (same names, subsystems and release profile as the app)
+        shell: pwsh
+        run: |
+          $stub = Join-Path $env:RUNNER_TEMP 'stub'
+          New-Item -ItemType Directory -Force -Path $stub | Out-Null
+          @'
+          [package]
+          name = "stub"
+          version = "0.1.0"
+          edition = "2024"
+
+          [[bin]]
+          name = "paragon-photo"
+          path = "app.rs"
+
+          [[bin]]
+          name = "paragon-photo-cli"
+          path = "cli.rs"
+
+          [profile.release]
+          lto = "thin"
+          codegen-units = 1
+          '@ | Set-Content (Join-Path $stub 'Cargo.toml')
+          '#![windows_subsystem = "windows"]' + "`nfn main() {}" | Set-Content (Join-Path $stub 'app.rs')
+          'fn main() { println!("paragon-photo-cli stand-in"); }' | Set-Content (Join-Path $stub 'cli.rs')
+          $target = 'x86_64-pc-windows-msvc'
+          $env:CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS = '-C target-feature=+crt-static'
+          cargo build --release --manifest-path (Join-Path $stub 'Cargo.toml') --target $target --target-dir (Join-Path $stub 'target')
+          if ($LASTEXITCODE -ne 0) { throw 'stand-in build failed' }
+          $from = Join-Path $stub "target\$target\release"
+          $to = Join-Path $env:GITHUB_WORKSPACE "target\$target\release"
+          New-Item -ItemType Directory -Force -Path $to | Out-Null
+          Get-ChildItem $from -File | Where-Object { $_.Extension -in '.exe', '.pdb' } | ForEach-Object { Copy-Item $_.FullName $to; Write-Output "staged $($_.Name)" }
+
+      - name: Package (real package.ps1, build skipped)
+        shell: pwsh
+        env:
+          DIST: dist/smoke
+        run: ./packaging/windows/package.ps1 -Arch x64 -SkipBuild
