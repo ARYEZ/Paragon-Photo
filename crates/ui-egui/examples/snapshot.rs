@@ -160,13 +160,15 @@ fn main() {
     if reruns && log::set_logger(&RerunLog).is_ok() {
         log::set_max_level(log::LevelFilter::Debug);
     }
+    // SNAPSHOT_PRINT=1 prints every call's reply, not only the failures (to read state a script reaches).
+    let print_replies = std::env::var_os("SNAPSHOT_PRINT").is_some_and(|v| v == "1");
     for (method, params) in script {
         let t0 = std::time::Instant::now();
         let label = format!("{method} {}", params.get("command").and_then(Value::as_str).unwrap_or(""));
         let (req, _rx) = ControlRequest::new(&method, params);
         let outcome = handle(harness.state_mut(), &ctx, &req);
         if let Reply::Done(v) = &outcome
-            && v.get("ok") == Some(&Value::Bool(false))
+            && (v.get("ok") == Some(&Value::Bool(false)) || print_replies)
         {
             eprintln!("{method}: {v}");
         }
